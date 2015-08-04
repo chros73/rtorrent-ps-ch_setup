@@ -1,0 +1,278 @@
+# ~/.rtorrent.rc and enable/modify the options as needed. Remember to uncomment the options you wish to enable.
+
+
+##### begin: Including PyroScope settings #####
+
+#
+# PyroScope SETTINGS
+#
+
+# Set "pyro.extended" to 1 to activate rTorrent-PS features!
+# LEAVE THIS AT 0 IF YOU RUN A VANILLA rTorrent!
+method.insert = pyro.extended, value|const, 1
+
+# Set "pyro.bin_dir" to the "bin" directory where you installed the pyrocore tools!
+# Make sure you end it with a "/"; if this is left empty, then the shell's path is searched.
+method.insert = pyro.bin_dir, string|const, "$cat=/home/chros73/bin/"
+
+# Importing the other conf file
+#method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-,\"$system.client_version=\",.rc.default"
+#method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-0.9.4.rc"
+#method.insert = pyro.rtorrent_rc, string|const|private, "$cat=/home/chros73/.pyroscope/rtorrent-0.9.4.rc"
+method.insert = pyro.rtorrent_rc, string|const|private, "$cat=/home/chros73/.pyroscope/rtorrent-,\"$system.client_version=\",.rc"
+import = $pyro.rtorrent_rc=
+
+## TORQUE: Daemon watchdog schedule
+## Must be activated by touching the "~/.pyroscope/run/pyrotorque" file!
+## Set the second argument to "-v" or "-q" to change log verbosity.
+schedule = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
+
+##### end: Including PyroScope settings #####
+
+
+
+##### begin: Default connection settings #####
+
+# Global upload and download rate in KiB (download_rate, upload_rate). "0" for unlimited.
+throttle.global_down.max_rate.set_kb = 10000
+throttle.global_up.max_rate.set_kb   = 2500
+
+# Maximum and minimum number of peers to connect to per torrent while downloading (applies to the 'slowup' throttle group). (min_peers, max_peers)
+throttle.min_peers.normal.set = 89
+throttle.max_peers.normal.set = 100
+
+# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (applies to the 'slowup' throttle group). (min_peers_seed, max_peers_seed)
+throttle.min_peers.seed.set = 29
+throttle.max_peers.seed.set = 50
+
+# Maximum number of simultanious uploads per torrent. (upload slots!) (applies to the 'slowup' throttle group). (max_uploads)
+throttle.max_uploads.set = 15
+
+# Maximum number of simultaneous downloads and uploads slots (global slots!) (max_downloads_global, max_uploads_global)
+throttle.max_downloads.global.set = 300
+throttle.max_uploads.global.set   = 300
+
+# Throttles rates for (groups of) downloads or IP ranges. (throttle_up) These throttles borrow bandwidth from the global throttle and thus are limited by it too.
+# You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
+# Limits the upload rate to 600 kb/s for the slowup throttle group. 
+throttle.up = slowup,600
+
+# Set the max amount of memory space used to mapping file chunks. (max_memory_usage) This may also be set using ulimit -m where 3/4 will be allocated to file chunks.
+pieces.memory.max.set = 2000M
+
+# Limit the number of connections rtorrent can accept/make (sockets) 
+network.max_open_sockets.set = 768
+
+# Limit the number of open files rtorrent can keep open (you have to modify the system wide settings with ulimit!!!) (set_max_open_files)
+network.max_open_files.set = 1999
+
+# Limit the number simultanous of HTTP request (default 32) (set_max_open_http)
+network.http.max_open.set = 99
+
+##### end: Default connection settings #####
+
+
+
+##### begin: Directory settings #####
+
+# Defining directory constants
+method.insert = main_dir,  string|const|private, "$cat=/mnt/Torrents/"
+method.insert = sub_dir,   string|const|private, "$cat=$main_dir=,.rtorrent/"
+method.insert = queue_dir, string|const|private, "$cat=$sub_dir=,.queue/"
+method.insert = meta_dir,  string|const|private, "$cat=$sub_dir=,.torrent/"
+
+# Default directory to save the downloaded torrents and where you should place your 'complete' data before you place your *.torrent file into the watch folder to be able to be hash checked. (directory)
+directory.default.set = "$cat=$sub_dir=,incomplete/"
+
+# Default session directory. Make sure you don't run multiple instance of rtorrent using the same session directory. Perhaps using a relative path? (session)
+session.path.set = "$cat=$sub_dir=,.session"
+
+# Watch directories for new torrents (metafiles). 
+# Also specifying the final directories (data_dir and meta_dir) for them, and setting:
+# - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
+schedule = watch_dir_1,  5, 10, "load.start=\"$cat=$queue_dir=,rotating/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,rotating\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,rotating\\\"\", d.priority.set=3,           \"d.custom.set=unsafe_data,1\""
+schedule = watch_dir_2,  5, 10, "load.start=\"$cat=$queue_dir=,fullseed/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,fullseed\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,fullseed\\\"\", d.priority.set=3"
+schedule = watch_dir_3,  5, 10, "load.start=\"$cat=$queue_dir=,unsafe/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,unsafe\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,unsafe\\\"\",   d.throttle_name.set=slowup, \"d.custom.set=unsafe_data,1\""
+schedule = watch_dir_4,  5, 10, "load.start=\"$cat=$queue_dir=,misc/*.torrent\",     \"d.custom.set=data_dir,\\\"$cat=$main_dir=,misc\\\"\",     \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,misc\\\"\",     d.throttle_name.set=slowup"
+schedule = watch_dir_5,  5, 10, "load.start=\"$cat=$queue_dir=,apps/*.torrent\",     \"d.custom.set=data_dir,\\\"$cat=$main_dir=,apps\\\"\",     \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,apps\\\"\",     d.throttle_name.set=slowup"
+schedule = watch_dir_6,  5, 10, "load.start=\"$cat=$queue_dir=,ebooks/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,ebooks\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,ebooks\\\"\",   d.throttle_name.set=slowup"
+schedule = watch_dir_7,  5, 10, "load.start=\"$cat=$queue_dir=,pictures/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,pictures\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,pictures\\\"\", d.throttle_name.set=slowup"
+schedule = watch_dir_8,  5, 10, "load.start=\"$cat=$queue_dir=,music/*.torrent\",    \"d.custom.set=data_dir,\\\"$cat=$main_dir=,music\\\"\",    \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,music\\\"\",    d.throttle_name.set=slowup"
+schedule = watch_dir_9,  5, 10, "load.start=\"$cat=$queue_dir=,cartoons/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,cartoons\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,cartoons\\\"\", d.throttle_name.set=slowup"
+schedule = watch_dir_10, 5, 10, "load.start=\"$cat=$queue_dir=,series/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,series\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,series\\\"\",   d.throttle_name.set=slowup"
+schedule = watch_dir_11, 5, 10, "load.start=\"$cat=$queue_dir=,movies/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,movies\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,movies\\\"\",   d.throttle_name.set=slowup"
+
+# Delete data (dir/files) not from the UI, for torrents when the metafile (torrent file) has been deleted manually from these folders (allows rotating torrents)
+schedule = untied_dir_1, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating/*.torrent\""
+schedule = untied_dir_3, 8, 5,  "remove_untied=\"$cat=$meta_dir=,unsafe/*.torrent\""
+
+# Delete data (dir/files) from the UI (CTRL+dd), only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents)
+method.insert  = d.get_incomplete_path, simple|string|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
+method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.base_path=}"
+method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",\"execute={rm,-rf,--,$d.base_path=}\""
+
+
+### begin: Move data and meta (.torrent) file automatically of a finished or hashchecked torrent ( when you drop in 100% done torrent data and then have rtorrent check the data and resume seeding) ###
+# insert a method with the alias 'd.get_data_path' which returns the fullpath of its final data dir
+method.insert  = d.get_data_path, simple|string|private, "cat=$d.custom=data_dir,/,$d.base_filename="
+# insert a method which returns true if the current path of the torrent data is not equal to the fullpath of its final data dir, otherwise returns false
+method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_data_path=,d.base_path=}\""
+# insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
+method.insert  = d.move_data, simple, "d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.base_path=,$d.custom=data_dir;d.stop=;d.start="
+
+# insert a method to determine just the basename of a given meta (.torrent) file
+method.insert  = d.get_meta_basename, simple|string|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="
+# insert a method which returns the fullpath of its final meta dir
+method.insert  = d.get_meta_path, simple|string|private, "cat=$d.custom=meta_dir,/,$d.get_meta_basename="
+# insert a method which returns true if the current path of the meta (.torrent) file is not equal to the fullpath of its final meta dir, otherwise returns false
+method.insert  = d.compare_meta_path, simple|private, "not=\"$equal={d.get_meta_path=,d.tied_to_file=}\""
+# insert a method which: moves meta (.torrent) file to its final place; updates the tied meta file path of the torrent (to keep seeding it)
+method.insert  = d.move_meta, simple, "execute=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_meta_path="
+
+# insert a method which returns true if neither of its fullpath of data nor its fullpath of meta (.torrent) file isn't in the final place
+method.insert  = d.compare_both, simple|private, "and={d.compare_meta_path=,d.compare_data_path=}"
+# insert a method which will move both data and meta (.torrent) file: moves meta (.torrent) file; moves data; saves the session of it
+method.insert  = d.move_both, simple, "d.move_meta=;d.move_data=;d.save_full_session="
+# insert a method wich will move both data and meta (.torrent) file if neither of them is in the final place
+method.insert  = d.move_both_check, simple, "branch=d.compare_both=,d.move_both="
+# finally, set a key with the name 'move_both_f' that is triggered by the finished event: moves both data and meta (.torrent) file when it's finished
+method.set_key = event.download.finished, move_both_f, "d.move_both_check="
+# finally, set a key with the name 'move_both_h' that is triggered by the hash_done event: moves both data and meta (.torrent) file of a completed torrent when it's 100% hashchecked
+method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.move_both_check="
+### end: Move data and meta (.torrent) file automatically ###
+
+
+### begin: Helper methods to move data and meta (.torrent) file manually ###
+# helper method: checks existence of directory during moving
+method.insert  = check_dir.value, simple|value|private, "execute.capture=bash,-c,\"$cat=\\\"test -d \\\",$argument.0=,$argument.1=,\\\" && echo -n 1 || echo -n\\\"\""
+# helper method: displays error if a directory doesn't exist
+method.insert  = check_dir.error.print, simple|private, "print=\"$cat=Error\\\\\ during\\\\\ moving\\\\\ ,$argument.2=,!\\\\\ No\\\\\ such\\\\\ directory:\\\\\ ,$argument.0=,$argument.1=\""
+
+# Move a finished, stucked meta file from the queue dir into its final place (thanks to the simetimes missing meta_dir custom field value, rtorrent bug?)
+# Usage: 'd.move_meta_to=misc'
+# helper method: sets the missing meta_dir custom field value to the fullpath of the value of the argument and moves the meta (.torrent) file
+method.insert  = d.move_meta_to.helper, simple|private, "d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_meta="
+# helper method: calls the 'd.move_meta_to.helper' method which will move the meta (.torrent) file if the required directory exist, otherwise prints out an error
+method.insert  = d.move_meta_to.check_dir, simple|private, "branch=\"check_dir.value=$meta_dir=,$argument.0=\",d.move_meta_to.helper=$argument.0=,\"check_dir.error.print=$meta_dir=,$argument.0=,metafile\""
+# helper method: prints out an error message when the meta_dir custom field value exists
+method.insert  = d.move_meta_to.print, simple|private, "print={Metadir\\\ is\\\ already\\\ set:\\\ ,$d.custom=meta_dir}"
+# moves the finished, stucked meta file if there isn't any error, it receives 1 argument: dirname
+method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"branch=d.custom=meta_dir,d.move_meta_to.print=,d.move_meta_to.check_dir=$argument.0=\""
+
+# Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it
+# Usage: 'd.move_to=rotating,1,1' or 'd.move_to=fullseed,,1' or 'd.move_to=unsafe,1,' or 'd.move_to=misc,,'
+# helper method: sets the required attributes only for torrents in special group (removes throttle group; sets priority to high)
+method.insert  = d.modify_rest_special, simple|private, "d.throttle_name.set=;d.priority.set=3"
+# helper method: sets the required attributes only for torrents in the 2nd group (rest) (sets slowup throttle group; sets priority to normal)
+method.insert  = d.modify_rest_slowup, simple|private, "d.throttle_name.set=slowup;d.priority.set=2"
+# helper method: decides which remaining helper method should be called based upon the 3rd argument and calls it
+method.insert  = d.is_special_group, simple|private, "branch=argument.0=,d.modify_rest_special=,d.modify_rest_slowup="
+# helper method: sets everything it can and calls the other helper methods for the rest (stops it; sets the remaining attributes (throttle group, priority) based open the 3rd argument; sets the new data and meta dirs based open the 1st argument; tries to move both data and meta; modifies the new slot values based open the 3rd argument; sets unsafe_data custom field value based open the 2nd argument; saves the session of it)
+method.insert  = d.move_to.helper, simple|private, "d.stop=;d.is_special_group=$argument.2=;d.custom.set=data_dir,\"$cat=$main_dir=,$argument.0=\";d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_both_check=;d.modify_slots_both=;branch=argument.1=,\"d.custom.set=unsafe_data,1\",\"d.custom.set=unsafe_data,\";d.save_full_session="
+# helper method: calls the 'd.move_to.helper' method which will does the job if the required meta directory also exists, otherwise prints out an error
+method.insert  = d.move_to.check_meta_dir, simple|private, "branch=\"check_dir.value=$meta_dir=,$argument.0=\",\"d.move_to.helper=$argument.0=,$argument.1=,$argument.2=\",\"check_dir.error.print=$meta_dir=,$argument.0=,metafile\""
+# helper method: calls the 'd.move_to.check_meta_dir' method which will check the meta dir if the required data directory exists, otherwise prints out an error
+method.insert  = d.move_to.check_data_dir, simple|private, "branch=\"check_dir.value=$main_dir=,$argument.0=\",\"d.move_to.check_meta_dir=$argument.0=,$argument.1=,$argument.2=\",\"check_dir.error.print=$main_dir=,$argument.0=,data\""
+# moves data (can be partially downloaded) and meta (.torrent) file if there isn't any error, it receives 3 arguments: dirname,unsafe_data,specialgroup
+method.insert  = d.move_to, simple, "d.move_to.check_data_dir=$argument.0=,$argument.1=,$argument.2="
+### end: Helper methods to move data and meta (.torrent) file manually ###
+
+##### end: Directory settings #####
+
+
+
+##### begin: Favoring special group of torrents over the rest #####
+
+# Method to modify the peers_min, peers_max, max_uploads values of special torrents for both downloading and uploading
+method.insert  = d.modify_slots_special, simple|private, "d.peers_min.set=99;d.peers_max.set=100;d.uploads_max.set=50"
+# Method to modify the other group values as well when a hashcheck is finished
+method.insert  = d.modify_slots_slowup, simple|private, "d.peers_min.set=29;d.peers_max.set=50;d.uploads_max.set=15"
+# Modify only the special group values when a new torrent is added for downloading
+method.set_key = event.download.inserted_new, modify_slots_special, "branch={not=$d.throttle_name=,d.modify_slots_special=}"
+method.insert  = d.modify_slots_both, simple, "branch={not=$d.throttle_name=,d.modify_slots_special=,d.modify_slots_slowup=}"
+# Modify both group values when torrent is added for hashchecking or rtorrent is restarted
+method.set_key = event.download.hash_done, modify_slots_hashchecked_both, "branch=d.complete=,d.modify_slots_both=}"
+
+# Dynamically adjusts the 2nd group (slowup throttle) uprate (upload speed) to always leave enough bandwidth to the 1st main group.
+#   It works like this: checks the current throttle uprate and main uprate (with the help of the global uprate), then it raise or reduce the throttle limit according to the uprate of the main group.
+#   You should leave a considerable amount of gap (20% or ~ 500 KiB) between the top of the cap (sluplimit , e.g. 1700) and the global upload rate (upload_rate : the global upload limit , e.g. 2200) to be able to work efficiently (to leave bandwidth to the main group between checks (within that 20 seconds interval)).
+# Gets the new uprate limit for slowup throttle. You have to specify the top of the cap (sluplimit : highest allowable cap in KiB, e.g. 1700) and the bottom of the cap (sldownlimit : lowest allowable cap in KiB, e.g. 100).
+method.insert = get_new_uprate_limit, simple|value|private, "execute.capture=bash,-c,\"sluplimit=1700;sldownlimit=100;allup=\$\{1%.*\};slowup=\$\{2%.*\};let mainup=\$\{allup// /\}-\$\{slowup// /\};if [ \\\"\$mainup\\\" -lt 0 ]; then mainup=0;fi;let newslowup=\$sluplimit-\$mainup;if [ \\\"\$newslowup\\\" -gt \\\"\$sluplimit\\\" ];then echo -n \$sluplimit;elif [ \\\"\$newslowup\\\" -gt \\\"\$sldownlimit\\\" ];then echo -n \$newslowup;else echo -n \$sldownlimit;fi\",getNewUprateLimit,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup"
+# Sets the new uprate limit to slowup throttle
+method.insert = assign_new_uprate_limit, simple|private, "throttle.up=slowup,$get_new_uprate_limit="
+# Let it run in every 20 seconds
+schedule      = adjust_throttle_slowup, 14, 20, "assign_new_uprate_limit="
+
+# Helper method to display the current rate information: after CTRL+x , you can use: i= . It displays: MainUpRate: 1740 , ThrottleUpRate: 92 , ThrottleLimit: 100
+method.insert = get_rates_info, simple|string|private, "execute.capture=bash,-c,\"allup1=\$\{1%.*\};slowup2=\$\{2%.*\};slowlimit1=\$\{3%.*\};let mainup1=\$\{allup1// /\}-\$\{slowup2// /\};echo \\\"MainUpRate: \$mainup1 , ThrottleUpRate: \$\{slowup2// /\} , ThrottleLimit: \$\{slowlimit1// /\}\\\"\",getRatesInfo,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup"
+method.insert = i, simple, "print=$get_rates_info="
+
+##### end: Favoring special group of torrents over the rest #####
+
+
+
+##### begin: UI enhancements (the rest is in the other included config file) #####
+
+# SORT the MAIN view by DOWNLOADED TIME
+# Helper methods to list of main items by the date desc their torrent file was downloaded, Store time when torrent file was downloaded in a custom field (tm_downloaded)
+method.insert     = d.tm_downloaded, simple|value, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,$d.tied_to_file="
+method.insert     = d.tm_downloaded.set, simple|private, "d.custom.set=tm_downloaded,$cat=$d.tm_downloaded=;d.save_full_session="
+method.set_key    = event.download.inserted_new, set_downloaded_date, "d.tm_downloaded.set="
+view.sort_current = main,greater=d.custom=tm_downloaded
+
+##### end: UI enhancement #####
+
+
+
+##### begin: Other settings #####
+
+# Close torrents when diskspace is low.
+schedule = low_diskspace, 120, 120, close_low_diskspace=1000M
+
+# The ip address the listening socket and outgoing connections is bound to. (bind)
+network.bind_address.set = 192.168.1.8
+
+# The ip address reported to the tracker. (ip) And alternative calls to bind and ip that should handle dynamic ip's.
+network.local_address.set = chros73.no-ip.org
+schedule                  = ip_tick, 0, 1800, network.local_address.set=chros73.no-ip.org
+
+# Port range to use for listening. (port_range)
+network.port_range.set = 62820-62820
+
+# Set whether the client should try to connect to UDP trackers
+#trackers.use_udp.set = yes
+
+# Enable DHT support for trackerless torrents or when all trackers are down. May be set to "disable" (completely disable DHT), "off" (do not start DHT),
+# "auto" (start and stop DHT as needed), or "on" (start DHT immediately). The default is "off". For DHT to work, a session directory must be defined.
+#dht.mode.set = auto
+
+# UDP port to use for DHT
+#dht.port.set = 62882
+
+# Check hash for finished torrents. Might be usefull until the bug is fixed that causes lack of diskspace not to be properly reported. (check_hash)
+pieces.hash.on_completion.set = no
+
+# Adding support to SSL trackers (http_capath)
+network.http.ssl_verify_peer.set = 0
+network.http.capath.set          = /etc/ssl/certs
+
+# Encryption options (encryption), set to none (default) or any combination of the following: allow_incoming, try_outgoing, require, require_RC4, enable_retry, prefer_plaintext
+# The example value allows incoming encrypted connections, starts unencrypted outgoing connections but retries with encryption if they fail, preferring plaintext to RC4 encryption after the encrypted handshake
+protocol.encryption.set = allow_incoming,prefer_plaintext,enable_retry
+
+# SCGI socket and make it world writeable when rtorrent starts (otherwise apps can't connect to it since it was started by a normal user) (scgi_local)
+network.scgi.open_local = /tmp/.rtorrent.sock
+schedule                = chmod_scgi_socket, 0, 0, "execute=chmod,777,/tmp/.rtorrent.sock"
+
+# for non english chars (encoding_list)
+encoding.add = UTF-8
+
+# default for network.xmlrpc.size_limit : 524288 (xmlrpc_size_limit)
+network.xmlrpc.size_limit.set = 2M
+
+# Set the umask for this process, which is applied to all files created by the program.
+system.umask.set = 022
+
+##### end: Other settings #####
+
+

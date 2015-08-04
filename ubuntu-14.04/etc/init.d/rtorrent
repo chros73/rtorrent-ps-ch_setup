@@ -1,0 +1,116 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          rtorrent_autostart
+# Required-Start:    $local_fs $remote_fs $network $syslog $netdaemons
+# Required-Stop:     $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: rtorrent script using tmux
+# Description:       rtorrent script using tmux
+### END INIT INFO
+
+# system user to run as (can only use one)
+user="chros73"
+
+# default directory for screen, needs to be an absolute path
+base=$(su -c 'echo $HOME' $user)
+
+# the full path to the filename where you store your rtorrent configuration
+config="$base/.rtorrent.rc"
+
+# the full path to the session directory of rtorrent
+sessiondir="/mnt/Torrents/.rtorrent/.session"
+
+# options to pass to rtorrent, dont read config from $HOME; load alternate
+#options="-n -O import=$config"
+options=""
+
+PATH=/usr/bin:/usr/local/bin:/usr/local/sbin:/sbin:/bin:/usr/sbin:/opt/rtorrent/bin
+DESC="rT-PS"
+NAME=rtorrent
+DDIR="/opt/rtorrent/bin"
+DAEMON=$NAME
+SCRIPTNAME=/etc/init.d/$NAME
+
+
+
+checkcnfg() {
+    if [ -z "$(which $DAEMON)" ] ; then
+        echo "Cannot find $DAEMON binary in PATH: $PATH"
+        exit 3
+    fi
+    if ! [ -r "$config" ] ; then
+        echo "Cannot find readable config $config. Check that it is there and permissions are appropriate"
+        exit 3
+    fi
+    if ! [ -d "$sessiondir" ] ; then
+        echo "Cannot find readable session directory $sessiondir from config $config. Check permissions"
+        exit 3
+    fi
+}
+
+
+isRunning() {
+    if [ -s "${sessiondir}/rtorrent.lock" ] ; then
+	pid=`cat ${sessiondir}/rtorrent.lock | awk -F: '{print($2)}' | sed "s/[^0-9]//g"`
+	# make sure the pid doesn't belong to another process : this will match lines containing rtorrent, which grep '[r]torrent' does not!
+	ps aux | grep -sq ${pid}.*[r]torrent && echo -e ${pid} || rm -f "${sessiondir}/rtorrent.lock"
+    fi
+}
+
+
+d_start() {
+    [ -d "$base" ] && cd "$base"
+    # if STDIN is a terminal (we are using interactive mode)
+    [ -t 0 ] && stty stop undef && stty start undef
+    # start the default 2 tmux window (bash and mc) if there isn't tmux session called rtorrent
+    if ! su -c "tmux ls | grep -sq ${NAME}: " $user ; then
+	su -c "tmux -2u new-session -d -s ${NAME} -n 'shell1'" $user
+	su -c "tmux -2u new-window -t ${NAME}:1 -n 'mc1' 'mc'" $user
+    fi
+    # start rtorrent in another tmux window if it's not running
+    if [ "$(isRunning)" == "" ]; then
+	su -c "tmux -2u new-window -t ${NAME}:2 -n ${DESC} ${DDIR}/${DAEMON} ${options}" $user
+    fi
+}
+
+
+d_stop() {
+    pid=$(isRunning)
+    if [ "$pid" != "" ]; then
+	kill -s INT $pid
+    fi
+}
+
+
+checkcnfg
+
+
+case "$1" in
+    start)
+        echo -n "Starting $DESC: $NAME"
+        d_start
+        echo "."
+        ;;
+    stop)
+        echo -n "Stopping $DESC: $NAME"
+        d_stop
+        echo "."
+        ;;
+    restart|force-reload)
+        echo -n "Restarting $DESC: $NAME"
+        d_stop
+        sleep 1
+        d_start
+        echo "."
+        ;;
+    isRunning)
+        isRunning
+        ;;
+    *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload|isRunning}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
