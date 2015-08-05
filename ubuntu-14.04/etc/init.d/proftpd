@@ -106,7 +106,7 @@ signal()
 	fi
     fi
     if [ -f "$PIDFILE" ]; then
-    	start-stop-daemon --stop --signal $SIGNAL --quiet --pidfile "$PIDFILE"
+    	start-stop-daemon --stop --signal $SIGNAL --retry 1 --quiet --pidfile "$PIDFILE"
    	 if [ $? = 0 ]; then
         	log_end_msg 0
     	else
