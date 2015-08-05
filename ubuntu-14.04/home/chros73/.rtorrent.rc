@@ -90,9 +90,9 @@ session.path.set = "$cat=$sub_dir=,.session"
 # Watch directories for new torrents (metafiles). 
 # Also specifying the final directories (data_dir and meta_dir) for them, and setting:
 # - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
-schedule = watch_dir_1,  5, 10, "load.start=\"$cat=$queue_dir=,rotating/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,rotating\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,rotating\\\"\", d.priority.set=3,           \"d.custom.set=unsafe_data,1\""
+schedule = watch_dir_1,  5, 10, "load.start=\"$cat=$queue_dir=,rotating-special/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,rotating-special\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,rotating-special\\\"\", d.priority.set=3,           \"d.custom.set=unsafe_data,1\""
 schedule = watch_dir_2,  5, 10, "load.start=\"$cat=$queue_dir=,fullseed/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,fullseed\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,fullseed\\\"\", d.priority.set=3"
-schedule = watch_dir_3,  5, 10, "load.start=\"$cat=$queue_dir=,unsafe/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,unsafe\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,unsafe\\\"\",   d.throttle_name.set=slowup, \"d.custom.set=unsafe_data,1\""
+schedule = watch_dir_3,  5, 10, "load.start=\"$cat=$queue_dir=,rotating-rest/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,rotating-rest\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,rotating-rest\\\"\",   d.throttle_name.set=slowup, \"d.custom.set=unsafe_data,1\""
 schedule = watch_dir_4,  5, 10, "load.start=\"$cat=$queue_dir=,misc/*.torrent\",     \"d.custom.set=data_dir,\\\"$cat=$main_dir=,misc\\\"\",     \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,misc\\\"\",     d.throttle_name.set=slowup"
 schedule = watch_dir_5,  5, 10, "load.start=\"$cat=$queue_dir=,apps/*.torrent\",     \"d.custom.set=data_dir,\\\"$cat=$main_dir=,apps\\\"\",     \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,apps\\\"\",     d.throttle_name.set=slowup"
 schedule = watch_dir_6,  5, 10, "load.start=\"$cat=$queue_dir=,ebooks/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,ebooks\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,ebooks\\\"\",   d.throttle_name.set=slowup"
@@ -103,8 +103,8 @@ schedule = watch_dir_10, 5, 10, "load.start=\"$cat=$queue_dir=,series/*.torrent\
 schedule = watch_dir_11, 5, 10, "load.start=\"$cat=$queue_dir=,movies/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,movies\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,movies\\\"\",   d.throttle_name.set=slowup"
 
 # Delete data (dir/files) not from the UI, for torrents when the metafile (torrent file) has been deleted manually from these folders (allows rotating torrents)
-schedule = untied_dir_1, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating/*.torrent\""
-schedule = untied_dir_3, 8, 5,  "remove_untied=\"$cat=$meta_dir=,unsafe/*.torrent\""
+schedule = untied_dir_1, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating-special/*.torrent\""
+schedule = untied_dir_3, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating-rest/*.torrent\""
 
 # Delete data (dir/files) from the UI (CTRL+dd), only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents)
 method.insert  = d.get_incomplete_path, simple|string|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
@@ -160,7 +160,7 @@ method.insert  = d.move_meta_to.print, simple|private, "print={Metadir\\\ is\\\ 
 method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"branch=d.custom=meta_dir,d.move_meta_to.print=,d.move_meta_to.check_dir=$argument.0=\""
 
 # Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it
-# Usage: 'd.move_to=rotating,1,1' or 'd.move_to=fullseed,,1' or 'd.move_to=unsafe,1,' or 'd.move_to=misc,,'
+# Usage: 'd.move_to=rotating-special,1,1' or 'd.move_to=fullseed,,1' or 'd.move_to=rotating-rest,1,' or 'd.move_to=misc,,'
 # helper method: sets the required attributes only for torrents in special group (removes throttle group; sets priority to high)
 method.insert  = d.modify_rest_special, simple|private, "d.throttle_name.set=;d.priority.set=3"
 # helper method: sets the required attributes only for torrents in the 2nd group (rest) (sets slowup throttle group; sets priority to normal)
