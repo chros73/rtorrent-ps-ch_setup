@@ -1,6 +1,7 @@
-# rtorrent-ps
-Enable init script
+## Enable init script
 
-You should use these commands:
-$ sudo update-rc.d rtorrent defaults 92
-$ sudo update-rc.d rtorrent enable
+Run these commands to install the supplied init script:
+
+`$ sudo update-rc.d rtorrent defaults 92`
+
+`$ sudo update-rc.d rtorrent enable`
