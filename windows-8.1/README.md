@@ -31,15 +31,16 @@ You can experiment with others (See Putty section).
 
 Use Putty version 0.64b or greater (to be able to have bold fonts).
 
-Terminal - Features:
-    x "Disable remote-controlled terminal resizing"
-Window - Appearance:
-    x "Allow selection of variable-pitch fonts"
-    Font: DejaVu Sans Condensed, size: 9
-Window - Colours:
-    x "Allow terminal to use xterm 256-colour mode"
-    set "Indicate bolded text by changing" to " both"
-Connection - Data:
-    set "Terminal-type string" to "putty-256color"
+The following settings are suggested for the session:
+* Terminal - Features:
+    * x "Disable remote-controlled terminal resizing"
+* Window - Appearance:
+    * x "Allow selection of variable-pitch fonts"
+    * Font: DejaVu Sans Condensed, size: 9
+* Window - Colours:
+    * x "Allow terminal to use xterm 256-colour mode"
+    * set "Indicate bolded text by changing" to " both"
+* Connection - Data:
+    * set "Terminal-type string" to "putty-256color"
 
 Alternatively run the supplied `HKCU-putty_v064b-rtorrent_session.reg` registry patch that has all of these settings and it will create a session profile called rtorrent.

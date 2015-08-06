@@ -1,2 +1,1 @@
-# rtorrent-ps
-Advanced rtorrent-ps setup
+# Advanced rTorrent-PS (rTorrent) setup (configuration)
