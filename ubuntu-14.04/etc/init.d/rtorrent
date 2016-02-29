@@ -50,7 +50,7 @@ checkcnfg() {
 }
 
 
-isRunning() {
+status() {
     if [ -s "${sessiondir}/rtorrent.lock" ] ; then
 	pid=`cat ${sessiondir}/rtorrent.lock | awk -F: '{print($2)}' | sed "s/[^0-9]//g"`
 	# make sure the pid doesn't belong to another process : this will match lines containing rtorrent, which grep '[r]torrent' does not!
@@ -69,14 +69,14 @@ d_start() {
 	su -c "tmux -2u new-window -t ${NAME}:1 -n 'mc1' 'mc'" $user
     fi
     # start rtorrent in another tmux window if it's not running
-    if [ "$(isRunning)" == "" ]; then
+    if [ "$(status)" == "" ]; then
 	su -c "tmux -2u new-window -t ${NAME}:2 -n ${DESC} ${DDIR}/${DAEMON} ${options}" $user
     fi
 }
 
 
 d_stop() {
-    pid=$(isRunning)
+    pid=$(status)
     if [ "$pid" != "" ]; then
 	kill -s INT $pid
     fi
@@ -104,11 +104,11 @@ case "$1" in
         d_start
         echo "."
         ;;
-    isRunning)
-        isRunning
+    status)
+        status
         ;;
     *)
-        echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload|isRunning}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload|status}" >&2
         exit 1
         ;;
 esac
