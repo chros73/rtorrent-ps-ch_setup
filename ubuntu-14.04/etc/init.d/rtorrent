@@ -70,7 +70,7 @@ d_start() {
     fi
     # start rtorrent in another tmux window if it's not running
     if [ "$(status)" == "" ]; then
-	su -c "tmux -2u new-window -t ${NAME}:2 -n ${DESC} ${DDIR}/${DAEMON} ${options}" $user
+	su -c "tmux -2u new-window -t ${NAME}:2 -n ${DESC} \"${DDIR}/${DAEMON} ${options}\"" $user
     fi
 }
 
