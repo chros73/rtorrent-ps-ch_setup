@@ -66,11 +66,11 @@ d_start() {
     # start the default 2 tmux window (bash and mc) if there isn't tmux session called rtorrent
     if ! su -c "tmux ls | grep -sq ${NAME}: " $user ; then
 	su -c "tmux -2u new-session -d -s ${NAME} -n 'shell1'" $user
-	su -c "tmux -2u new-window -t ${NAME}:1 -n 'mc1' 'mc'" $user
+	su -c "tmux -2u new-window -t ${NAME}:1 -n 'mc1' 'mc; bash'" $user
     fi
-    # start rtorrent in another tmux window if it's not running
+    # start rtorrent always in the 2nd tmux window if it's not running and leave shell behind to be able to see reason of a crash
     if [ "$(status)" == "" ]; then
-	su -c "tmux -2u new-window -t ${NAME}:2 -n ${DESC} \"${DDIR}/${DAEMON} ${options}\"" $user
+	su -c "tmux -2u list-panes -t ${NAME}:2 &>/dev/null && tmux -2u respawn-pane -t ${NAME}:2 -k \"${DDIR}/${DAEMON} ${options}; bash\" || tmux -2u new-window -t ${NAME}:2 -n ${DESC} \"${DDIR}/${DAEMON} ${options}; bash\"" $user
     fi
 }
 
