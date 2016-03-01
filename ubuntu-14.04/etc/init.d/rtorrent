@@ -51,10 +51,10 @@ checkcnfg() {
 
 
 status() {
-    if [ -s "${sessiondir}/rtorrent.lock" ] ; then
+    if [ -e "${sessiondir}/rtorrent.lock" ] ; then
 	pid=`cat ${sessiondir}/rtorrent.lock | awk -F: '{print($2)}' | sed "s/[^0-9]//g"`
-	# make sure the pid doesn't belong to another process : this will match lines containing rtorrent, which grep '[r]torrent' does not!
-	ps aux | grep -sq ${pid}.*[r]torrent && echo -e ${pid} || rm -f "${sessiondir}/rtorrent.lock"
+	# make sure the pid isn't empty and doesn't belong to another process : this will match lines containing rtorrent, which grep '[r]torrent' does not!
+	[[ -n "$pid" ]] && ps aux | grep -sq ${pid}.*[r]torrent && echo -e ${pid} || rm -f "${sessiondir}/rtorrent.lock"
     fi
 }
 
