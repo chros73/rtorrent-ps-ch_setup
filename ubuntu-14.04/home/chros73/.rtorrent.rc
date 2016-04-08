@@ -107,34 +107,34 @@ schedule = untied_dir_1, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating-specia
 schedule = untied_dir_3, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating-rest/*.torrent\""
 
 # Delete data (dir/files) from the UI (CTRL+dd), only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents)
-method.insert  = d.get_incomplete_path, simple|string|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
+method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
 method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.base_path=}"
 method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",\"execute={rm,-rf,--,$d.base_path=}\""
 
 
 ### begin: Move data and meta (.torrent) file automatically of a finished or hashchecked torrent ( when you drop in 100% done torrent data and then have rtorrent check the data and resume seeding) ###
 # insert a method with the alias 'd.get_data_path' which returns the fullpath of its final data dir
-method.insert  = d.get_data_path, simple|string|private, "cat=$d.custom=data_dir,/,$d.base_filename="
+method.insert  = d.get_data_path, simple|private, "cat=$d.custom=data_dir,/,$d.base_filename="
 # insert a method which returns true if the current path of the torrent data is not equal to the fullpath of its final data dir, otherwise returns false
 method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_data_path=,d.base_path=}\""
 # insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
-method.insert  = d.move_data, simple, "d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.base_path=,$d.custom=data_dir;d.stop=;d.start="
+method.insert  = d.move_data, simple|private, "d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.base_path=,$d.custom=data_dir;d.stop=;d.start="
 
 # insert a method to determine just the basename of a given meta (.torrent) file
-method.insert  = d.get_meta_basename, simple|string|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="
+method.insert  = d.get_meta_basename, simple|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="
 # insert a method which returns the fullpath of its final meta dir
-method.insert  = d.get_meta_path, simple|string|private, "cat=$d.custom=meta_dir,/,$d.get_meta_basename="
+method.insert  = d.get_meta_path, simple|private, "cat=$d.custom=meta_dir,/,$d.get_meta_basename="
 # insert a method which returns true if the current path of the meta (.torrent) file is not equal to the fullpath of its final meta dir, otherwise returns false
 method.insert  = d.compare_meta_path, simple|private, "not=\"$equal={d.get_meta_path=,d.tied_to_file=}\""
 # insert a method which: moves meta (.torrent) file to its final place; updates the tied meta file path of the torrent (to keep seeding it)
-method.insert  = d.move_meta, simple, "execute=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_meta_path="
+method.insert  = d.move_meta, simple|private, "execute=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_meta_path="
 
 # insert a method which returns true if neither of its fullpath of data nor its fullpath of meta (.torrent) file isn't in the final place
 method.insert  = d.compare_both, simple|private, "and={d.compare_meta_path=,d.compare_data_path=}"
 # insert a method which will move both data and meta (.torrent) file: moves meta (.torrent) file; moves data; saves the session of it
-method.insert  = d.move_both, simple, "d.move_meta=;d.move_data=;d.save_full_session="
+method.insert  = d.move_both, simple|private, "d.move_meta=;d.move_data=;d.save_full_session="
 # insert a method wich will move both data and meta (.torrent) file if neither of them is in the final place
-method.insert  = d.move_both_check, simple, "branch=d.compare_both=,d.move_both="
+method.insert  = d.move_both_check, simple|private, "branch=d.compare_both=,d.move_both="
 # finally, set a key with the name 'move_both_f' that is triggered by the finished event: moves both data and meta (.torrent) file when it's finished
 method.set_key = event.download.finished, move_both_f, "d.move_both_check="
 # finally, set a key with the name 'move_both_h' that is triggered by the hash_done event: moves both data and meta (.torrent) file of a completed torrent when it's 100% hashchecked
@@ -144,7 +144,7 @@ method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.mo
 
 ### begin: Helper methods to move data and meta (.torrent) file manually ###
 # helper method: checks existence of directory during moving
-method.insert  = check_dir.value, simple|value|private, "execute.capture=bash,-c,\"$cat=\\\"test -d \\\",$argument.0=,$argument.1=,\\\" && echo -n 1 || echo -n\\\"\""
+method.insert  = check_dir.value, simple|private, "execute.capture=bash,-c,\"$cat=\\\"test -d \\\",$argument.0=,$argument.1=,\\\" && echo -n 1 || echo -n\\\"\""
 # helper method: displays error if a directory doesn't exist
 method.insert  = check_dir.error.print, simple|private, "print=\"$cat=Error\\\\\ during\\\\\ moving\\\\\ ,$argument.2=,!\\\\\ No\\\\\ such\\\\\ directory:\\\\\ ,$argument.0=,$argument.1=\""
 
@@ -197,14 +197,14 @@ method.set_key = event.download.hash_done, modify_slots_hashchecked_both, "branc
 #   It works like this: checks the current throttle uprate and main uprate (with the help of the global uprate), then it raise or reduce the throttle limit according to the uprate of the main group.
 #   You should leave a considerable amount of gap (20% or ~ 500 KiB) between the top of the cap (sluplimit , e.g. 1700) and the global upload rate (upload_rate : the global upload limit , e.g. 2200) to be able to work efficiently (to leave bandwidth to the main group between checks (within that 20 seconds interval)).
 # Gets the new uprate limit for slowup throttle. You have to specify the top of the cap (sluplimit : highest allowable cap in KiB, e.g. 1700) and the bottom of the cap (sldownlimit : lowest allowable cap in KiB, e.g. 100).
-method.insert = get_new_uprate_limit, simple|value|private, "execute.capture=bash,-c,\"sluplimit=1700;sldownlimit=100;allup=\$\{1%.*\};slowup=\$\{2%.*\};let mainup=\$\{allup// /\}-\$\{slowup// /\};if [ \\\"\$mainup\\\" -lt 0 ]; then mainup=0;fi;let newslowup=\$sluplimit-\$mainup;if [ \\\"\$newslowup\\\" -gt \\\"\$sluplimit\\\" ];then echo -n \$sluplimit;elif [ \\\"\$newslowup\\\" -gt \\\"\$sldownlimit\\\" ];then echo -n \$newslowup;else echo -n \$sldownlimit;fi\",getNewUprateLimit,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup"
+method.insert = get_new_uprate_limit, simple|private, "execute.capture=bash,-c,\"sluplimit=1700;sldownlimit=100;allup=\$\{1%.*\};slowup=\$\{2%.*\};let mainup=\$\{allup// /\}-\$\{slowup// /\};if [ \\\"\$mainup\\\" -lt 0 ]; then mainup=0;fi;let newslowup=\$sluplimit-\$mainup;if [ \\\"\$newslowup\\\" -gt \\\"\$sluplimit\\\" ];then echo -n \$sluplimit;elif [ \\\"\$newslowup\\\" -gt \\\"\$sldownlimit\\\" ];then echo -n \$newslowup;else echo -n \$sldownlimit;fi\",getNewUprateLimit,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup"
 # Sets the new uprate limit to slowup throttle
 method.insert = assign_new_uprate_limit, simple|private, "throttle.up=slowup,$get_new_uprate_limit="
 # Let it run in every 20 seconds
 schedule      = adjust_throttle_slowup, 14, 20, "assign_new_uprate_limit="
 
 # Helper method to display the current rate information: after CTRL+x , you can use: i= . It displays: MainUpRate: 1740 , ThrottleUpRate: 92 , ThrottleLimit: 100
-method.insert = get_rates_info, simple|string|private, "execute.capture=bash,-c,\"allup1=\$\{1%.*\};slowup2=\$\{2%.*\};slowlimit1=\$\{3%.*\};let mainup1=\$\{allup1// /\}-\$\{slowup2// /\};echo \\\"MainUpRate: \$mainup1 , ThrottleUpRate: \$\{slowup2// /\} , ThrottleLimit: \$\{slowlimit1// /\}\\\"\",getRatesInfo,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup"
+method.insert = get_rates_info, simple|private, "execute.capture=bash,-c,\"allup1=\$\{1%.*\};slowup2=\$\{2%.*\};slowlimit1=\$\{3%.*\};let mainup1=\$\{allup1// /\}-\$\{slowup2// /\};echo \\\"MainUpRate: \$mainup1 , ThrottleUpRate: \$\{slowup2// /\} , ThrottleLimit: \$\{slowlimit1// /\}\\\"\",getRatesInfo,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup"
 method.insert = i, simple, "print=$get_rates_info="
 
 ##### end: Favoring special group of torrents over the rest #####
@@ -215,7 +215,7 @@ method.insert = i, simple, "print=$get_rates_info="
 
 # SORT the MAIN view by DOWNLOADED TIME
 # Helper methods to list of main items by the date desc their torrent file was downloaded, Store time when torrent file was downloaded in a custom field (tm_downloaded)
-method.insert     = d.tm_downloaded, simple|value, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,$d.tied_to_file="
+method.insert     = d.tm_downloaded, simple, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,$d.tied_to_file="
 method.insert     = d.tm_downloaded.set, simple|private, "d.custom.set=tm_downloaded,$cat=$d.tm_downloaded=;d.save_full_session="
 method.set_key    = event.download.inserted_new, set_downloaded_date, "d.tm_downloaded.set="
 view.sort_current = main,greater=d.custom=tm_downloaded

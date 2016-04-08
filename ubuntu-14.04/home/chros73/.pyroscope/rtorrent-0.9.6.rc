@@ -34,7 +34,7 @@ method.set_key = event.download.resumed,time_stamp_r,"branch=d.custom=tm_started
 method.set_key = event.download.inserted_new,time_stamp_i,"d.custom.set=tm_loaded,$cat=$system.time= ;d.save_full_session="
 method.insert  = pyro.tm_completed.now,simple|private,"d.custom.set=tm_completed,$cat=$system.time= ;d.save_full_session="
 method.set_key = event.download.finished,time_stamp_f,"pyro.tm_completed.now="
-method.insert  = pyro.tm_completed.check,simple,"and={d.complete=,not=$d.custom=tm_completed}"
+method.insert  = pyro.tm_completed.check,simple|private,"and={d.complete=,not=$d.custom=tm_completed}"
 method.set_key = event.download.hash_done,time_stamp_h,"branch=pyro.tm_completed.check=,pyro.tm_completed.now="
 
 # EVENTS: Activation intervals
@@ -43,10 +43,10 @@ method.set_key = event.download.paused,activations,"pyro.activations.append=P"
 method.set_key = event.download.resumed,activations,"pyro.activations.append=R"
 
 # SCHEDULE: Set "last_active" custom field for items that have peers
-method.insert = d.last_active, simple|value, "if=$d.peers_connected=,$cat=$system.time=,$d.custom=last_active"
+method.insert = d.last_active, simple, "if=$d.peers_connected=,$cat=$system.time=,$d.custom=last_active"
 method.insert = d.last_active.set, simple|private, "d.custom.set=last_active,$cat=$system.time="
 schedule = update_last_active, 24, 42, "d.multicall2=started,\"branch=$d.peers_connected=,d.last_active.set=\""
-method.insert = d.last_active.print, simple|private, "print=\"$cat={$convert.date=$d.last_active=, \\\" \\\", $convert.time=$d.last_active=}\""
+method.insert = d.last_active.print, simple, "print=\"$cat={$convert.date=$d.last_active=, \\\" \\\", $convert.time=$d.last_active=}\""
 method.insert  = d.last_active.check, simple|private, "or={d.peers_connected=,not=$d.custom=last_active}"
 method.set_key = event.download.resumed, last_active_r, "branch={d.last_active.check=,d.last_active.set= ;d.save_full_session=}"
 method.set_key = event.download.finished, last_active_f, "d.last_active.set= ;d.save_full_session="
