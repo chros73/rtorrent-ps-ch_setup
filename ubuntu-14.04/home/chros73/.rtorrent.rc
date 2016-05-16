@@ -118,6 +118,7 @@ method.insert  = d.get_data_path, simple|private, "cat=$d.custom=data_dir,/,$d.b
 # insert a method which returns true if the current path of the torrent data is not equal to the fullpath of its final data dir, otherwise returns false
 method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_data_path=,d.base_path=}\""
 # insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
+#   The 'd.stop=;d.start=' methods are supposed to be together at the end of this method (used by 'download.finished' and 'download.hash_done' events)!!! Don't change it until it's working fine, it will cause a bug in tracker controller resulting stucked http/https requests!!!
 method.insert  = d.move_data, simple|private, "d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.base_path=,$d.custom=data_dir;d.stop=;d.start="
 
 # insert a method to determine just the basename of a given meta (.torrent) file
