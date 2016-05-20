@@ -77,6 +77,7 @@ method.insert = main_dir,        string|const|private, "$cat=/mnt/Torrents/"
 method.insert = sub_dir,         string|const|private, "$cat=$main_dir=,.rtorrent/"
 method.insert = downloading_dir, string|const|private, "$cat=$sub_dir=,.downloading/"
 method.insert = meta_dir,        string|const|private, "$cat=$sub_dir=,.completed/"
+method.insert = delqueue_dir,    string|const|private, "$cat=$sub_dir=,.delqueue/"
 
 # Default directory to save the downloaded torrents and where you should place your 'complete' data before you place your *.torrent file into the watch folder to be able to be hash checked. (directory)
 directory.default.set = "$cat=$sub_dir=,incomplete/"
@@ -108,9 +109,9 @@ schedule = untied_torrents, 8, 5, "remove_untied="
 method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
 # helper method: checks whether the data of a torrent is in incomplete dir
 method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.base_path=}"
-# helper method: deletes data of a torrent
-method.insert  = d.remove_data, simple|private, "execute={rm,-rf,--,$d.base_path=}"
-# Deletes data of a torrent if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir.
+# helper method: deletes data of a torrent and removes symlink for its metafile if it exists
+method.insert  = d.remove_data, simple|private, "d.remove_symlink=;execute={rm,-rf,--,$d.base_path=}"
+# Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir.
 method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",d.remove_data="
 ### end: Delete data (dir/files) ###
 
@@ -147,24 +148,43 @@ method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.mo
 
 
 ### begin: Helper methods to move data and meta (.torrent) file manually ###
-# helper method: checks existence of directory during moving
-method.insert  = check_dir.value, simple|private, "execute.capture=bash,-c,\"$cat=\\\"test -d \\\",$argument.0=,$argument.1=,\\\" && echo -n 1 || echo -n\\\"\""
-# helper method: displays error if a directory doesn't exist
-method.insert  = check_dir.error.print, simple|private, "print=\"$cat=Error\\\\\ during\\\\\ moving\\\\\ ,$argument.2=,!\\\\\ No\\\\\ such\\\\\ directory:\\\\\ ,$argument.0=,$argument.1=\""
+# helper method: checks existence of a directory, file, symlink
+method.insert  = check_object.value, simple|private, "execute.capture=bash,-c,\"$cat=\\\"test -\\\",$argument.2=,\\\" \\\\\\\"\\\",$argument.0=,$argument.1=,\\\"\\\\\\\" && echo -n 1 || echo -n\\\"\""
+# helper method: displays error if an object doesn't exist
+method.insert  = check_object.error.print, simple|private, "print=\"$cat=Error\\\\\ during\\\\\ moving\\\\\ ,$argument.2=,!\\\\\ No\\\\\ such\\\\\ ,$argument.3=,:\\\\\ ,$argument.0=,$argument.1=\""
+
+# Dealing with delqueue dir entries and attribute
+# Usage: d.add_to_delqueue=  |  d.remove_from_delqueue=  |  d.fix_delqueue_flag=
+# helper method: get delqueue symlink name
+method.insert  = d.get_delqueue_symlink_name, simple|private, "cat=$delqueue_dir=,$d.get_meta_basename="
+# helper method: set/unset delqueue attrib
+method.insert  = d.delqueue.set, simple|private, "d.custom.set=delqueue,$argument.0=; d.save_full_session="
+# helper method: set delqueue attrib and create symlink
+method.insert  = d.delqueue.set_create, simple|private, "d.delqueue.set=1; execute=ln,-sf,$d.tied_to_file=,$d.get_delqueue_symlink_name="
+# adds torrent to delqueue if it has the unsafe_data flag by creating a symlink in delqueue dir to its metafile
+method.insert  = d.add_to_delqueue, simple, "branch=d.custom=unsafe_data,d.delqueue.set_create="
+# helper method: removes symlink (if it exists) for metafile from delqueue dir
+method.insert  = d.remove_symlink, simple|private, "branch=\"check_object.value=$delqueue_dir=,$d.get_meta_basename=,L\",\"execute=rm,-f,--,$d.get_delqueue_symlink_name=\""
+# removes torrent from delqueue by deleting its symlink (if it exists) from delqueue dir
+method.insert  = d.remove_from_delqueue, simple, "d.delqueue.set=; d.remove_symlink="
+# fixes delqueue flag: apply if unsafe_data flag and symlink in delqueue dir exists, remove it otherwise
+method.insert  = d.fix_delqueue_flag, simple, "branch=\"and={d.custom=unsafe_data,\\\"check_object.value=$delqueue_dir=,$d.get_meta_basename=,L\\\"}\",d.delqueue.set=1,d.delqueue.set="
+# run the above d.fix_delqueue_flag every day at 1:18 AM, useful if symlinks are sometimes created manually or by a script in delqueue dir
+schedule = fix_delqueue_flag, 1:19:00, 24:00:00, "d.multicall2=main,d.fix_delqueue_flag="
 
 # Move a finished, stucked meta file from the queue dir into its final place (thanks to the simetimes missing meta_dir custom field value, rtorrent bug?)
-# Usage: 'd.move_meta_to=misc'
+# Usage: 'd.move_meta_to=others'
 # helper method: sets the missing meta_dir custom field value to the fullpath of the value of the argument and moves the meta (.torrent) file
 method.insert  = d.move_meta_to.helper, simple|private, "d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_meta="
 # helper method: calls the 'd.move_meta_to.helper' method which will move the meta (.torrent) file if the required directory exist, otherwise prints out an error
-method.insert  = d.move_meta_to.check_dir, simple|private, "branch=\"check_dir.value=$meta_dir=,$argument.0=\",d.move_meta_to.helper=$argument.0=,\"check_dir.error.print=$meta_dir=,$argument.0=,metafile\""
+method.insert  = d.move_meta_to.check_object, simple|private, "branch=\"check_object.value=$meta_dir=,$argument.0=,d\",d.move_meta_to.helper=$argument.0=,\"check_object.error.print=$meta_dir=,$argument.0=,metafile,directory\""
 # helper method: prints out an error message when the meta_dir custom field value exists
 method.insert  = d.move_meta_to.print, simple|private, "print={Metadir\\\ is\\\ already\\\ set:\\\ ,$d.custom=meta_dir}"
 # moves the finished, stucked meta file if there isn't any error, it receives 1 argument: dirname
-method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"branch=d.custom=meta_dir,d.move_meta_to.print=,d.move_meta_to.check_dir=$argument.0=\""
+method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"d.move_meta_to.check_object=$argument.0=\""
 
-# Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it
-# Usage: 'd.move_to=rotating-special,1,1' or 'd.move_to=fullseed,,1' or 'd.move_to=rotating-rest,1,' or 'd.move_to=misc,,'
+# Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it. It receives 4 arguments: dirname,specialgroup,unsafe_data,delqueue
+# Usage: e.g. 'd.move_to=rotating,1,1,' / 'd.move_to=rotating,1,1,1' or 'd.move_to=fullseed,1,,' or 'd.move_to=unsafe,,1,' / 'd.move_to=unsafe,,1,1' or 'd.move_to=others,,,'
 # helper method: sets the required attributes only for torrents in special group (removes throttle group; sets priority to high)
 method.insert  = d.modify_rest_special, simple|private, "d.throttle_name.set=;d.priority.set=3"
 # helper method: sets the required attributes only for torrents in the 2nd group (rest) (sets slowup throttle group; sets priority to normal)
@@ -172,13 +192,13 @@ method.insert  = d.modify_rest_slowup, simple|private, "d.throttle_name.set=slow
 # helper method: decides which remaining helper method should be called based upon the 3rd argument and calls it
 method.insert  = d.is_special_group, simple|private, "branch=argument.0=,d.modify_rest_special=,d.modify_rest_slowup="
 # helper method: sets everything it can and calls the other helper methods for the rest (stops it; sets the remaining attributes (throttle group, priority) based open the 3rd argument; sets the new data and meta dirs based open the 1st argument; tries to move both data and meta; modifies the new slot values based open the 3rd argument; sets unsafe_data custom field value based open the 2nd argument; saves the session of it)
-method.insert  = d.move_to.helper, simple|private, "d.stop=;d.is_special_group=$argument.2=;d.custom.set=data_dir,\"$cat=$main_dir=,$argument.0=\";d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_both_check=;d.modify_slots_both=;branch=argument.1=,\"d.custom.set=unsafe_data,1\",\"d.custom.set=unsafe_data,\";d.save_full_session="
+method.insert  = d.move_to.helper, simple|private, "d.stop=;d.is_special_group=$argument.1=;d.custom.set=data_dir,\"$cat=$main_dir=,$argument.0=\";d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_both_check=;d.modify_slots_both=;branch=argument.2=,\"d.custom.set=unsafe_data,1\",\"d.custom.set=unsafe_data,\";branch=argument.3=,d.add_to_delqueue=,d.remove_from_delqueue="
 # helper method: calls the 'd.move_to.helper' method which will does the job if the required meta directory also exists, otherwise prints out an error
-method.insert  = d.move_to.check_meta_dir, simple|private, "branch=\"check_dir.value=$meta_dir=,$argument.0=\",\"d.move_to.helper=$argument.0=,$argument.1=,$argument.2=\",\"check_dir.error.print=$meta_dir=,$argument.0=,metafile\""
+method.insert  = d.move_to.check_meta_dir, simple|private, "branch=\"check_object.value=$meta_dir=,$argument.0=,d\",\"d.move_to.helper=$argument.0=,$argument.1=,$argument.2=,$argument.3=\",\"check_object.error.print=$meta_dir=,$argument.0=,metafile,directory\""
 # helper method: calls the 'd.move_to.check_meta_dir' method which will check the meta dir if the required data directory exists, otherwise prints out an error
-method.insert  = d.move_to.check_data_dir, simple|private, "branch=\"check_dir.value=$main_dir=,$argument.0=\",\"d.move_to.check_meta_dir=$argument.0=,$argument.1=,$argument.2=\",\"check_dir.error.print=$main_dir=,$argument.0=,data\""
-# moves data (can be partially downloaded) and meta (.torrent) file if there isn't any error, it receives 3 arguments: dirname,unsafe_data,specialgroup
-method.insert  = d.move_to, simple, "d.move_to.check_data_dir=$argument.0=,$argument.1=,$argument.2="
+method.insert  = d.move_to.check_data_dir, simple|private, "branch=\"check_object.value=$main_dir=,$argument.0=,d\",\"d.move_to.check_meta_dir=$argument.0=,$argument.1=,$argument.2=,$argument.3=\",\"check_object.error.print=$main_dir=,$argument.0=,data,directory\""
+# moves data (can be partially downloaded) and meta (.torrent) file if there isn't any error, it receives 4 arguments: dirname,specialgroup,unsafe_data,delqueue
+method.insert  = d.move_to, simple, "d.move_to.check_data_dir=$argument.0=,$argument.1=,$argument.2=,$argument.3="
 ### end: Helper methods to move data and meta (.torrent) file manually ###
 
 ##### end: Directory settings #####
