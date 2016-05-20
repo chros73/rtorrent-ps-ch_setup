@@ -197,19 +197,14 @@ method.insert  = d.modify_slots_both, simple, "branch={not=$d.throttle_name=,d.m
 # Modify both group values when torrent is added for hashchecking or rtorrent is restarted
 method.set_key = event.download.hash_done, modify_slots_hashchecked_both, "branch=d.complete=,d.modify_slots_both=}"
 
-# Dynamically adjusts the 2nd group (slowup throttle) uprate (upload speed) to always leave enough bandwidth to the 1st main group.
-#   It works like this: checks the current throttle uprate and main uprate (with the help of the global uprate), then it raise or reduce the throttle limit according to the uprate of the main group.
-#   You should leave a considerable amount of gap (20% or ~ 500 KiB) between the top of the cap (sluplimit , e.g. 1700) and the global upload rate (upload_rate : the global upload limit , e.g. 2200) to be able to work efficiently (to leave bandwidth to the main group between checks (within that 20 seconds interval)).
-# Gets the new uprate limit for slowup throttle. You have to specify the top of the cap (sluplimit : highest allowable cap in KiB, e.g. 1700) and the bottom of the cap (sldownlimit : lowest allowable cap in KiB, e.g. 100).
-method.insert = get_new_uprate_limit, simple|private, "execute.capture=bash,-c,\"sluplimit=1700;sldownlimit=100;allup=\$\{1%.*\};slowup=\$\{2%.*\};let mainup=\$\{allup// /\}-\$\{slowup// /\};if [ \\\"\$mainup\\\" -lt 0 ]; then mainup=0;fi;let newslowup=\$sluplimit-\$mainup;if [ \\\"\$newslowup\\\" -gt \\\"\$sluplimit\\\" ];then echo -n \$sluplimit;elif [ \\\"\$newslowup\\\" -gt \\\"\$sldownlimit\\\" ];then echo -n \$newslowup;else echo -n \$sldownlimit;fi\",getNewUprateLimit,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup"
-# Sets the new uprate limit to slowup throttle
-method.insert = assign_new_uprate_limit, simple|private, "throttle.up=slowup,$get_new_uprate_limit="
-# Let it run in every 20 seconds
-schedule      = adjust_throttle_slowup, 14, 20, "assign_new_uprate_limit="
-
-# Helper method to display the current rate information: after CTRL+x , you can use: i= . It displays: MainUpRate: 1740 , ThrottleUpRate: 92 , ThrottleLimit: 100
-method.insert = get_rates_info, simple|private, "execute.capture=bash,-c,\"allup1=\$\{1%.*\};slowup2=\$\{2%.*\};slowlimit1=\$\{3%.*\};let mainup1=\$\{allup1// /\}-\$\{slowup2// /\};echo \\\"MainUpRate: \$mainup1 , ThrottleUpRate: \$\{slowup2// /\} , ThrottleLimit: \$\{slowlimit1// /\}\\\"\",getRatesInfo,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup"
-method.insert = i, simple, "print=$get_rates_info="
+# helper method: gets one of the below info with the help of getLimits.sh script (Variables are inside the script, you have to edit those values there!)
+method.insert = get_limit, simple|private, "execute.capture=\"$cat=$pyro.bin_dir=,getLimits.sh\",$argument.0=,$argument.1=,$argument.2=,$argument.3="
+# Dynamically adjusts the 2nd group (slowup throttle) uprate (upload speed) to always leave enough bandwidth to the 1st main group. (More info in getLimits.sh script.)
+schedule      = adjust_throttle_slowup, 14, 20, "throttle.up=slowup,\"$get_limit=$cat=up,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
+# Dynamically adjusts the global download rate to always leave enough bandwidth to the 1st main group upload rate. It's good for async connection (e.g. ADSL) where upload speed can be slowed down if download speed is close to max. Comment it out if you don't need it.
+schedule      = adjust_throttle_global_down_max_rate, 54, 60, "throttle.global_down.max_rate.set_kb=\"$get_limit=$cat=down,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
+# Helper method to display the current rate information: after CTRL+x , you can use: i= . It displays: MainUpRate: 1440 , ThrottleUpRate: 92 , ThrottleLimit: 100
+method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup\""
 
 ##### end: Favoring special group of torrents over the rest #####
 
