@@ -13,19 +13,16 @@ method.insert = pyro.extended, value|const, 1
 
 # Set "pyro.bin_dir" to the "bin" directory where you installed the pyrocore tools!
 # Make sure you end it with a "/"; if this is left empty, then the shell's path is searched.
-method.insert = pyro.bin_dir, string|const, "$cat=/home/chros73/bin/"
+method.insert = pyro.bin_dir, string|const, "$cat=~/bin/"
 
 # Importing the other conf file
-#method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-,\"$system.client_version=\",.rc.default"
-#method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-0.9.4.rc"
-#method.insert = pyro.rtorrent_rc, string|const|private, "$cat=/home/chros73/.pyroscope/rtorrent-0.9.4.rc"
-method.insert = pyro.rtorrent_rc, string|const|private, "$cat=/home/chros73/.pyroscope/rtorrent-,\"$system.client_version=\",.rc"
+method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-,\"$system.client_version=\",.rc"
 import = $pyro.rtorrent_rc=
 
-## TORQUE: Daemon watchdog schedule
-## Must be activated by touching the "~/.pyroscope/run/pyrotorque" file!
-## Set the second argument to "-v" or "-q" to change log verbosity.
-schedule = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
+# TORQUE: Daemon watchdog schedule
+# Must be activated by touching the "~/.pyroscope/run/pyrotorque" file!
+# Set the second argument to "-v" or "-q" to change log verbosity.
+#schedule = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
 
 ##### end: Including PyroScope settings #####
 
@@ -102,9 +99,8 @@ schedule = watch_dir_9,  5, 10, "load.start=\"$cat=$queue_dir=,cartoons/*.torren
 schedule = watch_dir_10, 5, 10, "load.start=\"$cat=$queue_dir=,series/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,series\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,series\\\"\",   d.throttle_name.set=slowup"
 schedule = watch_dir_11, 5, 10, "load.start=\"$cat=$queue_dir=,movies/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,movies\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,movies\\\"\",   d.throttle_name.set=slowup"
 
-# Delete data (dir/files) not from the UI, for torrents when the metafile (torrent file) has been deleted manually from these folders (allows rotating torrents)
-schedule = untied_dir_1, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating-special/*.torrent\""
-schedule = untied_dir_3, 8, 5,  "remove_untied=\"$cat=$meta_dir=,rotating-rest/*.torrent\""
+# Removes torrents from client when its metafile (torrent file) has been deleted manually or by a script. Run it every 5 seconds.
+schedule = untied_torrents, 8, 5, "remove_untied="
 
 # Delete data (dir/files) from the UI (CTRL+dd), only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents)
 method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
@@ -266,8 +262,7 @@ schedule = low_diskspace, 120, 120, close_low_diskspace=1000M
 network.bind_address.set = 192.168.1.8
 
 # The ip address reported to the tracker. (ip) And alternative calls to bind and ip that should handle dynamic ip's.
-network.local_address.set = chros73.no-ip.org
-schedule                  = ip_tick, 0, 1800, network.local_address.set=chros73.no-ip.org
+schedule = ip_tick, 0, 1800, network.local_address.set=chros73.no-ip.org
 
 # Port range to use for listening. (port_range)
 network.port_range.set = 62820-62820
