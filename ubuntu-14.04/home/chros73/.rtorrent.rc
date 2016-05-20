@@ -173,7 +173,7 @@ method.insert  = d.fix_delqueue_flag, simple, "branch=\"and={d.custom=unsafe_dat
 schedule = fix_delqueue_flag, 1:19:00, 24:00:00, "d.multicall2=main,d.fix_delqueue_flag="
 
 # Move a finished, stucked meta file from the queue dir into its final place (thanks to the simetimes missing meta_dir custom field value, rtorrent bug?)
-# Usage: 'd.move_meta_to=others'
+# Usage: 'd.move_meta_to=various'
 # helper method: sets the missing meta_dir custom field value to the fullpath of the value of the argument and moves the meta (.torrent) file
 method.insert  = d.move_meta_to.helper, simple|private, "d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_meta="
 # helper method: calls the 'd.move_meta_to.helper' method which will move the meta (.torrent) file if the required directory exist, otherwise prints out an error
@@ -184,7 +184,7 @@ method.insert  = d.move_meta_to.print, simple|private, "print={Metadir\\\ is\\\ 
 method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"d.move_meta_to.check_object=$argument.0=\""
 
 # Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it. It receives 4 arguments: dirname,specialgroup,unsafe_data,delqueue
-# Usage: e.g. 'd.move_to=rotating,1,1,' / 'd.move_to=rotating,1,1,1' or 'd.move_to=fullseed,1,,' or 'd.move_to=unsafe,,1,' / 'd.move_to=unsafe,,1,1' or 'd.move_to=others,,,'
+# Usage: e.g. 'd.move_to=rotating,1,1,' / 'd.move_to=rotating,1,1,1' or 'd.move_to=fullseed,1,,' or 'd.move_to=unsafe,,1,' / 'd.move_to=unsafe,,1,1' or 'd.move_to=various,,,'
 # helper method: sets the required attributes only for torrents in special group (removes throttle group; sets priority to high)
 method.insert  = d.modify_rest_special, simple|private, "d.throttle_name.set=;d.priority.set=3"
 # helper method: sets the required attributes only for torrents in the 2nd group (rest) (sets slowup throttle group; sets priority to normal)
