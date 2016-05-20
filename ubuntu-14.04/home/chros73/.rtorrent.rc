@@ -282,6 +282,9 @@ network.port_range.set = 62820-62820
 # UDP port to use for DHT
 #dht.port.set = 62882
 
+# Enable/disable peer exchange for torrents that aren't marked private. Disabled by default. (peer_exchange)
+#protocol.pex.set = no
+
 # Check hash for finished torrents. Might be usefull until the bug is fixed that causes lack of diskspace not to be properly reported. (check_hash)
 pieces.hash.on_completion.set = no
 
