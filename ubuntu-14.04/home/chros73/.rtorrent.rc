@@ -99,13 +99,20 @@ schedule = watch_dir_9,  5, 10, "load.start=\"$cat=$queue_dir=,cartoons/*.torren
 schedule = watch_dir_10, 5, 10, "load.start=\"$cat=$queue_dir=,series/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,series\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,series\\\"\",   d.throttle_name.set=slowup"
 schedule = watch_dir_11, 5, 10, "load.start=\"$cat=$queue_dir=,movies/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,movies\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,movies\\\"\",   d.throttle_name.set=slowup"
 
+
+### begin: Delete data (dir/files) for torrents that have been removed either from the UI (CTRL+dd) or the tied metafile has been removed manually or by a script, ###
+#     only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents). This allows rotating capability.
 # Removes torrents from client when its metafile (torrent file) has been deleted manually or by a script. Run it every 5 seconds.
 schedule = untied_torrents, 8, 5, "remove_untied="
-
-# Delete data (dir/files) from the UI (CTRL+dd), only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents)
+# helper method: gets the incomplete dir data path of a torrent
 method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
+# helper method: checks whether the data of a torrent is in incomplete dir
 method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.base_path=}"
-method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",\"execute={rm,-rf,--,$d.base_path=}\""
+# helper method: deletes data of a torrent
+method.insert  = d.remove_data, simple|private, "execute={rm,-rf,--,$d.base_path=}"
+# Deletes data of a torrent if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir.
+method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",d.remove_data="
+### end: Delete data (dir/files) ###
 
 
 ### begin: Move data and meta (.torrent) file automatically of a finished or hashchecked torrent ( when you drop in 100% done torrent data and then have rtorrent check the data and resume seeding) ###
