@@ -76,8 +76,8 @@ branch=pyro.extended=,"schedule = bind_messages,0,0,\"ui.bind_key=download_list,
 #          This will ONLY work if you use rT-PS!
 branch=pyro.extended=,"view.add = trackers"
 branch=pyro.extended=,"view.collapsed.toggle = trackers"
-branch=pyro.extended=,"view.sort_new     = trackers,\"compare=,d.tracker_domain=,d.custom=tm_downloaded\""
-branch=pyro.extended=,"view.sort_current = trackers,\"compare=,d.tracker_domain=,d.custom=tm_downloaded\""
+branch=pyro.extended=,"view.sort_new     = trackers,\"compare=+-,d.tracker_domain=,d.custom=tm_downloaded\""
+branch=pyro.extended=,"view.sort_current = trackers,\"compare=+-,d.tracker_domain=,d.custom=tm_downloaded\""
 branch=pyro.extended=,"schedule = bind_trackers,0,0,\"ui.bind_key=download_list,t,ui.current_view.set=trackers\""
 
 # UI/VIEW: Manually tag (select) items
@@ -96,12 +96,12 @@ branch=pyro.extended=,"schedule = bind_tag_show,0,0,\"ui.bind_key=download_list,
 # UI/VIEW: Bind "*" to toggle between collapsed and expanded display
 branch=pyro.extended=,"schedule = bind_collapsed,0,0,\"ui.bind_key=download_list,*,view.collapsed.toggle=\""
 
-# UI/VIEW: Show active, incomplete, queued torrents (in view #0) and update every 20 seconds
-# Items are grouped into complete, incomplete, and queued, in that order.
-# Each group is devided again into subgroups by throttle name (e.g. slowup).
+# UI/VIEW: Show active, incomplete torrents (in view #0) and update every 20 seconds
+# Items are grouped by whether they are open and throttle name (e.g. slowup).
+# Each group is devided again into subgroups complete, incomplete, in that order.
 # Within each subgroup, they're sorted by download and then upload speed.
 branch=pyro.extended=,false=,"view.sort_current = active,greater=d.up.rate="
-branch=pyro.extended=,"view.sort_current = active,\"compare=--+--,d.is_open=,d.complete=,d.throttle_name=,d.down.rate=,d.up.rate=\""
+branch=pyro.extended=,"view.sort_current = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\""
 schedule = filter_active,12,20,"view.filter = active,\"or={d.up.rate=,d.down.rate=,not=$d.complete=}\" ;view.sort=active"
 
 # UI/VIEW: SORT the SEEDING view (in view #8) by the UPLOAD RATE (grouped by throttle name (e.g. slowup) and only show torrents with peers
@@ -120,6 +120,7 @@ branch=pyro.extended=,"view.sort_current = started,\"compare=++-,d.complete=,d.t
 
 # UI/VIEW: SORT torrents by UPLOADED DATA (grouped by throttle name (e.g. slowup) and  bound to 'L' in rT-PS)
 view.add = uploadeddata
+branch=pyro.extended=,"view.collapsed.toggle=uploadeddata"
 branch=pyro.extended=,false=,"view.sort_current = uploadeddata,greater=d.up.total="
 branch=pyro.extended=,"view.sort_current = uploadeddata,\"compare=+-,d.throttle_name=,d.up.total=\""
 view.sort = uploadeddata
@@ -168,7 +169,7 @@ branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_lis
 view.add = pyrotorque
 branch=pyro.extended=,"view.collapsed.toggle=pyrotorque"
 view.filter = pyrotorque,false=
-branch=pyro.extended=,"view.sort_current = pyrotorque,\"compare=--+--,d.is_open=,d.complete=,d.throttle_name=,d.down.rate=,d.up.rate=\""
+branch=pyro.extended=,"view.sort_current = pyrotorque,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\""
 schedule = filter_pyrotorque,1,15,"view.filter = pyrotorque,\"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}\""
 branch=pyro.extended=,"schedule = bind_pyrotorque,0,0,\"ui.bind_key=download_list,Q,ui.current_view.set=pyrotorque\""
 
@@ -189,8 +190,8 @@ branch=pyro.extended=,"ui.color.odd.set         = \"on 232\""
 branch=pyro.extended=,"ui.color.progress0.set   = \"196\""
 branch=pyro.extended=,"ui.color.progress100.set = \"34\""
 branch=pyro.extended=,"ui.color.progress120.set = \"bold bright 46\""
-branch=pyro.extended=,"ui.color.progress20.set  = \"202\""
-branch=pyro.extended=,"ui.color.progress40.set  = \"207\""
+branch=pyro.extended=,"ui.color.progress20.set  = \"207\""
+branch=pyro.extended=,"ui.color.progress40.set  = \"202\""
 branch=pyro.extended=,"ui.color.progress60.set  = \"214\""
 branch=pyro.extended=,"ui.color.progress80.set  = \"226\""
 branch=pyro.extended=,"ui.color.queued.set      = \"133\""
