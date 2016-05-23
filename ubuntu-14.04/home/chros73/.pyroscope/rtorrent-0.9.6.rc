@@ -215,8 +215,5 @@ branch=pyro.extended=,"schedule = bind_pgdn,0,0,\"ui.bind_key=download_list,0522
 # Sets the number of items to skip on pgdn / pgup, default is: 50.
 branch=pyro.extended=,"ui.focus.page_size.set   = \"30\""
 
-# Add support for nonofficial SSL trackers
-branch=pyro.extended=,"network.http.ssl_verify_host.set = 0"
-
 # Display additional throttle up info in status bar
 branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle_up_name.set = \\\"slowup\\\"\""

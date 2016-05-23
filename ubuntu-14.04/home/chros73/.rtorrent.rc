@@ -308,9 +308,15 @@ network.port_range.set = 62820-62820
 # Check hash for finished torrents. Might be usefull until the bug is fixed that causes lack of diskspace not to be properly reported. (check_hash)
 pieces.hash.on_completion.set = no
 
-# Adding support to SSL trackers (http_capath)
+# Adding support to SSL trackers and peers (http_capath)
+network.http.capath.set = /etc/ssl/certs
+
+# CURL options to add support for nonofficial SSL trackers and peers
+network.http.ssl_verify_host.set = 0
 network.http.ssl_verify_peer.set = 0
-network.http.capath.set          = /etc/ssl/certs
+
+# CURL option to lower DNS timeout (default: 60)
+network.http.dns_cache_timeout.set = 25
 
 # Encryption options (encryption), set to none (default) or any combination of the following: allow_incoming, try_outgoing, require, require_RC4, enable_retry, prefer_plaintext
 # The example value allows incoming encrypted connections, starts unencrypted outgoing connections but retries with encryption if they fail, preferring plaintext to RC4 encryption after the encrypted handshake
