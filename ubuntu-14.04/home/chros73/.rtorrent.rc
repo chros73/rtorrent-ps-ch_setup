@@ -19,9 +19,11 @@ method.insert = pyro.extended.ch, value|const, 1
 # Make sure you end it with a "/"; if this is left empty, then the shell's path is searched.
 method.insert = pyro.bin_dir, string|const, "$cat=~/bin/"
 
-# Importing the other conf file
-method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-,\"$system.client_version=\",.rc"
-import = $pyro.rtorrent_rc=
+# Helper method to import specified conf file as a parameter from ~/.pyroscope/ directory.
+method.insert = import.pyro.rc, simple, "import=\"$cat=~/.pyroscope/,$argument.0=\""
+
+# Imports main pyroscope conf file
+import.pyro.rc = "$cat=rtorrent-ps-,\"$system.client_version=\",.rc"
 
 ##### end: Including PyroScope settings #####
 

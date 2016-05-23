@@ -25,6 +25,9 @@ branch=pyro.extended=,print=rTorrent-PS\\\ features\\\ active!,print=rTorrent-PS
 # COMMAND: Return startup time (can be used to calculate uptime)
 method.insert = startup_time,value|const,$system.time=
 
+# Import color scheme from external config
+import.pyro.rc = "color_scheme256-happy_pastel.rc"
+
 # EVENTS: Timestamps
 #   tm_loaded = time loaded into client
 #   tm_started = time of *first* start
@@ -171,29 +174,6 @@ schedule = network_history_sampling,1,32, network.history.sample=
 method.insert = network.history.auto_scale.toggle, simple|private, "branch=network.history.auto_scale=,\"network.history.auto_scale.set=0\",\"network.history.auto_scale.set=1\""
 method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.history.auto_scale.toggle= ;network.history.refresh="
 branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
-
-# Apply custom 256 color scheme.
-branch=pyro.extended=,"ui.color.alarm.set       = \"bold 250 on 124\""
-branch=pyro.extended=,"ui.color.complete.set    = \"41\""
-branch=pyro.extended=,"ui.color.even.set        = \"on 234\""
-branch=pyro.extended=,"ui.color.focus.set       = \"reverse\""
-branch=pyro.extended=,"ui.color.footer.set      = \"bright 123 on 160\""
-branch=pyro.extended=,"ui.color.incomplete.set  = \"221\""
-branch=pyro.extended=,"ui.color.info.set        = \"white\""
-branch=pyro.extended=,"ui.color.label.set       = \"241\""
-branch=pyro.extended=,"ui.color.leeching.set    = \"bold bright 220\""
-branch=pyro.extended=,"ui.color.odd.set         = \"on 232\""
-branch=pyro.extended=,"ui.color.progress0.set   = \"196\""
-branch=pyro.extended=,"ui.color.progress100.set = \"34\""
-branch=pyro.extended=,"ui.color.progress120.set = \"bold bright 46\""
-branch=pyro.extended=,"ui.color.progress20.set  = \"207\""
-branch=pyro.extended=,"ui.color.progress40.set  = \"202\""
-branch=pyro.extended=,"ui.color.progress60.set  = \"214\""
-branch=pyro.extended=,"ui.color.progress80.set  = \"226\""
-branch=pyro.extended=,"ui.color.queued.set      = \"133\""
-branch=pyro.extended=,"ui.color.seeding.set     = \"bold bright 40\""
-branch=pyro.extended=,"ui.color.stopped.set     = \"33\""
-branch=pyro.extended=,"ui.color.title.set       = \"bold bright white on 202\""
 
 # Key bindings for special keys: home, end, pgup, pgdn
 branch=pyro.extended=,"schedule = bind_home,0,0,\"ui.bind_key=download_list,0406,ui.focus.home=\""
