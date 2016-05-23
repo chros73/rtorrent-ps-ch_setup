@@ -142,6 +142,14 @@ branch=pyro.extended=,"view.sort_current = ratio,\"compare=+-,d.throttle_name=,d
 view.sort = ratio
 branch=pyro.extended=,"schedule = bind_ratio,0,0,\"ui.bind_key=download_list,r,ui.current_view.set=ratio\""
 
+# UI/VIEW: SORT torrents by CATEGORY and  bound to 'y' key in rT-PS)
+view.add = category
+branch=pyro.extended=,"view.collapsed.toggle=category"
+branch=pyro.extended=,false=,"view.sort_current = category,less=d.base_path="
+branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.base_path=\""
+view.sort = category
+branch=pyro.extended=,"schedule = bind_category,0,0,\"ui.bind_key=download_list,y,ui.current_view.set=category\""
+
 # UI/VIEW: Default view for filtering results (bound to '^' key in rT-PS)
 view.add = rtcontrol
 branch=pyro.extended=,"view.collapsed.toggle=rtcontrol"
@@ -209,3 +217,6 @@ branch=pyro.extended=,"ui.focus.page_size.set   = \"30\""
 
 # Add support for nonofficial SSL trackers
 branch=pyro.extended=,"network.http.ssl_verify_host.set = 0"
+
+# Display additional throttle up info in status bar
+branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle_up_name.set = \\\"slowup\\\"\""
