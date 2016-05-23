@@ -10,6 +10,7 @@
 # Set "pyro.extended" to 1 to activate rTorrent-PS features!
 # LEAVE THIS AT 0 IF YOU RUN A VANILLA rTorrent!
 method.insert = pyro.extended, value|const, 1
+
 # Set "pyro.extended.ch" to 1 to activate rTorrent-PS-CH features!
 # LEAVE THIS AT 0 IF YOU DO NOT RUN IT!
 method.insert = pyro.extended.ch, value|const, 1
@@ -21,11 +22,6 @@ method.insert = pyro.bin_dir, string|const, "$cat=~/bin/"
 # Importing the other conf file
 method.insert = pyro.rtorrent_rc, string|const|private, "$cat=~/.pyroscope/rtorrent-,\"$system.client_version=\",.rc"
 import = $pyro.rtorrent_rc=
-
-# TORQUE: Daemon watchdog schedule
-# Must be activated by touching the "~/.pyroscope/run/pyrotorque" file!
-# Set the second argument to "-v" or "-q" to change log verbosity.
-#schedule = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
 
 ##### end: Including PyroScope settings #####
 

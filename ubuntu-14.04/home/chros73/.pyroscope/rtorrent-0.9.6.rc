@@ -172,18 +172,6 @@ method.insert = network.history.auto_scale.toggle, simple|private, "branch=netwo
 method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.history.auto_scale.toggle= ;network.history.refresh="
 branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
 
-# TORQUE: View for queue manager job (bound to 'Q' key in rT-PS)
-# (this is not the buggy internal scheduler controlled by scheduler.max_active)
-view.add = pyrotorque
-branch=pyro.extended=,"view.collapsed.toggle=pyrotorque"
-view.filter = pyrotorque,false=
-branch=pyro.extended=,"view.sort_current = pyrotorque,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\""
-schedule = filter_pyrotorque,1,15,"view.filter = pyrotorque,\"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}\""
-branch=pyro.extended=,"schedule = bind_pyrotorque,0,0,\"ui.bind_key=download_list,Q,ui.current_view.set=pyrotorque\""
-
-# TORQUE: Daemon watchdog
-method.insert = pyro.watchdog,simple|private,"execute.nothrow=bash,-c,\"$cat=\\\"test ! -f \\\",$argument.0=,\\\"/run/pyrotorque || \\\",$pyro.bin_dir=,\\\"pyrotorque --cron \\\",$argument.1=\""
-
 # Apply custom 256 color scheme.
 branch=pyro.extended=,"ui.color.alarm.set       = \"bold 250 on 124\""
 branch=pyro.extended=,"ui.color.complete.set    = \"41\""
@@ -217,3 +205,27 @@ branch=pyro.extended=,"ui.focus.page_size.set   = \"30\""
 
 # Display additional throttle up info in status bar
 branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle_up_name.set = \\\"slowup\\\"\""
+
+
+
+##### begin: Unused pyroscope features #####
+
+## TORQUE: Daemon watchdog
+#method.insert = pyro.watchdog,simple|private,"execute.nothrow=bash,-c,\"$cat=\\\"test ! -f \\\",$argument.0=,\\\"/run/pyrotorque || \\\",$pyro.bin_dir=,\\\"pyrotorque --cron \\\",$argument.1=\""
+
+## TORQUE: Daemon watchdog schedule
+## Must be activated by touching the "~/.pyroscope/run/pyrotorque" file!
+## Set the second argument to "-v" or "-q" to change log verbosity.
+#schedule = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
+
+## TORQUE: View for queue manager job (bound to 'Q' key in rT-PS)
+## (this is not the buggy internal scheduler controlled by scheduler.max_active)
+#view.add = pyrotorque
+#branch=pyro.extended=,"view.collapsed.toggle=pyrotorque"
+#view.filter = pyrotorque,false=
+#branch=pyro.extended=,"view.sort_current = pyrotorque,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\""
+#schedule = filter_pyrotorque,1,15,"view.filter = pyrotorque,\"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}\""
+#branch=pyro.extended=,"schedule = bind_pyrotorque,0,0,\"ui.bind_key=download_list,Q,ui.current_view.set=pyrotorque\""
+
+##### end: Unused pyroscope features #####
+
