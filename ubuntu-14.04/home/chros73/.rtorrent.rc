@@ -165,7 +165,6 @@ method.insert  = d.add_to_delqueue, simple, "d.unsafe_data.set=2; execute=ln,-sf
 # helper method: removes symlink (if it exists) for metafile from delqueue dir
 method.insert  = d.remove_symlink, simple|private, "branch=\"check_object.value=$delqueue_dir=,$d.get_meta_basename=,L\",\"execute=rm,-f,--,$d.get_delqueue_symlink_name=\""
 # removes torrent from delqueue by deleting its symlink (if it exists) from delqueue dir, if optional parameter "1" is given then assign it to unsafe_data
-#method.insert  = d.remove_from_delqueue, simple, "branch=\"equal={argument.0=,1}\",d.unsafe_data.set=1,d.unsafe_data.set=; d.remove_symlink="
 method.insert  = d.remove_from_delqueue, simple, "branch=argument.0=,d.unsafe_data.set=1,d.unsafe_data.set=; d.remove_symlink="
 # helper method: sets unsafe_data to "1" if the value exist, unsets it otherwise
 method.insert  = d.fix_delqueue_flag.helper, simple|private, "branch=\"d.custom=unsafe_data\",d.unsafe_data.set=1,d.unsafe_data.set="
@@ -193,8 +192,8 @@ method.insert  = d.modify_rest_special, simple|private, "d.throttle_name.set=;d.
 method.insert  = d.modify_rest_slowup, simple|private, "d.throttle_name.set=slowup;d.priority.set=2"
 # helper method: decides which remaining helper method should be called based upon the 3rd argument and calls it
 method.insert  = d.is_special_group, simple|private, "branch=argument.0=,d.modify_rest_special=,d.modify_rest_slowup="
-# helper method: sets everything it can and calls the other helper methods for the rest (stops it; sets the remaining attributes (throttle group, priority) based open the 3rd argument; sets the new data and meta dirs based open the 1st argument; tries to move both data and meta; modifies the new slot values based open the 3rd argument; sets unsafe_data custom field value based open the 2nd argument; saves the session of it)
-method.insert  = d.move_to.helper, simple|private, "d.stop=;d.is_special_group=$argument.1=;d.custom.set=data_dir,\"$cat=$main_dir=,$argument.0=\";d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_both_check=;d.modify_slots_both=;branch=argument.2=,\"d.custom.set=unsafe_data,$argument.2=\",\"d.custom.set=unsafe_data,\";branch=\"equal={argument.2=,2}\",d.add_to_delqueue=,d.remove_from_delqueue=$argument.2="
+# helper method: sets everything it can and calls the other helper methods for the rest (stops it; sets the remaining attributes (throttle group, priority) based open the 2nd argument; sets the new data and meta dirs based open the 1st argument; tries to move both data and meta; modifies the new slot values based open the 2nd argument; handles delete-queue and sets unsafe_data custom field value based open the 3rd argument; saves the session of it)
+method.insert  = d.move_to.helper, simple|private, "d.stop=;d.is_special_group=$argument.1=;d.custom.set=data_dir,\"$cat=$main_dir=,$argument.0=\";d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_both_check=;d.modify_slots_both=;branch=\"equal={argument.2=,cat=2}\",d.add_to_delqueue=,d.remove_from_delqueue=$argument.2="
 # helper method: calls the 'd.move_to.helper' method which will does the job if the required meta directory also exists, otherwise prints out an error
 method.insert  = d.move_to.check_meta_dir, simple|private, "branch=\"check_object.value=$meta_dir=,$argument.0=,d\",\"d.move_to.helper=$argument.0=,$argument.1=,$argument.2=\",\"check_object.error.print=$meta_dir=,$argument.0=,metafile,directory\""
 # helper method: calls the 'd.move_to.check_meta_dir' method which will check the meta dir if the required data directory exists, otherwise prints out an error
