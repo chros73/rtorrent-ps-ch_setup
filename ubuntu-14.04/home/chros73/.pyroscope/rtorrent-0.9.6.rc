@@ -118,8 +118,8 @@ schedule = sort_seeding,12,20,"view.filter = seeding,\"and={d.complete=,d.peers_
 # Items are grouped into incomplete, complete in that order.
 # Each group is devided again into subgroups by throttle name (e.g. slowup).
 # Within each subgroup, they're sorted by last_active field desc.
-branch=pyro.extended=,false=,"view.sort_current = started,greater=d.custom=last_active"
-branch=pyro.extended=,"view.sort_current = started,\"compare=++-,d.complete=,d.throttle_name=,d.custom=last_active\""
+branch=pyro.extended=,false=,"view.sort_current = started,greater=d.last_active="
+branch=pyro.extended=,"view.sort_current = started,\"compare=++-,d.complete=,d.throttle_name=,d.last_active=\""
 
 # UI/VIEW: SORT torrents by UPLOADED DATA (grouped by throttle name (e.g. slowup) and  bound to 'L' in rT-PS)
 view.add = uploadeddata
