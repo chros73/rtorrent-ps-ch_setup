@@ -106,10 +106,16 @@ schedule = untied_torrents, 8, 5, "remove_untied="
 method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.name="
 # helper method: checks whether the data of a torrent is in incomplete dir
 method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.get_data_full_path=}"
+# helper method: returns true if the current data path of the torrent exists, otherwise returns false
+method.insert  = d.data_full_path_exist, simple|private, "or=\"check_object.value=$cat=$d.directory=,,d\",\"check_object.value=\\\"$cat=$d.directory=,/\\\",$d.name=,f\""
+# helper method: prints out an error message if the current data path of the torrent doesn't exist
+method.insert  = d.remove_data.error.print, simple|private, "print=\"$cat=ERROR\\\\\ during\\\\\ deleting:\\\\\ ,$argument.0=,\\\\\ !\\\\\ Data\\\\\ path\\\\\ doesn't\\\\\ exist.\""
 # helper method: deletes data of a torrent and removes symlink for its metafile if it exists
 method.insert  = d.remove_data, simple|private, "d.remove_symlink=;execute={rm,-rf,--,$d.get_data_full_path=}"
-# Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir.
-method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",d.remove_data="
+# helper method: calls 'd.remove_data' if data dir/file of a torrent exist or prints out an error message
+method.insert  = d.remove_data.check, simple|private, "branch=d.data_full_path_exist=,d.remove_data=,d.remove_data.error.print=$d.get_data_full_path="
+# Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir and their data dir/file exist.
+method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",d.remove_data.check="
 ### end: Delete data (dir/files) ###
 
 
