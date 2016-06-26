@@ -94,17 +94,20 @@ schedule = watch_dir_9,  5, 10, "load.start=\"$cat=$downloading_dir=,cartoons/*.
 schedule = watch_dir_10, 5, 10, "load.start=\"$cat=$downloading_dir=,hdtv/*.torrent\",     \"d.custom.set=data_dir,\\\"$cat=$main_dir=,hdtv\\\"\",     \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,hdtv\\\"\",     d.throttle_name.set=slowup"
 schedule = watch_dir_11, 5, 10, "load.start=\"$cat=$downloading_dir=,movies/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,movies\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,movies\\\"\",   d.throttle_name.set=slowup"
 
+# gets the full path of data of a torrent (it's a workaround for the possibly empty 'd.base_path' attribute)
+method.insert  = d.get_data_full_path, simple, "branch=d.is_multi_file=,cat=$d.directory=,\"cat=$d.directory=,/,$d.name=\""
+
 
 ### begin: Delete data (dir/files) for torrents that have been removed either from the UI (CTRL+dd) or the tied metafile has been removed manually or by a script, ###
 #     only for torrents which have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents). This allows rotating capability.
 # Removes torrents from client when its metafile (torrent file) has been deleted manually or by a script. Run it every 5 seconds.
 schedule = untied_torrents, 8, 5, "remove_untied="
 # helper method: gets the incomplete dir data path of a torrent
-method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.base_filename="
+method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.name="
 # helper method: checks whether the data of a torrent is in incomplete dir
-method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.base_path=}"
+method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.get_data_full_path=}"
 # helper method: deletes data of a torrent and removes symlink for its metafile if it exists
-method.insert  = d.remove_data, simple|private, "d.remove_symlink=;execute={rm,-rf,--,$d.base_path=}"
+method.insert  = d.remove_data, simple|private, "d.remove_symlink=;execute={rm,-rf,--,$d.get_data_full_path=}"
 # Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir.
 method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=unsafe_data,d.compare_incomplete_path=}\",d.remove_data="
 ### end: Delete data (dir/files) ###
@@ -112,14 +115,15 @@ method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=uns
 
 ### begin: Move data and meta (.torrent) file automatically of a finished or hashchecked torrent ( when you drop in 100% done torrent data and then have rtorrent check the data and resume seeding) ###
 # helper method: returns the fullpath of its final data dir
-method.insert  = d.get_data_path, simple|private, "cat=$d.custom=data_dir,/,$d.base_filename="
+method.insert  = d.get_data_path, simple|private, "cat=$d.custom=data_dir,/,$d.name="
 # helper method: returns true if the current path of the torrent data is not equal to the fullpath of its final data dir, otherwise returns false
-method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_data_path=,d.base_path=}\""
+method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_data_path=,d.get_data_full_path=}\""
 # helper method: returns true if the target path of the torrent data exists, otherwise returns false
-method.insert  = d.data_path_exist, simple|private, "or=\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.base_filename=,d\",\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.base_filename=,f\""
+method.insert  = d.data_path_exist, simple|private, "or=\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,d\",\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,f\""
 # insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
+#   Creating and using a custom variable with the 'd.get_data_full_path' method is necessary since we overwrite the 'd.directory' attribute before moving data.
 #   The 'd.stop=;d.start=' methods are supposed to be together at the end of this method (used by 'download.finished' and 'download.hash_done' events)!!! Don't change it until it's working fine, it will cause a bug in tracker controller resulting stucked http/https requests!!!
-method.insert  = d.move_data, simple|private, "d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.base_path=,$d.custom=data_dir;d.stop=;d.start="
+method.insert  = d.move_data, simple|private, "d.custom.set=data_full_path,$cat=$d.get_data_full_path= ;d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.custom=data_full_path,$d.custom=data_dir;d.stop=;d.start="
 
 # helper method: determines just the basename of a given meta (.torrent) file
 method.insert  = d.get_meta_basename, simple|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="

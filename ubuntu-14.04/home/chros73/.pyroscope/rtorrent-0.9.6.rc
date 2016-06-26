@@ -148,8 +148,8 @@ branch=pyro.extended=,"schedule = bind_ratio,0,0,\"ui.bind_key=download_list,r,u
 # UI/VIEW: SORT torrents by CATEGORY and  bound to 'y' key in rT-PS)
 view.add = category
 branch=pyro.extended=,"view.collapsed.toggle=category"
-branch=pyro.extended=,false=,"view.sort_current = category,less=d.base_path="
-branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.base_path=\""
+branch=pyro.extended=,false=,"view.sort_current = category,less=d.get_data_full_path="
+branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.get_data_full_path=\""
 view.sort = category
 branch=pyro.extended=,"schedule = bind_category,0,0,\"ui.bind_key=download_list,y,ui.current_view.set=category\""
 
