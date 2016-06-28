@@ -94,8 +94,16 @@ schedule = watch_dir_9,  5, 10, "load.start=\"$cat=$downloading_dir=,cartoons/*.
 schedule = watch_dir_10, 5, 10, "load.start=\"$cat=$downloading_dir=,hdtv/*.torrent\",     \"d.custom.set=data_dir,\\\"$cat=$main_dir=,hdtv\\\"\",     \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,hdtv\\\"\",     d.throttle_name.set=slowup"
 schedule = watch_dir_11, 5, 10, "load.start=\"$cat=$downloading_dir=,movies/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,movies\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,movies\\\"\",   d.throttle_name.set=slowup"
 
+
+### begin: Common helper methods ###
 # gets the full path of data of a torrent (it's a workaround for the possibly empty 'd.base_path' attribute)
 method.insert  = d.get_data_full_path, simple, "branch=d.is_multi_file=,cat=$d.directory=,\"cat=$d.directory=,/,$d.name=\""
+
+# helper method: checks existence of a directory, file, symlink
+method.insert  = check_object.value, simple|private, "execute.capture=bash,-c,\"$cat=\\\"test -\\\",$argument.2=,\\\" \\\\\\\"\\\",$argument.0=,$argument.1=,\\\"\\\\\\\" && echo -n 1 || echo -n\\\"\""
+# helper method: displays error if an object doesn't exist
+method.insert  = check_object.error.print, simple|private, "print=\"$cat=Error\\\\\ during\\\\\ moving\\\\\ ,$argument.2=,!\\\\\ No\\\\\ such\\\\\ ,$argument.3=,:\\\\\ ,$argument.0=,$argument.1=\""
+### end: Common helper methods ###
 
 
 ### begin: Delete data (dir/files) for torrents that have been removed either from the UI (CTRL+dd) or the tied metafile has been removed manually or by a script, ###
@@ -106,8 +114,6 @@ schedule = untied_torrents, 8, 5, "remove_untied="
 method.insert  = d.get_incomplete_path, simple|private, "cat=$sub_dir=,incomplete/,$d.name="
 # helper method: checks whether the data of a torrent is in incomplete dir
 method.insert  = d.compare_incomplete_path, simple|private, "equal={d.get_incomplete_path=,d.get_data_full_path=}"
-# helper method: returns true if the current data path of the torrent exists, otherwise returns false
-method.insert  = d.data_full_path_exist, simple|private, "or=\"check_object.value=$cat=$d.directory=,,d\",\"check_object.value=\\\"$cat=$d.directory=,/\\\",$d.name=,f\""
 # helper method: prints out an error message if the current data path of the torrent doesn't exist
 method.insert  = d.remove_data.error.print, simple|private, "print=\"$cat=ERROR\\\\\ during\\\\\ deleting:\\\\\ ,$argument.0=,\\\\\ !\\\\\ Data\\\\\ path\\\\\ doesn't\\\\\ exist.\""
 # helper method: deletes data of a torrent and removes symlink for its metafile if it exists
@@ -121,11 +127,13 @@ method.set_key = event.download.erased, remove_files, "branch=\"or={d.custom=uns
 
 ### begin: Move data and meta (.torrent) file automatically of a finished or hashchecked torrent ( when you drop in 100% done torrent data and then have rtorrent check the data and resume seeding) ###
 # helper method: returns the fullpath of its final data dir
-method.insert  = d.get_data_path, simple|private, "cat=$d.custom=data_dir,/,$d.name="
+method.insert  = d.get_target_data_path, simple|private, "cat=$d.custom=data_dir,/,$d.name="
 # helper method: returns true if the current path of the torrent data is not equal to the fullpath of its final data dir, otherwise returns false
-method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_data_path=,d.get_data_full_path=}\""
+method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_target_data_path=,d.get_data_full_path=}\""
 # helper method: returns true if the target path of the torrent data exists, otherwise returns false
-method.insert  = d.data_path_exist, simple|private, "or=\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,d\",\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,f\""
+method.insert  = d.target_data_path_exist, simple|private, "or=\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,d\",\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,f\""
+# helper method: returns true if the current data path of the torrent exists, otherwise returns false
+method.insert  = d.data_full_path_exist, simple|private, "or=\"check_object.value=$cat=$d.directory=,,d\",\"check_object.value=\\\"$cat=$d.directory=,/\\\",$d.name=,f\""
 # insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
 #   Creating and using a custom variable with the 'd.get_data_full_path' method is necessary since we overwrite the 'd.directory' attribute before moving data.
 #   The 'd.stop=;d.start=' methods are supposed to be together at the end of this method (used by 'download.finished' and 'download.hash_done' events)!!! Don't change it until it's working fine, it will cause a bug in tracker controller resulting stucked http/https requests!!!
@@ -134,18 +142,20 @@ method.insert  = d.move_data, simple|private, "d.custom.set=data_full_path,$cat=
 # helper method: determines just the basename of a given meta (.torrent) file
 method.insert  = d.get_meta_basename, simple|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="
 # helper method: the fullpath of its final meta dir
-method.insert  = d.get_meta_path, simple|private, "cat=$d.custom=meta_dir,/,$d.get_meta_basename="
+method.insert  = d.get_target_meta_path, simple|private, "cat=$d.custom=meta_dir,/,$d.get_meta_basename="
 # helper method: returns true if the current path of the meta (.torrent) file is not equal to the fullpath of its final meta dir, otherwise returns false
-method.insert  = d.compare_meta_path, simple|private, "not=\"$equal={d.get_meta_path=,d.tied_to_file=}\""
+method.insert  = d.compare_meta_path, simple|private, "not=\"$equal={d.get_target_meta_path=,d.tied_to_file=}\""
 # helper method: returns true if the target path of the meta (.torrent) file exists, otherwise returns false
-method.insert  = d.meta_path_exist, simple|private, "check_object.value=\"$cat=$d.custom=meta_dir,/\",$d.get_meta_basename=,f"
+method.insert  = d.target_meta_path_exist, simple|private, "check_object.value=\"$cat=$d.custom=meta_dir,/\",$d.get_meta_basename=,f"
+# helper method: returns true if the current meta path of the torrent exists, otherwise returns false
+method.insert  = d.meta_full_path_exist, simple|private, "check_object.value=$d.tied_to_file=,,f"
 # insert a method which: moves meta (.torrent) file to its final place; updates the tied meta file path of the torrent (to keep seeding it)
-method.insert  = d.move_meta, simple|private, "execute=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_meta_path="
+method.insert  = d.move_meta, simple|private, "execute=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_target_meta_path="
 
 # helper method: moves both data and meta (.torrent) file if neither of them is in the final place and saves its session
 method.insert  = d.move_both, simple|private, "d.move_meta=; d.move_data=; d.save_full_session="
 # helper method: tries to move both data and meta file only if none of the targets exist nor they have already been moved (latter is necessary for hashckecking)
-method.insert  = d.move_both_check, simple|private, "branch=\"and={d.compare_meta_path=,not=$d.meta_path_exist=,d.compare_data_path=,not=$d.data_path_exist=}\",d.move_both="
+method.insert  = d.move_both_check, simple|private, "branch=\"and={d.compare_meta_path=,not=$d.target_meta_path_exist=,d.meta_full_path_exist=,d.compare_data_path=,not=$d.target_data_path_exist=,d.data_full_path_exist=}\",d.move_both="
 # finally, set a key with the name 'move_both_f' that is triggered by the finished event: tries to move both data and meta (.torrent) file when it's finished
 method.set_key = event.download.finished, move_both_f, "d.move_both_check="
 # finally, set a key with the name 'move_both_h' that is triggered by the hash_done event: tries to move both data and meta (.torrent) file of a completed torrent when it's 100% hashchecked
@@ -153,12 +163,7 @@ method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.mo
 ### end: Move data and meta (.torrent) file automatically ###
 
 
-### begin: Helper methods to move data and meta (.torrent) file manually ###
-# helper method: checks existence of a directory, file, symlink
-method.insert  = check_object.value, simple|private, "execute.capture=bash,-c,\"$cat=\\\"test -\\\",$argument.2=,\\\" \\\\\\\"\\\",$argument.0=,$argument.1=,\\\"\\\\\\\" && echo -n 1 || echo -n\\\"\""
-# helper method: displays error if an object doesn't exist
-method.insert  = check_object.error.print, simple|private, "print=\"$cat=Error\\\\\ during\\\\\ moving\\\\\ ,$argument.2=,!\\\\\ No\\\\\ such\\\\\ ,$argument.3=,:\\\\\ ,$argument.0=,$argument.1=\""
-
+### begin: Move data and meta (.torrent) file manually ###
 # Dealing with delqueue dir entries and corresponding attribute (d.custom=unsafe_data is 2)
 #   Usage: d.add_to_delqueue=  |  d.remove_from_delqueue=1  |  d.remove_from_delqueue=  |  d.fix_delqueue_flag=
 # helper method: get delqueue symlink name
@@ -180,12 +185,14 @@ schedule = fix_delqueue_flag, 1:19:00, 24:00:00, "d.multicall2=main,d.fix_delque
 
 # Move a finished, stucked meta file from the downloading dir into its final place (thanks to the simetimes missing meta_dir custom field value, rtorrent bug on OpenWRT?)
 #   Usage: 'd.move_meta_to=various'
-# helper method: sets the missing meta_dir custom field value to the fullpath of the value of the argument and moves the meta (.torrent) file
-method.insert  = d.move_meta_to.helper, simple|private, "d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\";d.move_meta="
-# helper method: calls the 'd.move_meta_to.helper' method which will move the meta (.torrent) file if the required directory exist, otherwise prints out an error
-method.insert  = d.move_meta_to.check_object, simple|private, "branch=\"check_object.value=$meta_dir=,$argument.0=,d\",d.move_meta_to.helper=$argument.0=,\"check_object.error.print=$meta_dir=,$argument.0=,metafile,directory\""
+# helper method: prints out an error message if there is any problem during moving meta file
+method.insert  = d.move_meta_to.error.print, simple|private, "print=\"$cat=ERROR\\\\\ during\\\\\ moving\\\\\ meta\\\\\ (.torrent)\\\\\ file:\\\\\ ,$argument.0=,\\\\\ !\""
+# helper method: sets custom meta_dir property then tries to move meta (.torrent) file (if it's not moved already and if target meta file doesn't exist and if meta file of a torrent exist) or prints out an error message
+method.insert  = d.move_meta_to.check, simple|private, "d.custom.set=meta_dir,\"$cat=$meta_dir=,$argument.0=\"; branch=\"and={d.compare_meta_path=,not=$d.target_meta_path_exist=,d.meta_full_path_exist=}\",d.move_meta=,d.move_meta_to.error.print=$d.tied_to_file="
+# helper method: calls the 'd.move_meta_to.check' method if the required directory exist, otherwise prints out an error
+method.insert  = d.move_meta_to.check_meta_dir, simple|private, "branch=\"check_object.value=$meta_dir=,$argument.0=,d\",d.move_meta_to.check=$argument.0=,\"check_object.error.print=$meta_dir=,$argument.0=,metafile,directory\""
 # moves the finished, stucked meta file if there isn't any error, it receives 1 argument: dirname
-method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"d.move_meta_to.check_object=$argument.0=\""
+method.insert  = d.move_meta_to, simple, "branch=d.complete=,\"d.move_meta_to.check_meta_dir=$argument.0=\""
 
 # Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it. It receives 3 arguments: dirname,specialgroup,unsafe_data
 #   Usage: 'd.move_to=rotating,1,1' / 'd.move_to=rotating,1,2' or 'd.move_to=fullseed,1,' or 'd.move_to=unsafe,,1' / 'd.move_to=unsafe,,2' or 'd.move_to=various,,'
@@ -201,7 +208,7 @@ method.insert  = d.move_to.check_meta_dir, simple|private, "branch=\"check_objec
 method.insert  = d.move_to.check_data_dir, simple|private, "branch=\"check_object.value=$main_dir=,$argument.0=,d\",\"d.move_to.check_meta_dir=$argument.0=,$argument.1=,$argument.2=\",\"check_object.error.print=$main_dir=,$argument.0=,data,directory\""
 # moves data (can be partially downloaded) and meta (.torrent) file if there isn't any error, it receives 3 arguments: dirname,specialgroup,unsafe_data
 method.insert  = d.move_to, simple, "d.move_to.check_data_dir=$argument.0=,$argument.1=,$argument.2="
-### end: Helper methods to move data and meta (.torrent) file manually ###
+### end: Move data and meta (.torrent) file manually ###
 
 ##### end: Directory settings #####
 
