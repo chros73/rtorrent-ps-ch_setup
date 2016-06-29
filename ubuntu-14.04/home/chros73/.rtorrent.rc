@@ -133,7 +133,7 @@ method.insert  = d.compare_data_path, simple|private, "not=\"$equal={d.get_targe
 # helper method: returns true if the target path of the torrent data exists, otherwise returns false
 method.insert  = d.target_data_path_exist, simple|private, "or=\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,d\",\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,f\""
 # helper method: returns true if the current data path of the torrent exists, otherwise returns false
-method.insert  = d.data_full_path_exist, simple|private, "or=\"check_object.value=$cat=$d.directory=,,d\",\"check_object.value=\\\"$cat=$d.directory=,/\\\",$d.name=,f\""
+method.insert  = d.data_full_path_exist, simple|private, "branch=d.is_multi_file=,\"check_object.value=$cat=$d.directory=,,d\",\"check_object.value=\\\"$cat=$d.directory=,/\\\",$d.name=,f\""
 # insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
 #   Creating and using a custom variable with the 'd.get_data_full_path' method is necessary since we overwrite the 'd.directory' attribute before moving data.
 #   The 'd.stop=;d.start=' methods are supposed to be together at the end of this method (used by 'download.finished' and 'download.hash_done' events)!!! Don't change it until it's working fine, it will cause a bug in tracker controller resulting stucked http/https requests!!!
