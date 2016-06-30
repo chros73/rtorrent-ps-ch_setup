@@ -16,7 +16,7 @@ method.insert = pyro.bin_dir, string|const, "$cat=~/bin/"
 method.insert = import.pyro.rc, simple, "import=\"$cat=~/.pyroscope/,$argument.0=\""
 
 # Imports main pyroscope conf file
-import.pyro.rc = "$cat=rtorrent-,\"$system.client_version=\",.rc"
+import.pyro.rc = "$cat=rtorrent-ps.rc"
 
 ##### end: Including PyroScope settings #####
 
