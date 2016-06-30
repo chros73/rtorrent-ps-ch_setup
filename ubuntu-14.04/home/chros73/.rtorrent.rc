@@ -4,39 +4,39 @@
 ##### begin: Including PyroScope settings #####
 
 # Set "pyro.extended" to 1 to activate rTorrent-PS features! LEAVE THIS AT 0 IF YOU RUN A VANILLA rTorrent!
-method.insert = pyro.extended, value|const, 1
+method.insert = pyro.extended,    value|const,  1
 
 # Set "pyro.extended.ch" to 1 to activate rTorrent-PS-CH features! LEAVE THIS AT 0 IF YOU DO NOT RUN IT!
-method.insert = pyro.extended.ch, value|const, 1
+method.insert = pyro.extended.ch, value|const,  1
 
 # Set "pyro.bin_dir" to the "bin" directory where you installed the pyrocore tools! Make sure you end it with a "/"; if this is left empty, then the shell's path is searched.
-method.insert = pyro.bin_dir, string|const, "$cat=~/bin/"
+method.insert = pyro.bin_dir, string|const, (cat,"~/bin/")
 
-# Helper method to import specified conf file as a parameter from ~/.pyroscope/ directory.
-method.insert = import.pyro.rc, simple, "import=\"$cat=~/.pyroscope/,$argument.0=\""
+# Helper method to import specified conf file as a parameter from "~/.pyroscope/" directory.
+method.insert = import.pyro.rc, simple, "import=(cat,\"~/.pyroscope/\",(argument.0))"
 
 # Imports main pyroscope conf file
-import.pyro.rc = "$cat=rtorrent-ps.rc"
+import.pyro.rc = (cat,"rtorrent-ps.rc")
 
 ##### end: Including PyroScope settings #####
 
 
 
-##### begin: Default connection settings #####
+##### begin: Default connection, performance settings #####
 
 # Global upload and download rate in KiB (download_rate, upload_rate). "0" for unlimited.
 throttle.global_down.max_rate.set_kb = 10000
 throttle.global_up.max_rate.set_kb   = 2500
 
-# Maximum and minimum number of peers to connect to per torrent while downloading (applies to the 'slowup' throttle group). (min_peers, max_peers)
+# Maximum and minimum number of peers to connect to per torrent while downloading (These default values will be overriden by per torrent settings in Favoring section below). (min_peers, max_peers)
 throttle.min_peers.normal.set = 89
 throttle.max_peers.normal.set = 100
 
-# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (applies to the 'slowup' throttle group). (min_peers_seed, max_peers_seed)
+# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (These default values will be overriden by per torrent settings in Favoring section below). (min_peers_seed, max_peers_seed)
 throttle.min_peers.seed.set = 29
 throttle.max_peers.seed.set = 50
 
-# Maximum number of simultanious uploads per torrent. (upload slots!) (applies to the 'slowup' throttle group). (max_uploads)
+# Maximum number of simultanious uploads per torrent. (upload slots!) (These default values will be overriden by per torrent settings in Favoring section below). (max_uploads)
 throttle.max_uploads.set = 15
 
 # Maximum number of simultaneous downloads and uploads slots (global slots!) (max_downloads_global, max_uploads_global)
@@ -44,44 +44,45 @@ throttle.max_downloads.global.set = 300
 throttle.max_uploads.global.set   = 300
 
 # Throttles rates for (groups of) downloads or IP ranges. (throttle_up) These throttles borrow bandwidth from the global throttle and thus are limited by it too.
-# You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
-# Limits the upload rate to 600 kb/s for the slowup throttle group. 
+#   You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
+#   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favoring section below.)
 throttle.up = slowup,600
 
-# Set the max amount of memory space used to mapping file chunks. (max_memory_usage) This may also be set using ulimit -m where 3/4 will be allocated to file chunks.
+# Set the max amount of memory space used to mapping file chunks. This refers to memory mapping, not physical memory allocation. (max_memory_usage) This may also be set using ulimit -m where 3/4 will be allocated to file chunks.
 pieces.memory.max.set = 2000M
 
-# Limit the number of connections rtorrent can accept/make (sockets) 
+# Limit the number of connections rtorrent can accept/make (sockets)
 network.max_open_sockets.set = 768
 
 # Limit the number of open files rtorrent can keep open (you have to modify the system wide settings with ulimit!!!) (set_max_open_files)
 network.max_open_files.set = 1999
 
-# Limit the number simultanous of HTTP request (default 32) (set_max_open_http)
+# Limit the number simultanous of HTTP request (used by announce or scrape requests) (default 32) (set_max_open_http)
 network.http.max_open.set = 99
 
-##### end: Default connection settings #####
+##### end: Default connection, performance settings #####
 
 
 
 ##### begin: Directory settings #####
 
 # Defining directory constants
-method.insert = main_dir,        string|const|private, "$cat=/mnt/Torrents/"
-method.insert = sub_dir,         string|const|private, "$cat=$main_dir=,.rtorrent/"
-method.insert = downloading_dir, string|const|private, "$cat=$sub_dir=,.downloading/"
-method.insert = meta_dir,        string|const|private, "$cat=$sub_dir=,.completed/"
-method.insert = delqueue_dir,    string|const|private, "$cat=$sub_dir=,.delqueue/"
+method.insert = main_dir,        string|const|private, (cat,"/mnt/Torrents/")
+method.insert = sub_dir,         string|const|private, (cat,(main_dir),".rtorrent/")
+method.insert = incomplete_dir,  string|const|private, (cat,(sub_dir),"incomplete/")
+method.insert = downloading_dir, string|const|private, (cat,(sub_dir),".downloading/")
+method.insert = meta_dir,        string|const|private, (cat,(sub_dir),".completed/")
+method.insert = delqueue_dir,    string|const|private, (cat,(sub_dir),".delqueue/")
+method.insert = session_dir,     string|const|private, (cat,(sub_dir),".session/")
 
 # Default directory to save the downloaded torrents and where you should place your 'complete' data before you place your *.torrent file into the watch folder to be able to be hash checked. (directory)
-directory.default.set = "$cat=$sub_dir=,incomplete/"
+directory.default.set = (cat,(incomplete_dir))
 
-# Default session directory. Make sure you don't run multiple instance of rtorrent using the same session directory. Perhaps using a relative path? (session)
-session.path.set = "$cat=$sub_dir=,.session"
+# Default session directory. Make sure you don't run multiple instance of rtorrent using the same session directory. (session)
+session.path.set = (cat,(session_dir))
 
-# Watch directories for new torrents (metafiles).
-# Also specifying the final directories (data_dir and meta_dir) for them, and setting:
-# - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
+# Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, and setting:
+#   - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
 schedule = watch_dir_1,  5, 10, "load.start=\"$cat=$downloading_dir=,rotating/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,rotating\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,rotating\\\"\", d.priority.set=3,           \"d.custom.set=unsafe_data,1\""
 schedule = watch_dir_2,  5, 10, "load.start=\"$cat=$downloading_dir=,fullseed/*.torrent\", \"d.custom.set=data_dir,\\\"$cat=$main_dir=,fullseed\\\"\", \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,fullseed\\\"\", d.priority.set=3"
 schedule = watch_dir_3,  5, 10, "load.start=\"$cat=$downloading_dir=,unsafe/*.torrent\",   \"d.custom.set=data_dir,\\\"$cat=$main_dir=,unsafe\\\"\",   \"d.custom.set=meta_dir,\\\"$cat=$meta_dir=,unsafe\\\"\",   d.throttle_name.set=slowup, \"d.custom.set=unsafe_data,1\""
@@ -238,8 +239,7 @@ method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.g
 
 ##### begin: UI enhancements (the rest is in the other included config file) #####
 
-# SORT the MAIN view by DOWNLOADED TIME
-# Helper methods to list of main items by the date desc their torrent file was downloaded, Store time when torrent file was downloaded in a custom field (tm_downloaded)
+# UI/VIEW: SORT the MAIN view by DOWNLOADED TIME desc (Store time in a custom field when torrent file was downloaded (tm_downloaded))
 method.insert     = d.tm_downloaded, simple, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,$d.tied_to_file="
 method.insert     = d.tm_downloaded.set, simple|private, "d.custom.set=tm_downloaded,$cat=$d.tm_downloaded=;d.save_full_session="
 method.set_key    = event.download.inserted_new, set_downloaded_date, "d.tm_downloaded.set="
@@ -289,7 +289,7 @@ schedule = low_diskspace, 120, 120, close_low_diskspace=1000M
 # The ip address the listening socket and outgoing connections is bound to. (bind)
 network.bind_address.set = 192.168.1.8
 
-# The ip address reported to the tracker. (ip) And alternative calls to bind and ip that should handle dynamic ip's.
+# The ip address reported to the tracker. (ip) This should handle dynamic ip's as well.
 schedule = ip_tick, 0, 1800, network.local_address.set=chros73.no-ip.org
 
 # Port range to use for listening. (port_range)
@@ -308,7 +308,7 @@ network.port_range.set = 62820-62820
 # Enable/disable peer exchange for torrents that aren't marked private. Disabled by default. (peer_exchange)
 #protocol.pex.set = no
 
-# Check hash for finished torrents. Might be usefull until the bug is fixed that causes lack of diskspace not to be properly reported. (check_hash)
+# Check hash for finished torrents. (check_hash)
 pieces.hash.on_completion.set = no
 
 # Adding support to SSL trackers and peers (http_capath)
@@ -329,10 +329,10 @@ protocol.encryption.set = allow_incoming,prefer_plaintext,enable_retry
 network.scgi.open_local = /tmp/.rtorrent.sock
 schedule                = chmod_scgi_socket, 0, 0, "execute=chmod,777,/tmp/.rtorrent.sock"
 
-# for non english chars (encoding_list)
+# Encoding for non english chars (encoding_list)
 encoding.add = UTF-8
 
-# default for network.xmlrpc.size_limit : 524288 (xmlrpc_size_limit)
+# Max packet size using xmlrpc (Default: 524288) (xmlrpc_size_limit)
 network.xmlrpc.size_limit.set = 2M
 
 # Set the umask for this process, which is applied to all files created by the program.
