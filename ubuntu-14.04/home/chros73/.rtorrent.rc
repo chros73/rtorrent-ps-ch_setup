@@ -187,11 +187,11 @@ method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.g
 
 ##### begin: Other enhancements #####
 
-# Display any time value in human readable format (useful for verifying value inside rtorrent). Usage: hrf_time=<<timefield>> (e.g.: hrf_time=$d.creation_date=)
+# Display any valid time value in human readable format or print the value itself (useful for verifying value inside rtorrent). Usage: hrf_time=<<timefield>> (e.g.: hrf_time=$d.creation_date=)
 # helper method: to display any time field (e.g. d.creation_date= , d.custom=tm_last_scrape) in human readable format
-method.insert = hrf_time.helper, simple|private, "print=(cat,(convert.date,(argument.0)),\" \",(convert.time,(argument.0)))"
-# method to display any time field in human readable format if the value exists (e.g.: 30/06/2013 23:47:33)
-method.insert = hrf_time, simple, "branch=((argument.0)),((hrf_time.helper,(argument.0))),((print))"
+method.insert = hrf_time.helper, simple|private, "print=\"$cat={$convert.date=$argument.0=, \\\" \\\", $convert.time=$argument.0=}\""
+# method to display any time field in human readable format if the value greater than 0 otherwise print the value itself (e.g.: 30/06/2013 23:47:33)
+method.insert = hrf_time, simple, "branch=\"greater={argument.0=,cat=0}\",hrf_time.helper=$argument.0=,print=$argument.0="
 
 # Regularly update scrape information for all torrents (even stopped ones), it won't affect the operation of rtorrent, but nice to have these values updated.
 # This info is only updated when rtorrent starts or a torrent is added by default.
