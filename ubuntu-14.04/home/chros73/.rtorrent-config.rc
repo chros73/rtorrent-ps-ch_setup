@@ -1,0 +1,145 @@
+# ~/.rtorrent-config.rc and enable/modify the options as needed. Remember to uncomment the options you wish to enable. This config is included in the main config.
+
+
+##### begin: Default connection, performance settings #####
+
+# Global upload and download rate in KiB (download_rate, upload_rate). "0" for unlimited.
+throttle.global_down.max_rate.set_kb = 10000
+throttle.global_up.max_rate.set_kb   = 2500
+
+# Maximum number of simultaneous downloads and uploads slots (global slots!) (max_downloads_global, max_uploads_global)
+throttle.max_downloads.global.set = 300
+throttle.max_uploads.global.set   = 300
+
+# Maximum and minimum number of peers to connect to per torrent while downloading (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section below). (min_peers, max_peers)
+throttle.min_peers.normal.set = 99
+throttle.max_peers.normal.set = 100
+
+# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section below). (min_peers_seed, max_peers_seed)
+throttle.min_peers.seed.set = -1
+throttle.max_peers.seed.set = -1
+
+# Maximum number of simultanious uploads per torrent. (upload slots!) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section below). (max_uploads)
+throttle.max_uploads.set = 50
+
+# Throttles rates for (groups of) downloads or IP ranges. (throttle_up) These throttles borrow bandwidth from the global throttle and thus are limited by it too.
+#   You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
+#   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favoring section below.)
+throttle.up = slowup,600
+
+# Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favoring section below.
+#   cfg.slowup.d.peers_min ~ throttle.min_peers.normal , cfg.slowup.d.peers_max ~ throttle.max_peers.normal , cfg.slowup.d.uploads_max ~ throttle.max_uploads
+method.insert = cfg.slowup.d.peers_min,   value|const,  29
+method.insert = cfg.slowup.d.peers_max,   value|const,  50
+method.insert = cfg.slowup.d.uploads_max, value|const,  15
+
+# Set the max amount of memory space used to mapping file chunks. This refers to memory mapping, not physical memory allocation. (max_memory_usage) This may also be set using ulimit -m where 3/4 will be allocated to file chunks.
+pieces.memory.max.set = 2000M
+
+# Limit the number of connections rtorrent can accept/make (sockets)
+network.max_open_sockets.set = 768
+
+# Limit the number of open files rtorrent can keep open (you have to modify the system wide settings with ulimit!!!) (set_max_open_files)
+network.max_open_files.set = 1999
+
+# Limit the number simultanous of HTTP request (used by announce or scrape requests) (default 32) (set_max_open_http)
+network.http.max_open.set = 99
+
+##### end: Default connection, performance settings #####
+
+
+
+##### begin: Directory settings #####
+
+# Defining directory constants
+method.insert = cfg.dir.main,       string|const|private, (cat,"/mnt/Torrents/")
+method.insert = cfg.dir.sub,        string|const|private, (cat,(cfg.dir.main),".rtorrent/")
+method.insert = cfg.dir.incomplete, string|const|private, (cat,(cfg.dir.sub),"incomplete/")
+method.insert = cfg.dir.meta_downl, string|const|private, (cat,(cfg.dir.sub),".downloading/")
+method.insert = cfg.dir.meta_compl, string|const|private, (cat,(cfg.dir.sub),".completed/")
+method.insert = cfg.dir.delqueue,   string|const|private, (cat,(cfg.dir.sub),".delqueue/")
+method.insert = cfg.dir.session,    string|const|private, (cat,(cfg.dir.sub),".session/")
+
+# Default directory to save the downloaded torrents and where you should place your 'complete' data before you place your *.torrent file into the watch folder to be able to be hash checked. (directory)
+directory.default.set = (cat,(cfg.dir.incomplete))
+
+# Default session directory. Make sure you don't run multiple instance of rtorrent using the same session directory. (session)
+session.path.set = (cat,(cfg.dir.session))
+
+# Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
+#   - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
+schedule2 = watch_dir_1,  5,  10, "load.start=(cat,(cfg.dir.meta_downl),rotating/*.torrent), \"d.attribs.set=rotating,1,1\""
+schedule2 = watch_dir_2,  6,  10, "load.start=(cat,(cfg.dir.meta_downl),fullseed/*.torrent), \"d.attribs.set=fullseed,1,\""
+schedule2 = watch_dir_3,  7,  10, "load.start=(cat,(cfg.dir.meta_downl),unsafe/*.torrent),   \"d.attribs.set=unsafe,,1\""
+schedule2 = watch_dir_4,  8,  10, "load.start=(cat,(cfg.dir.meta_downl),various/*.torrent),  \"d.attribs.set=various,,\""
+schedule2 = watch_dir_5,  9,  10, "load.start=(cat,(cfg.dir.meta_downl),apps/*.torrent),     \"d.attribs.set=apps,,\""
+schedule2 = watch_dir_6,  10, 10, "load.start=(cat,(cfg.dir.meta_downl),cartoons/*.torrent), \"d.attribs.set=cartoons,,\""
+schedule2 = watch_dir_7,  11, 10, "load.start=(cat,(cfg.dir.meta_downl),ebooks/*.torrent),   \"d.attribs.set=ebooks,,\""
+schedule2 = watch_dir_8,  12, 10, "load.start=(cat,(cfg.dir.meta_downl),hdtv/*.torrent),     \"d.attribs.set=hdtv,,\""
+schedule2 = watch_dir_9,  13, 10, "load.start=(cat,(cfg.dir.meta_downl),movies/*.torrent),   \"d.attribs.set=movies,,\""
+schedule2 = watch_dir_10, 14, 10, "load.start=(cat,(cfg.dir.meta_downl),pictures/*.torrent), \"d.attribs.set=pictures,,\""
+schedule2 = watch_dir_11, 15, 10, "load.start=(cat,(cfg.dir.meta_downl),songs/*.torrent),    \"d.attribs.set=songs,,\""
+
+##### end: Directory settings #####
+
+
+
+##### begin: Other settings #####
+
+# Close torrents when diskspace is low.
+schedule2 = low_diskspace, 120, 120, close_low_diskspace=1000M
+
+# The ip address the listening socket and outgoing connections is bound to. (bind)
+network.bind_address.set = 192.168.1.8
+
+# The ip address reported to the tracker. (ip) This should handle dynamic ip's as well.
+schedule2 = ip_tick, 0, 1800, network.local_address.set=chros73.no-ip.org
+
+# Port range to use for listening. (port_range)
+network.port_range.set = 62820-62820
+
+# Set whether the client should try to connect to UDP trackers
+#trackers.use_udp.set = yes
+
+# Enable DHT support for trackerless torrents or when all trackers are down. May be set to "disable" (completely disable DHT), "off" (do not start DHT),
+# "auto" (start and stop DHT as needed), or "on" (start DHT immediately). The default is "off". For DHT to work, a session directory must be defined.
+#dht.mode.set = auto
+
+# UDP port to use for DHT
+#dht.port.set = 62882
+
+# Enable/disable peer exchange for torrents that aren't marked private. Disabled by default. (peer_exchange)
+#protocol.pex.set = no
+
+# Check hash for finished torrents. (check_hash)
+pieces.hash.on_completion.set = no
+
+# Adding support to SSL trackers and peers (http_capath)
+network.http.capath.set = /etc/ssl/certs
+
+# CURL options to add support for nonofficial SSL trackers and peers
+network.http.ssl_verify_host.set = 0
+network.http.ssl_verify_peer.set = 0
+
+# CURL option to lower DNS timeout (default: 60)
+network.http.dns_cache_timeout.set = 25
+
+# Encryption options (encryption), set to none (default) or any combination of the following: allow_incoming, try_outgoing, require, require_RC4, enable_retry, prefer_plaintext
+# The example value allows incoming encrypted connections, starts unencrypted outgoing connections but retries with encryption if they fail, preferring plaintext to RC4 encryption after the encrypted handshake
+protocol.encryption.set = allow_incoming,prefer_plaintext,enable_retry
+
+# SCGI socket and make it world writeable when rtorrent starts (otherwise apps can't connect to it since it was started by a normal user) (scgi_local)
+network.scgi.open_local = /tmp/.rtorrent.sock
+schedule2 = chmod_scgi_socket, 0, 0, "execute=chmod,777,/tmp/.rtorrent.sock"
+
+# Encoding for non english chars (encoding_list)
+encoding.add = UTF-8
+
+# Max packet size using xmlrpc (Default: 524288) (xmlrpc_size_limit)
+network.xmlrpc.size_limit.set = 2M
+
+# Set the umask for this process, which is applied to all files created by the program.
+system.umask.set = 022
+
+##### end: Other settings #####
+
