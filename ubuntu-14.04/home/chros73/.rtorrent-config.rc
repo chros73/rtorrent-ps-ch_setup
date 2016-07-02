@@ -11,30 +11,33 @@ throttle.global_up.max_rate.set_kb   = 2500
 throttle.max_downloads.global.set = 300
 throttle.max_uploads.global.set   = 300
 
-# Maximum and minimum number of peers to connect to per torrent while downloading (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section below). (min_peers, max_peers)
+# Maximum and minimum number of peers to connect to per torrent while downloading (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section of main config file). (min_peers, max_peers)
 throttle.min_peers.normal.set = 99
 throttle.max_peers.normal.set = 100
 
-# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section below). (min_peers_seed, max_peers_seed)
+# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section of main config file). (min_peers_seed, max_peers_seed)
 throttle.min_peers.seed.set = -1
 throttle.max_peers.seed.set = -1
 
-# Maximum number of simultanious uploads per torrent. (upload slots!) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section below). (max_uploads)
+# Maximum number of simultanious uploads per torrent. (upload slots!) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section of main config file). (max_uploads)
 throttle.max_uploads.set = 50
 
 # Throttles rates for (groups of) downloads or IP ranges. (throttle_up) These throttles borrow bandwidth from the global throttle and thus are limited by it too.
 #   You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
-#   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favoring section below.)
+#   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favoring section of main config file.)
 throttle.up = slowup,600
 
-# Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favoring section below.
+# Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favoring section of main config file.
 #   cfg.slowup.d.peers_min ~ throttle.min_peers.normal , cfg.slowup.d.peers_max ~ throttle.max_peers.normal , cfg.slowup.d.uploads_max ~ throttle.max_uploads
 method.insert = cfg.slowup.d.peers_min,   value|const,  29
 method.insert = cfg.slowup.d.peers_max,   value|const,  50
 method.insert = cfg.slowup.d.uploads_max, value|const,  15
 
+# Set the numwant field sent to the tracker, which indicates how many peers we want. A negative value disables this feature. Default: -1 (tracker_numwant)
+trackers.numwant.set = 100
+
 # Set the max amount of memory space used to mapping file chunks. This refers to memory mapping, not physical memory allocation. (max_memory_usage) This may also be set using ulimit -m where 3/4 will be allocated to file chunks.
-pieces.memory.max.set = 2000M
+pieces.memory.max.set = 2048M
 
 # Limit the number of connections rtorrent can accept/make (sockets)
 network.max_open_sockets.set = 768
@@ -44,6 +47,14 @@ network.max_open_files.set = 1999
 
 # Limit the number simultanous of HTTP request (used by announce or scrape requests) (default 32) (set_max_open_http)
 network.http.max_open.set = 99
+
+# Preloading a piece of a file. (Default: 0) Possible values: 0 (Off) , 1 (Madvise) , 2 (Direct paging). (https://github.com/rakshasa/rtorrent/issues/418)
+pieces.preload.type.set = 2
+#pieces.preload.min_size.set = 262144
+#pieces.preload.min_rate.set = 5120
+
+# Change the TOS of peer connections, (Default: throughput) If the option is set to 'default' then the system default TOS is used. A hex value may be used for non-standard settings. Possible values: [default|lowdelay|throughput|reliability|mincost] or a hex value. (tos)
+#network.tos.set = throughput
 
 ##### end: Default connection, performance settings #####
 
@@ -68,6 +79,7 @@ session.path.set = (cat,(cfg.dir.session))
 
 # Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
 #   - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
+#   'd.attribs.set' command receives 3 arguments: dirname,specialgroup,unsafe_data
 schedule2 = watch_dir_1,  5,  10, "load.start=(cat,(cfg.dir.meta_downl),rotating/*.torrent), \"d.attribs.set=rotating,1,1\""
 schedule2 = watch_dir_2,  6,  10, "load.start=(cat,(cfg.dir.meta_downl),fullseed/*.torrent), \"d.attribs.set=fullseed,1,\""
 schedule2 = watch_dir_3,  7,  10, "load.start=(cat,(cfg.dir.meta_downl),unsafe/*.torrent),   \"d.attribs.set=unsafe,,1\""
@@ -88,6 +100,9 @@ schedule2 = watch_dir_11, 15, 10, "load.start=(cat,(cfg.dir.meta_downl),songs/*.
 
 # Close torrents when diskspace is low.
 schedule2 = low_diskspace, 120, 120, close_low_diskspace=1000M
+
+# Save all the session in every 12 hours instead of the default 20 minutes. This setup saves the session of a torrent a lot of time. (More info: https://github.com/rakshasa/rtorrent/issues/180#issuecomment-55140832)
+schedule2 = session_save, 1200, 43200, ((session.save))
 
 # The ip address the listening socket and outgoing connections is bound to. (bind)
 network.bind_address.set = 192.168.1.8
@@ -128,11 +143,11 @@ network.http.dns_cache_timeout.set = 25
 # The example value allows incoming encrypted connections, starts unencrypted outgoing connections but retries with encryption if they fail, preferring plaintext to RC4 encryption after the encrypted handshake
 protocol.encryption.set = allow_incoming,prefer_plaintext,enable_retry
 
-# SCGI socket and make it world writeable when rtorrent starts (otherwise apps can't connect to it since it was started by a normal user) (scgi_local)
+# SCGI socket and make it group writeable when rtorrent starts (otherwise apps can't connect to it since it was started by a normal user) (scgi_local)
 network.scgi.open_local = /tmp/.rtorrent.sock
-schedule2 = chmod_scgi_socket, 0, 0, "execute=chmod,777,/tmp/.rtorrent.sock"
+schedule2 = chmod_scgi_socket, 0, 0, "execute=chmod,g+w,/tmp/.rtorrent.sock"
 
-# Encoding for non english chars (encoding_list)
+# Add a preferred filename encoding to the list. Encoding for non english chars (encoding_list)
 encoding.add = UTF-8
 
 # Max packet size using xmlrpc (Default: 524288) (xmlrpc_size_limit)
@@ -140,6 +155,18 @@ network.xmlrpc.size_limit.set = 2M
 
 # Set the umask for this process, which is applied to all files created by the program.
 system.umask.set = 022
+
+# Change key-bindings. Values: [qwerty|azerty|qwertz|dvorak] Default is 'qwerty'. (key_layout)
+#keys.layout.set = qwerty
+
+# Use a proxy for http and/or torrent traffic (http_proxy , proxy_address)
+#network.http.proxy_address.set = 127.0.0.1:8118
+#network.proxy_address.set = 127.0.0.1:8118
+
+# Enables logging. Levels=[critical|error|warn|notice|info|debug]  Groups=[connection_*|dht_*|peer_*|rpc_*|storage_*|thread_*|tracker_*|torrent_*]
+#log.open_gz_file_pid = "rtorrent.log", (cat,"/tmp/rtorrent.log")
+#log.add_output = "info", "rtorrent.log"
+#log.add_output = "tracker_debug", "rtorrent.log"
 
 ##### end: Other settings #####
 
