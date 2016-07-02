@@ -3,7 +3,11 @@
 
 ##### begin: Including config settings #####
 
-import = (cat,"~/rtorrent-config.rc")
+# Custom string that can help to use different config files, scripts with different setups based on naming. It can be an empty string as well.
+method.insert = cfg.postfix, string|const|private, (cat,"")
+
+# Imports main config conf "~/.rtorrent-config.rc" file
+import = (cat,"~/.rtorrent",(cfg.postfix),"-config.rc")
 
 ##### end: Including config settings #####
 
@@ -22,8 +26,8 @@ method.insert = pyro.bin_dir, string|const, (cat,"~/bin/")
 
 # Helper method to import specified conf file as a parameter from "~/.pyroscope/" directory.
 method.insert = import.pyro.rc, simple, "import=(cat,\"~/.pyroscope/\",(argument.0))"
-# Imports main pyroscope conf file
-import.pyro.rc = (cat,"rtorrent-ps-ps.rc")
+# Imports main pyroscope conf "~/.pyroscope/rtorrent-ps.rc" file
+import.pyro.rc = (cat,"rtorrent-ps",(cfg.postfix),".rc")
 
 ##### end: Including PyroScope settings #####
 
@@ -169,7 +173,7 @@ method.insert = d.modify_slots_both, simple, "branch=((not,(d.throttle_name))),(
 method.set_key = event.download.resumed, modify_slots_resumed_both, "d.modify_slots_both="
 
 # helper method: gets one of the below info with the help of getLimits.sh script (Variables are inside the script, you have to edit those values there!)
-method.insert = get_limit, simple|private, "execute.capture=\"$cat=$pyro.bin_dir=,getLimits-ps.sh\",$argument.0=,$argument.1=,$argument.2=,$argument.3="
+method.insert = get_limit, simple|private, "execute.capture=\"$cat=$pyro.bin_dir=,getLimits,$cfg.postfix=,.sh\",$argument.0=,$argument.1=,$argument.2=,$argument.3="
 # Dynamically adjusts the 2nd group (slowup throttle) uprate (upload speed) to always leave enough bandwidth to the 1st main group. (More info in getLimits.sh script.)
 schedule2     = adjust_throttle_slowup, 14, 20, "throttle.up=slowup,\"$get_limit=$cat=up,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
 # Dynamically adjusts the global download rate to always leave enough bandwidth to the 1st main group upload rate. It's good for async connection (e.g. ADSL) where upload speed can be slowed down if download speed is close to max. Comment it out if you don't need it.
