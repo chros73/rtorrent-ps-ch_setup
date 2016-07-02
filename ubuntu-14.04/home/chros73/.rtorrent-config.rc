@@ -48,6 +48,11 @@ network.max_open_files.set = 1999
 # Limit the number simultanous of HTTP request (used by announce or scrape requests) (default 32) (set_max_open_http)
 network.http.max_open.set = 99
 
+# Adjust the send and receive buffer size for socket. Disabled by default (0), this means the default is used by OS (you have to modify the system wide settings!!!) (send_buffer_size, receive_buffer_size)
+#   Increasing buffer sizes may help reduce disk seeking, connection polling as more data is buffered each time the socket is written to. It will result higher memory usage (not by rtorrent process!).
+network.receive_buffer.size.set =  4M
+network.send_buffer.size.set    = 12M
+
 # Preloading a piece of a file. (Default: 0) Possible values: 0 (Off) , 1 (Madvise) , 2 (Direct paging). (https://github.com/rakshasa/rtorrent/issues/418)
 pieces.preload.type.set = 2
 #pieces.preload.min_size.set = 262144
