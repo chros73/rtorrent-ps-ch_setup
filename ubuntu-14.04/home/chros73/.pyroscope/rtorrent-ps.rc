@@ -48,7 +48,7 @@ method.set_key = event.download.resumed,activations,"pyro.activations.append=R"
 # SCHEDULE: Set "last_active" custom field for items that have peers
 method.insert = d.last_active, simple, "if=$d.peers_connected=,$cat=$system.time=,$d.custom=last_active"
 method.insert = d.last_active.set, simple|private, "d.custom.set=last_active,$cat=$system.time="
-schedule = update_last_active, 24, 42, "d.multicall2=started,\"branch=$d.peers_connected=,d.last_active.set=\""
+schedule2 = update_last_active, 24, 42, "d.multicall2=started,\"branch=$d.peers_connected=,d.last_active.set=\""
 method.insert  = d.last_active.check, simple|private, "or={d.peers_connected=,not=$d.custom=last_active}"
 method.set_key = event.download.resumed, last_active_r, "branch={d.last_active.check=,d.last_active.set= ;d.save_full_session=}"
 method.set_key = event.download.finished, last_active_f, "d.last_active.set= ;d.save_full_session="
@@ -73,7 +73,7 @@ view.filter = messages,d.message=
 branch=pyro.extended=,false=,"view.sort_current = messages,less=d.message="
 branch=pyro.extended=,"view.sort_current = messages,\"compare=+--,d.throttle_name=,d.message=,d.custom=tm_downloaded\""
 method.insert = ui.messages.show,simple,"ui.current_view.set=messages ;view.filter=messages,d.message= ;view.sort=messages ;print=$view.size=messages,\" message(s)!\""
-branch=pyro.extended=,"schedule = bind_messages,0,0,\"ui.bind_key=download_list,!,ui.messages.show=\""
+branch=pyro.extended=,"schedule2 = bind_messages,0,0,\"ui.bind_key=download_list,!,ui.messages.show=\""
 
 # UI/VIEW: Trackers (all items, sorted by tracker domain and name) (bound to 't' in rT-PS)
 #          This will ONLY work if you use rT-PS!
@@ -81,7 +81,7 @@ branch=pyro.extended=,"view.add = trackers"
 branch=pyro.extended=,"view.collapsed.toggle = trackers"
 branch=pyro.extended=,"view.sort_new     = trackers,\"compare=+-,d.tracker_domain=,d.custom=tm_downloaded\""
 branch=pyro.extended=,"view.sort_current = trackers,\"compare=+-,d.tracker_domain=,d.custom=tm_downloaded\""
-branch=pyro.extended=,"schedule = bind_trackers,0,0,\"ui.bind_key=download_list,t,ui.current_view.set=trackers\""
+branch=pyro.extended=,"schedule2 = bind_trackers,0,0,\"ui.bind_key=download_list,t,ui.current_view.set=trackers\""
 
 # UI/VIEW: Manually tag (select) items
 # . = toggle focused item between tagged and untagged
@@ -92,12 +92,12 @@ view.persistent = tagged
 branch=pyro.extended=,view.collapsed.toggle=tagged
 method.insert = view.toggle_visible,simple,"branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
 method.insert = pyro.view_tagged_clear,simple|private,"view.filter=tagged,false= ;d.multicall2=main,d.views.remove=tagged"
-branch=pyro.extended=,"schedule = bind_tag_toggle,0,0,\"ui.bind_key=download_list,.,view.toggle_visible=tagged\""
-branch=pyro.extended=,"schedule = bind_tag_clear,0,0,\"ui.bind_key=download_list,T,pyro.view_tagged_clear=\""
-branch=pyro.extended=,"schedule = bind_tag_show,0,0,\"ui.bind_key=download_list,:,ui.current_view.set=tagged\""
+branch=pyro.extended=,"schedule2 = bind_tag_toggle,0,0,\"ui.bind_key=download_list,.,view.toggle_visible=tagged\""
+branch=pyro.extended=,"schedule2 = bind_tag_clear,0,0,\"ui.bind_key=download_list,T,pyro.view_tagged_clear=\""
+branch=pyro.extended=,"schedule2 = bind_tag_show,0,0,\"ui.bind_key=download_list,:,ui.current_view.set=tagged\""
 
 # UI/VIEW: Bind "*" to toggle between collapsed and expanded display
-branch=pyro.extended=,"schedule = bind_collapsed,0,0,\"ui.bind_key=download_list,*,view.collapsed.toggle=\""
+branch=pyro.extended=,"schedule2 = bind_collapsed,0,0,\"ui.bind_key=download_list,*,view.collapsed.toggle=\""
 
 # UI/VIEW: Show active, incomplete torrents (in view #0) and update every 20 seconds
 # Items are grouped by whether they are open and throttle name (e.g. slowup).
@@ -105,14 +105,14 @@ branch=pyro.extended=,"schedule = bind_collapsed,0,0,\"ui.bind_key=download_list
 # Within each subgroup, they're sorted by download and then upload speed.
 branch=pyro.extended=,false=,"view.sort_current = active,greater=d.up.rate="
 branch=pyro.extended=,"view.sort_current = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\""
-schedule = filter_active,12,20,"view.filter = active,\"or={d.up.rate=,d.down.rate=,not=$d.complete=}\" ;view.sort=active"
+schedule2 = filter_active,12,20,"view.filter = active,\"or={d.up.rate=,d.down.rate=,not=$d.complete=}\" ;view.sort=active"
 
 # UI/VIEW: SORT the SEEDING view (in view #8) by the UPLOAD RATE (grouped by throttle name (e.g. slowup) and only show torrents with peers
 # Each group is devided again into subgroups by throttle name (e.g. slowup).
 # Within each subgroup, they're sorted by download and then upload speed.
 branch=pyro.extended=,false=,"view.sort_current = seeding,greater=d.up.rate="
 branch=pyro.extended=,"view.sort_current = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\""
-schedule = sort_seeding,12,20,"view.filter = seeding,\"and={d.complete=,d.peers_connected=}\" ;view.sort=seeding"
+schedule2 = sort_seeding,12,20,"view.filter = seeding,\"and={d.complete=,d.peers_connected=}\" ;view.sort=seeding"
 
 # UI/VIEW: SORT the STARTED view (in view #3) by LAST ACTIVE desc
 # Items are grouped into incomplete, complete in that order.
@@ -127,7 +127,7 @@ branch=pyro.extended=,"view.collapsed.toggle=uploadeddata"
 branch=pyro.extended=,false=,"view.sort_current = uploadeddata,greater=d.up.total="
 branch=pyro.extended=,"view.sort_current = uploadeddata,\"compare=+-,d.throttle_name=,d.up.total=\""
 view.sort = uploadeddata
-branch=pyro.extended=,"schedule = bind_uploadeddata,0,0,\"ui.bind_key=download_list,L,ui.current_view.set=uploadeddata\""
+branch=pyro.extended=,"schedule2 = bind_uploadeddata,0,0,\"ui.bind_key=download_list,L,ui.current_view.set=uploadeddata\""
 
 # UI/VIEW: SORT torrents by DATASIZE (grouped by throttle name (e.g. slowup) and  bound to 'i' in rT-PS)
 view.add = datasize
@@ -135,7 +135,7 @@ branch=pyro.extended=,"view.collapsed.toggle=datasize"
 branch=pyro.extended=,false=,"view.sort_current = datasize,greater=d.size_bytes="
 branch=pyro.extended=,"view.sort_current = datasize,\"compare=+-,d.throttle_name=,d.size_bytes=\""
 view.sort = datasize
-branch=pyro.extended=,"schedule = bind_datasize,0,0,\"ui.bind_key=download_list,i,ui.current_view.set=datasize\""
+branch=pyro.extended=,"schedule2 = bind_datasize,0,0,\"ui.bind_key=download_list,i,ui.current_view.set=datasize\""
 
 # UI/VIEW: SORT torrents by RATIO (grouped by throttle name (e.g. slowup) and  bound to 'r' in rT-PS)
 view.add = ratio
@@ -143,7 +143,7 @@ branch=pyro.extended=,"view.collapsed.toggle=ratio"
 branch=pyro.extended=,false=,"view.sort_current = ratio,greater=d.ratio="
 branch=pyro.extended=,"view.sort_current = ratio,\"compare=+-,d.throttle_name=,d.ratio=\""
 view.sort = ratio
-branch=pyro.extended=,"schedule = bind_ratio,0,0,\"ui.bind_key=download_list,r,ui.current_view.set=ratio\""
+branch=pyro.extended=,"schedule2 = bind_ratio,0,0,\"ui.bind_key=download_list,r,ui.current_view.set=ratio\""
 
 # UI/VIEW: SORT torrents by CATEGORY and  bound to 'y' key in rT-PS)
 view.add = category
@@ -151,13 +151,13 @@ branch=pyro.extended=,"view.collapsed.toggle=category"
 branch=pyro.extended=,false=,"view.sort_current = category,less=d.get_data_full_path="
 branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.get_data_full_path=\""
 view.sort = category
-branch=pyro.extended=,"schedule = bind_category,0,0,\"ui.bind_key=download_list,y,ui.current_view.set=category\""
+branch=pyro.extended=,"schedule2 = bind_category,0,0,\"ui.bind_key=download_list,y,ui.current_view.set=category\""
 
 # UI/VIEW: Default view for filtering results (bound to '^' key in rT-PS)
 view.add = rtcontrol
 branch=pyro.extended=,"view.collapsed.toggle=rtcontrol"
 view.filter = rtcontrol,false=
-branch=pyro.extended=,"schedule = bind_rtcontrol,0,0,\"ui.bind_key=download_list,^,ui.current_view.set=rtcontrol\""
+branch=pyro.extended=,"schedule2 = bind_rtcontrol,0,0,\"ui.bind_key=download_list,^,ui.current_view.set=rtcontrol\""
 
 # UI/CMD: Use rtcontrol filter (^X s=KEYWORD, ^X t=TRACKER, ^X f="FILTER")
 method.insert = s,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,\"$cat=*,$argument.0=,*\""
@@ -170,16 +170,16 @@ method.insert = cull,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcon
 
 # UI/VIEW: Show traffic of the last hour (bound to '=' key in rT-PS)
 branch=pyro.extended=,"network.history.depth.set=112"
-branch=pyro.extended=,"schedule = network_history_sampling,1,32,network.history.sample="
+branch=pyro.extended=,"schedule2 = network_history_sampling,1,32,network.history.sample="
 method.insert = network.history.auto_scale.toggle, simple|private, "branch=network.history.auto_scale=,\"network.history.auto_scale.set=0\",\"network.history.auto_scale.set=1\""
 method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.history.auto_scale.toggle= ;network.history.refresh="
-branch=pyro.extended=,"schedule = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
+branch=pyro.extended=,"schedule2 = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
 
 # Key bindings for special keys: home, end, pgup, pgdn
-branch=pyro.extended=,"schedule = bind_home,0,0,\"ui.bind_key=download_list,0406,ui.focus.home=\""
-branch=pyro.extended=,"schedule = bind_end, 0,0,\"ui.bind_key=download_list,0550,ui.focus.end=\""
-branch=pyro.extended=,"schedule = bind_pgup,0,0,\"ui.bind_key=download_list,0523,ui.focus.pgup=\""
-branch=pyro.extended=,"schedule = bind_pgdn,0,0,\"ui.bind_key=download_list,0522,ui.focus.pgdn=\""
+branch=pyro.extended=,"schedule2 = bind_home,0,0,\"ui.bind_key=download_list,0406,ui.focus.home=\""
+branch=pyro.extended=,"schedule2 = bind_end, 0,0,\"ui.bind_key=download_list,0550,ui.focus.end=\""
+branch=pyro.extended=,"schedule2 = bind_pgup,0,0,\"ui.bind_key=download_list,0523,ui.focus.pgup=\""
+branch=pyro.extended=,"schedule2 = bind_pgdn,0,0,\"ui.bind_key=download_list,0522,ui.focus.pgdn=\""
 
 # Sets the number of items to skip on pgdn / pgup, default is: 50.
 branch=pyro.extended=,"ui.focus.page_size.set   = \"30\""
@@ -197,7 +197,7 @@ branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle_up_name.set
 ## TORQUE: Daemon watchdog schedule
 ## Must be activated by touching the "~/.pyroscope/run/pyrotorque" file!
 ## Set the second argument to "-v" or "-q" to change log verbosity.
-#schedule = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
+#schedule2 = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
 
 ## TORQUE: View for queue manager job (bound to 'Q' key in rT-PS)
 ## (this is not the buggy internal scheduler controlled by scheduler.max_active)
@@ -205,8 +205,8 @@ branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle_up_name.set
 #branch=pyro.extended=,"view.collapsed.toggle=pyrotorque"
 #view.filter = pyrotorque,false=
 #branch=pyro.extended=,"view.sort_current = pyrotorque,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\""
-#schedule = filter_pyrotorque,1,15,"view.filter = pyrotorque,\"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}\""
-#branch=pyro.extended=,"schedule = bind_pyrotorque,0,0,\"ui.bind_key=download_list,Q,ui.current_view.set=pyrotorque\""
+#schedule2 = filter_pyrotorque,1,15,"view.filter = pyrotorque,\"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}\""
+#branch=pyro.extended=,"schedule2 = bind_pyrotorque,0,0,\"ui.bind_key=download_list,Q,ui.current_view.set=pyrotorque\""
 
 ##### end: Unused pyroscope features #####
 
