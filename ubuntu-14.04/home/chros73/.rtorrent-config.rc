@@ -11,23 +11,23 @@ throttle.global_up.max_rate.set_kb   = 2500
 throttle.max_downloads.global.set = 300
 throttle.max_uploads.global.set   = 300
 
-# Maximum and minimum number of peers to connect to per torrent while downloading (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section of main config file). (min_peers, max_peers)
+# Maximum and minimum number of peers to connect to per torrent while downloading (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favouring section of main config file). (min_peers, max_peers)
 throttle.min_peers.normal.set = 99
 throttle.max_peers.normal.set = 100
 
-# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section of main config file). (min_peers_seed, max_peers_seed)
+# Same as above but for seeding completed torrents (-1 = same as downloading) (seeds per torrent) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favouring section of main config file). (min_peers_seed, max_peers_seed)
 throttle.min_peers.seed.set = -1
 throttle.max_peers.seed.set = -1
 
-# Maximum number of simultanious uploads per torrent. (upload slots!) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favoring section of main config file). (max_uploads)
+# Maximum number of simultanious uploads per torrent. (upload slots!) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favouring section of main config file). (max_uploads)
 throttle.max_uploads.set = 50
 
 # Throttles rates for (groups of) downloads or IP ranges. (throttle_up) These throttles borrow bandwidth from the global throttle and thus are limited by it too.
 #   You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
-#   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favoring section of main config file.)
+#   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favouring section of main config file.)
 throttle.up = slowup,600
 
-# Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favoring section of main config file.
+# Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favouring section of main config file.
 #   cfg.slowup.d.peers_min ~ throttle.min_peers.normal , cfg.slowup.d.peers_max ~ throttle.max_peers.normal , cfg.slowup.d.uploads_max ~ throttle.max_uploads
 method.insert = cfg.slowup.d.peers_min,   value|const,  29
 method.insert = cfg.slowup.d.peers_max,   value|const,  50
