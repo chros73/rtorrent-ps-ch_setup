@@ -16,13 +16,13 @@ import = (cat,"~/.rtorrent",(cfg.postfix),"-config.rc")
 ##### begin: Including PyroScope settings #####
 
 # Set "pyro.extended" to 1 to activate rTorrent-PS features! LEAVE THIS AT 0 IF YOU RUN A VANILLA rTorrent!
-method.insert = pyro.extended,    value|const,  1
+method.insert = pyro.extended,    value|const|private,  1
 
 # Set "pyro.extended.ch" to 1 to activate rTorrent-PS-CH features! LEAVE THIS AT 0 IF YOU DO NOT RUN IT!
-method.insert = pyro.extended.ch, value|const,  1
+method.insert = pyro.extended.ch, value|const|private,  1
 
 # Set "pyro.bin_dir" to the "bin" directory where you installed the pyrocore tools! Make sure you end it with a "/"; if this is left empty, then the shell's path is searched.
-method.insert = pyro.bin_dir, string|const, (cat,"~/bin/")
+method.insert = pyro.bin_dir,     string|const|private, (cat,"~/bin/")
 
 # Helper method to import specified conf file as a parameter from "~/.pyroscope/" directory.
 method.insert = import.pyro.rc, simple, "import=(cat,\"~/.pyroscope/\",(argument.0))"
