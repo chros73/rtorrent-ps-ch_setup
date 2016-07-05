@@ -24,10 +24,10 @@ method.insert = pyro.extended.ch, value|const|private,  1
 # Set "pyro.bin_dir" to the "bin" directory where you installed the pyrocore tools! Make sure you end it with a "/"; if this is left empty, then the shell's path is searched.
 method.insert = pyro.bin_dir,     string|const|private, (cat,"~/bin/")
 
-# Helper method to import specified conf file as a parameter from "~/.pyroscope/" directory.
-method.insert = import.pyro.rc, simple, "import=(cat,\"~/.pyroscope/\",(argument.0))"
+# helper method: to import specified conf file as a parameter from "~/.pyroscope/" directory.
+method.insert = pyro.import, simple, "import=(cat,\"~/.pyroscope/\",(argument.0))"
 # Imports main pyroscope conf "~/.pyroscope/rtorrent-ps.rc" file
-import.pyro.rc = (cat,"rtorrent-ps",(cfg.postfix),".rc")
+pyro.import = (cat,"rtorrent-ps",(cfg.postfix),".rc")
 
 ##### end: Including PyroScope settings #####
 

@@ -29,9 +29,9 @@ throttle.up = slowup,600
 
 # Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favouring section of main config file.
 #   cfg.slowup.d.peers_min ~ throttle.min_peers.normal , cfg.slowup.d.peers_max ~ throttle.max_peers.normal , cfg.slowup.d.uploads_max ~ throttle.max_uploads
-method.insert = cfg.slowup.d.peers_min,   value|const|private,  29
-method.insert = cfg.slowup.d.peers_max,   value|const|private,  50
-method.insert = cfg.slowup.d.uploads_max, value|const|private,  15
+method.insert = cfg.slowup.d.peers_min,   value|private,  29
+method.insert = cfg.slowup.d.peers_max,   value|private,  50
+method.insert = cfg.slowup.d.uploads_max, value|private,  15
 
 # Set the numwant field sent to the tracker, which indicates how many peers we want. A negative value disables this feature. Default: -1 (tracker_numwant)
 trackers.numwant.set = 100
