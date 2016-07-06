@@ -176,6 +176,13 @@ branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.get_data_full_
 view.sort = category
 branch=pyro.extended=,"schedule2 = bind_category,0,0,\"ui.bind_key=download_list,@,ui.current_view.set=category\""
 
+# UI/VIEW: ADD collapsed DELETABLE view  (bound to '?' in rT-PS)     SORT it by DOWNLOADED time, group by 'unsafe_data' desc, THROTTLE desc . Show deletable torrents.
+view.add = deletable
+view.filter = deletable,d.custom=unsafe_data
+branch=pyro.extended=,"view.collapsed.toggle=deletable"
+branch=pyro.extended=,"view.sort_current = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = deletable,greater=d.custom=unsafe_data"
+branch=pyro.extended=,"schedule2 = bind_deletable,0,0,\"ui.bind_key=download_list,?,ui.current_view.set=deletable\""
+
 ### end: Adding new useful views ###
 
 
