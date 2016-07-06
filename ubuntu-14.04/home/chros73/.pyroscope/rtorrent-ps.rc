@@ -203,6 +203,10 @@ branch=pyro.extended=,"ui.focus.page_size.set   = \"30\""
 # UI/KEY: Bind '#' to SEND SCRAPE REQUEST manually (with the help of custom method in main config)
 branch=pyro.extended=,"schedule2 = bind_send_scrape,0,0,\"ui.bind_key=download_list,#,d.last_scrape.send_set=\""
 
+# UI/KEY: Bind '}' to TOGGLE "unsafe_data" ATTRIBUTE: "", "1", "2"   ("2" means in delqueue)
+method.insert = d.toggle_delqueue, simple|private, "branch=\"equal={d.custom=unsafe_data,cat=2}\",d.remove_from_delqueue=,\"branch=d.custom=unsafe_data,d.add_to_delqueue=,d.unsafe_data.set=1\""
+branch=pyro.extended=,"schedule2 = bind_toggle_delqueue,0,0,\"ui.bind_key=download_list,\},d.toggle_delqueue=\""
+
 ### end: Generic keybindings and attributes ###
 
 ##### end: UI related commands and enhancements #####
