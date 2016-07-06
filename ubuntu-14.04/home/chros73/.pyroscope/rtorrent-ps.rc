@@ -200,6 +200,9 @@ branch=pyro.extended=,"schedule2 = bind_pgdn,0,0,\"ui.bind_key=download_list,052
 # UI/ATTRIB: Sets the number of items to skip on pgdn / pgup, default is: 50.
 branch=pyro.extended=,"ui.focus.page_size.set   = \"30\""
 
+# UI/KEY: Bind '#' to SEND SCRAPE REQUEST manually (with the help of custom method in main config)
+branch=pyro.extended=,"schedule2 = bind_send_scrape,0,0,\"ui.bind_key=download_list,#,d.last_scrape.send_set=\""
+
 ### end: Generic keybindings and attributes ###
 
 ##### end: UI related commands and enhancements #####
