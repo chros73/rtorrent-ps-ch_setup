@@ -4,8 +4,16 @@
 
 ##### begin: Defining and including color themes #####
 
+# COMMAND: Defining selectable color theme configs
+method.insert = cfg.theme.0, string|const|private, (cat,"color_scheme256-happy_pastel.rc")
+method.insert = cfg.theme.1, string|const|private, (cat,"color_scheme256-solarized_yellow.rc")
+method.insert = cfg.theme.2, string|const|private, (cat,"color_scheme256-solarized_blue.rc")
+
+# COMMAND: Setting default theme config
+method.insert = pyro.theme.selected, string|private, (cat,(cfg.theme.0))
+
 # IMPORT: Import default color theme from external config
-pyro.import = "color_scheme256-happy_pastel.rc"
+pyro.import = (pyro.theme.selected)
 
 ##### end: Defining and including color themes #####
 
@@ -206,6 +214,12 @@ branch=pyro.extended=,"schedule2 = bind_send_scrape,0,0,\"ui.bind_key=download_l
 # UI/KEY: Bind '}' to TOGGLE "unsafe_data" ATTRIBUTE: "", "1", "2"   ("2" means in delqueue)
 method.insert = d.toggle_delqueue, simple|private, "branch=\"equal={d.custom=unsafe_data,cat=2}\",d.remove_from_delqueue=,\"branch=d.custom=unsafe_data,d.add_to_delqueue=,d.unsafe_data.set=1\""
 branch=pyro.extended=,"schedule2 = bind_toggle_delqueue,0,0,\"ui.bind_key=download_list,\},d.toggle_delqueue=\""
+
+# UI/KEY: Bind '|' to TOGGLE selectable THEMES defined at the top of this config file (Note: if a new theme is added to / removed from the available selection then this logic has to be modified as well!)
+method.insert = pyro.theme.store_set, simple|private, "pyro.import=$cat=$argument.0= ;pyro.theme.selected.set=$argument.0="
+method.insert = pyro.theme.toggle1, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.1=}\",pyro.theme.store_set=$cfg.theme.2=,pyro.theme.store_set=$cfg.theme.0="
+method.insert = pyro.theme.toggle0, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.0=}\",pyro.theme.store_set=$cfg.theme.1=,pyro.theme.toggle1="
+branch=pyro.extended=,"schedule2 = bind_toggle_theme,0,0,\"ui.bind_key=download_list,|,pyro.theme.toggle0=\""
 
 ### end: Generic keybindings and attributes ###
 
