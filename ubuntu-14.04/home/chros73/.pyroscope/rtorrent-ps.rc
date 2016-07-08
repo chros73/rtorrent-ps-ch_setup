@@ -203,7 +203,7 @@ view.filter = deletable,d.custom=unsafe_data
 branch=pyro.extended=,"view.collapsed.toggle=deletable"
 branch=pyro.extended=,"view.sort_new     = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_new     = deletable,greater=d.custom=unsafe_data"
 branch=pyro.extended=,"view.sort_current = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = deletable,greater=d.custom=unsafe_data"
-branch=pyro.extended=,"schedule2 = bind_deletable,0,0,\"ui.bind_key=download_list,?,ui.current_view.set=deletable\""
+branch=pyro.extended=,"schedule2 = bind_deletable,0,0,\"ui.bind_key=download_list,?,\\\"ui.current_view.set=deletable ;view.sort=deletable\\\"\""
 
 ### end: Adding new useful views ###
 
