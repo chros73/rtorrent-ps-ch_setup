@@ -114,23 +114,26 @@ branch=pyro.extended=,"view.sort_current = hashing,\"compare=++,d.throttle_name=
 
 # UI/VIEW: SORT the collapsed SEEDING view (view #8) by the UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by upload speed desc.
+view.filter = seeding,"and={d.complete=,d.peers_connected=}"
 branch=pyro.extended=,"view.collapsed.toggle=seeding"
 branch=pyro.extended=,"view.sort_new     = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_new     = seeding,greater=d.up.rate="
 branch=pyro.extended=,"view.sort_current = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_current = seeding,greater=d.up.rate="
-schedule2 = filter_sort_seeding,12,20,"view.filter = seeding,\"and={d.complete=,d.peers_connected=}\" ;view.sort=seeding"
+schedule2 = sort_filter_seeding,12,20,((view.sort,seeding))
 
 # UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by download and then upload speed desc.
+view.filter = leeching,"and={not=$d.complete=,d.peers_connected=}"
 branch=pyro.extended=,"view.sort_new     = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = leeching,greater=d.down.rate="
 branch=pyro.extended=,"view.sort_current = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = leeching,greater=d.down.rate="
-schedule2 = filter_sort_leeching,12,20,"view.filter = leeching,\"and={not=$d.complete=,d.peers_connected=}\" ;view.sort=leeching"
+schedule2 = sort_filter_leeching,12,20,((view.sort,leeching))
 
 # UI/VIEW: SORT the collapsed ACTIVE view (view #0) by DOWNLOAD, UPLOAD SPEED desc, group by OPEN desc, THROTTLE, COMPLETE desc. Show active, incomplete torrents and update it in every 20 seconds
 # Items are grouped by whether they are open and throttle (e.g. slowup). Each group is devided again into subgroups complete, incomplete, in that order. Each subgroup is sorted by download and then upload speed desc.
+view.filter = active,"or={d.up.rate=,d.down.rate=,not=$d.complete=}"
 branch=pyro.extended=,"view.collapsed.toggle=active"
 branch=pyro.extended=,"view.sort_new     = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_new     = active,greater=d.up.rate="
 branch=pyro.extended=,"view.sort_current = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_current = active,greater=d.up.rate="
-schedule2 = filter_sort_active,12,20,"view.filter = active,\"or={d.up.rate=,d.down.rate=,not=$d.complete=}\" ;view.sort=active"
+schedule2 = sort_filter_active,12,20,((view.sort,active))
 
 ### end: Modifications for default views ###
 
@@ -149,7 +152,7 @@ view.filter = messages,d.message=
 branch=pyro.extended=,"view.collapsed.toggle=messages"
 branch=pyro.extended=,"view.sort_new     = messages,\"compare=+-+,d.throttle_name=,d.message=,d.custom=tm_downloaded\"","view.sort_new     = messages,greater=d.message="
 branch=pyro.extended=,"view.sort_current = messages,\"compare=+-+,d.throttle_name=,d.message=,d.custom=tm_downloaded\"","view.sort_current = messages,greater=d.message="
-method.insert = ui.messages.show,simple,"ui.current_view.set=messages ;view.filter=messages,d.message= ;view.sort=messages ;print=$view.size=messages,\" message(s)!\""
+method.insert = ui.messages.show,simple,"ui.current_view.set=messages ;view.sort=messages ;print=$view.size=messages,\" message(s)!\""
 branch=pyro.extended=,"schedule2 = bind_messages,0,0,\"ui.bind_key=download_list,!,ui.messages.show=\""
 
 # UI/VIEW: ADD collapsed TRACKERS view  (bound to 't' in rT-PS)     SORT it by DOWNLOADED TIME desc, group by DOMAIN
@@ -270,11 +273,11 @@ branch=pyro.extended=,"schedule2 = bind_toggle_theme,0,0,\"ui.bind_key=download_
 
 ## TORQUE/UI/VIEW: ADD collapsed PYROTORQUE view for queue manager job  (bound to 'Q' key in rT-PS)  SORT it by UPLOAD SPEED desc, group by OPEN desc, THROTTLE, COMPLETE desc, DOWNLOAD SPEED desc. Show active, incomplete torrents and update it in every 15 seconds.
 #view.add = pyrotorque
-#view.filter = pyrotorque,false=
+#view.filter = pyrotorque,"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}"
 #branch=pyro.extended=,"view.collapsed.toggle=pyrotorque"
 #branch=pyro.extended=,"view.sort_new     = pyrotorque,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_new     = pyrotorque,greater=d.up.rate="
 #branch=pyro.extended=,"view.sort_current = pyrotorque,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_current = pyrotorque,greater=d.up.rate="
-#schedule2 = filter_sort_pyrotorque,1,15,"view.filter = pyrotorque,\"or={d.up.rate=,d.down.rate=,d.peers_connected=,not=$d.complete=}\""
+#schedule2 = sort_filter_pyrotorque,1,15,"view.sort=pyrotorque"
 #branch=pyro.extended=,"schedule2 = bind_pyrotorque,0,0,\"ui.bind_key=download_list,Q,ui.current_view.set=pyrotorque\""
 
 ##### end: Unused pyroscope features #####
