@@ -51,7 +51,7 @@ method.set_key = event.download.paused,activations,"pyro.activations.append=P"
 method.set_key = event.download.resumed,activations,"pyro.activations.append=R"
 
 # EVENTS: Timestamp 'tm_downloaded' (time when meta (torrent) file was downloaded)
-method.insert = d.tm_downloaded, simple, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,(d.tied_to_file)"
+method.insert = d.tm_downloaded, simple|private, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,(d.tied_to_file)"
 method.insert = d.tm_downloaded.set, simple|private, "d.custom.set=tm_downloaded,(cat,(d.tm_downloaded)); d.save_full_session="
 method.set_key = event.download.inserted_new, set_downloaded_date, ((d.tm_downloaded.set))
 
