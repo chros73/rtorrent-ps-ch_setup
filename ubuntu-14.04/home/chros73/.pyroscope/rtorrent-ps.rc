@@ -27,6 +27,9 @@ branch=pyro.extended=,print=rTorrent-PS\\\ features\\\ active!,print=rTorrent-PS
 # COMMAND: Return startup time (can be used to calculate uptime)
 method.insert = startup_time,value|const,$system.time=
 
+# COMMAND: Returns uptime (with the help of getUptime.sh script) in the form of "Up: 6 years, 5 months, 18 days, 02:39:57" (year/month info isn't shown if their value is 0)
+method.insert = uptime, simple, "print=\"$execute.capture=\\\"$cat=$pyro.bin_dir=,getUptime.sh\\\",$system.time=,$startup_time=\""
+
 # EVENTS: Timestamps: 'tm_loaded' (time loaded into client), 'tm_started' (time of *first* start), 'tm_completed' (time of completion)
 method.insert  = pyro.tm_started.now,simple|private,"d.custom.set=tm_started,$cat=$system.time= ;d.save_full_session="
 method.set_key = event.download.resumed,time_stamp_r,"branch=d.custom=tm_started,false=,pyro.tm_started.now="
