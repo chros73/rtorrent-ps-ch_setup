@@ -12,10 +12,14 @@ let difftimestamp=$1-$2;
 [ "$difftimestamp" -lt 0 ] && difftimestamp=0;
 
 
-# get year, month, day with 'date' util to get accurate result
-YEARD=$(date -d @$difftimestamp '+%y');
-MONTHD=$(date -d @$difftimestamp '+%m');
-DAYD=$(date -d @$difftimestamp '+%d');
+# get year, month, day numbers as one string with 'date' util to get accurate result
+DATESTR=$(date -d @$difftimestamp '+%y:%m,%d');
+
+# get year, month, day values out of it
+YEARD=${DATESTR%:*};
+MONTHYEARD=${DATESTR%,*};
+MONTHD=${MONTHYEARD##*:};
+DAYD=${DATESTR##*,};
 
 # get the correct numbers: substract appropriate numbers from the above values
 YEAR=$((YEARD-70));
