@@ -1,5 +1,4 @@
 #!/bin/bash
-#
 # Backup session directory of rtorrent
 # Usage: doBackup.sh
 

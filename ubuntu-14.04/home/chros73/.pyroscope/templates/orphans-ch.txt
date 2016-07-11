@@ -1,0 +1,44 @@
+{{# This template lists all paths in the main directory NOT loaded into the client.
+
+    Use it like this:
+        rtcontrol -qO orphans-ch.txt \*
+}}{{py:
+global os, fmt, subprocess
+from pyrocore.util import os,fmt
+import subprocess
+
+def du(path):
+    """disk usage in Bytes"""
+    return int(subprocess.check_output(['du','-sB1', path]).split()[0])
+
+main_dir = '/mnt/Torrents/'
+incomplete_dir = main_dir + '.rtorrent/incomplete/'
+
+entries = []
+entriessizes = {}
+allsize = 0
+
+# List all entries in all the category directories
+for i in os.listdir(main_dir):
+    if not i.startswith('.') and os.path.isdir(os.path.join(main_dir,i)):
+        for j in os.listdir(os.path.join(main_dir, i)):
+            entries.append(os.path.join(main_dir, i, j))
+
+# Adding incomlete_dir entries to the list
+for i in os.listdir(incomplete_dir):
+    entries.append(os.path.join(incomplete_dir, i))
+
+# From that list, remove everything loaded in the client
+for d in matches:
+    for i in entries:
+        if d.path == i.decode('utf-8') or d.directory == i.decode('utf-8'):
+            entries.remove(i)
+
+# Adding size info to the remianing entries and sum them up
+for i in entries:
+    entriessizes[i] = du(i)
+    allsize += entriessizes[i]
+
+}}{{for i in sorted(entriessizes)}} {{fmt.human_size(entriessizes[i])}} - {{i.decode('utf-8').replace(main_dir,'')}}
+{{endfor}}{{if bool(entriessizes)}} 
+Orphaned data size:{{fmt.human_size(allsize)}}{{endif}}
