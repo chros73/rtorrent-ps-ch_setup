@@ -1,0 +1,5 @@
+HOMEBIN="/home/chros73/bin"
+
+# run backup script every night at 01:17 , dismiss any errors
+17 1 * * * 	chros73	"$HOMEBIN/doBackup.sh" > /dev/null 2>&1
+
