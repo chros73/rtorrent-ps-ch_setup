@@ -10,7 +10,7 @@ MAILUTILSSCRIPT="mailutils.sh"
 
 
 # subject of email report
-REPORTSUBJECT="List of Stucked torrents in 'incomplete' dir"
+REPORTSUBJECT="List of Stuck torrents in 'incomplete' dir"
 
 # text for email at the beginning
 REPORTBODY="There are stuck torrents in 'incomplete' directory, manual interaction is required.\n"
