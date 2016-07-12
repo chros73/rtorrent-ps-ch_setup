@@ -2,6 +2,6 @@ HOMEBIN="/home/chros73/bin"
 
 # run backup script every night at 01:17 , dismiss any errors
 17 1 * * * 	chros73	"$HOMEBIN/doBackup.sh" > /dev/null 2>&1
-# run listing all orphaned data in every 10 days at 04:48
-48 4 */10 * *	chros73	"$HOMEBIN/listOrphans.sh"
+# run report of listing all orphaned data in every 10 days at 05:48
+48 5 */10 * *	chros73	"$HOMEBIN/reportOrphans.sh"
 

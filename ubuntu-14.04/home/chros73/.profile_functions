@@ -1,0 +1,16 @@
+#!/bin/bash
+# ~/.profile_functions: this will be included in ~/.profile or can be included in any script
+# It contains alises like useful functions.
+
+
+# python template file to generate the list
+RTORPHANSTEMPLATE="orphans-ch.txt"
+
+
+# list orphaned torrents
+rtlistOrphans () {
+    $HOME/bin/rtcontrol -qO $RTORPHANSTEMPLATE \*
+}
+
+
+

@@ -6,18 +6,24 @@
 #  - can check mount point with 'checkMountPoint' function (with cookies)
 #  - can check free space on device and can report it
 #  - can check if rtorrent is running, if not then it starts it in tmux
+#  - can prepare an email report based upon a function multiline output
 #  - certain parts can be enabled/disabled
 # Including usage in a main script: . "${BASH_SOURCE%/*}/mailutils.sh"
 
 
 # gets home directory (either if main script was run manually or from cron)
 HOMEDIR="${BASH_SOURCE%/*}/.."
+# check for valid HOME entry if not then set it (useful if it runs from cron)
+[ -z "$HOME" ] && HOME="$HOMEDIR"
+# include common rT helper functions
+. "$HOMEDIR/.profile_functions"
+
 
 ###### begin: Edit ######
 # directory that is mounted
 MOUNTDIR="/media/chros73/wdred"
 # mount point of the above directory
-CHECKDIR="$MOUNTDIR/Torrents"
+RTHOME="/mnt/Torrents"
 
 # email_from field when script sends email
 EMAILFROM="username@gmail.com"
@@ -46,7 +52,10 @@ SKIPFREESPACEMSG=false
 SSMTPBIN="/usr/sbin/ssmtp"
 # numfmt command with switches (converting numbers regarding to sizes)
 NUMFMT=(numfmt --to=iec-i --suffix=B --format="%3f")
-
+# full path to rtcontrol util
+RTCONTROLBIN="$HOMEDIR/bin/rtcontrol"
+# full path to rtxmlrpc util
+RTXMLRPCBIN="$HOMEDIR/bin/rtxmlrpc"
 
 
 # store the original IFS value and change it to newline char
@@ -91,7 +100,7 @@ checkMountPoint () {
     FREESPACE=`df -P --block-size=1 "$MOUNTDIR" | grep "$MOUNTDIR" | awk '{print $4}'`
     MAILHELPERMOUNTVALORIG=`cat $MAILHELPERMOUNT`
     # check for device is being dropped
-    if [ "$FREESPACE" == "" ] || [ ! -d "$CHECKDIR" ] ; then
+    if [ "$FREESPACE" == "" ] || [ ! -L "$RTHOME" ] || [ ! -e "$RTHOME" ] ; then
 	MAILHELPERMOUNTVAL=true
 	# prepare email about this error only if it wasn't sent already
 	if [ ! "$MAILHELPERMOUNTVALORIG" = true ]; then
@@ -109,6 +118,30 @@ checkMountPoint () {
     fi
     # set mounting cookie
     [[ ! "$MAILHELPERMOUNTVALORIG" = "$MAILHELPERMOUNTVAL" ]] && writeHelper $MAILHELPERMOUNTVAL $MAILHELPERMOUNT
+}
+
+
+# Function: Prepares an email for reports based upon a function multiline output
+# Usage: prepareReport FUNCTION ["String of subject of email"] ["String of body of email"] (e.g.: addMsg rtlistOrphans "List of Orphaned torrents" "There are orphaned torrents, manual interaction is required.")
+prepareReport () {
+    # do nothing if there's no function specified (1st param)
+    if [ "$1" == "" ]; then
+	return
+    fi
+    # get multiline output of a function (1st param) into array
+    LISTOFDATA=($("$1"))
+    # checking for any result: if there is then prepare the email
+    if [ -n "$LISTOFDATA" ]; then
+	EMAILSEND=true
+	# adding subject field (2nd param) if it was specified
+	[ "$2" != "" ] && addMsg SUBJECT "$2"
+	# adding extra text (3rd param) at the beginning of body if it was specified
+	[ "$3" != "" ] && addMsg MSG "$3"
+	# adding entries in array to email body line by line
+	for ROW in "${LISTOFDATA[@]}"; do
+	    addMsg MSG "$ROW"
+	done
+    fi
 }
 
 

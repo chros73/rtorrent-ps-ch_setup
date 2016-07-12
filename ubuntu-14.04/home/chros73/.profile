@@ -23,6 +23,9 @@ fi
 
 PATH="/home/chros73/bin:$PATH"
 
+# include common alises like functions and export them
+. ~/.profile_functions && export -f rtlistOrphans
+
 # Automatically reattach the rtorrent session or create a new one only if STDIN is a terminal (we are using interactive mode)
 if [ -t 0 ] && [ -z "$TMUX" ]; then 
     tmux -2u new-session -A -s rtorrent 

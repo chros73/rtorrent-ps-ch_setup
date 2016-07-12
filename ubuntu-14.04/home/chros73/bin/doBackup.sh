@@ -24,8 +24,6 @@ OF="$(date +%Y%m%d_%H%M)-session.tar.gz"
 ###### end: Edit ######
 
 
-# full path to rtxmlrpc util
-RTXMLRPC="$HOMEDIR/bin/rtxmlrpc"
 # do not report free space
 SKIPFREESPACEMSG=true
 
@@ -33,7 +31,7 @@ SKIPFREESPACEMSG=true
 # checking for mounting problems
 if [ ! "$MAILHELPERMOUNTVAL" = true ]; then
     # save session before backup if rtxmlrpc util exists then wait for 5 seconds to be able to complete it
-    [ -L "$RTXMLRPC" ] && "$RTXMLRPC" session.save &>/dev/null && sleep 5
+    [ -L "$RTXMLRPCBIN" ] && "$RTXMLRPCBIN" session.save &>/dev/null && sleep 5
     # backup session directory of rtorrent
     tar -czf "$OUTPUT_DIR/$OF" --exclude-from="$HOMEDIR/bin/$EXCLUDECONF" --files-from "$HOMEDIR/bin/$INCLUDECONF"
 
