@@ -4,4 +4,10 @@ HOMEBIN="/home/chros73/bin"
 17 1 * * * 	chros73	"$HOMEBIN/doBackup.sh" > /dev/null 2>&1
 # run report of listing all orphaned data in every 10 days at 05:48
 48 5 */10 * *	chros73	"$HOMEBIN/reportOrphans.sh"
+# run report of listing torrents with unusual trackers messages every day at 05:49
+49 5 * * *	chros73	"$HOMEBIN/reportMessages.sh"
+# run report of listing stuck torrents in incomplete directory every day at 05:53
+53 5 * * *	chros73	"$HOMEBIN/reportStuck.sh"
+# run report of listing stopped torrents every day at 05:54
+54 5 * * *	chros73	"$HOMEBIN/reportStopped.sh"
 
