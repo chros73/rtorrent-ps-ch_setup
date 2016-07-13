@@ -4,7 +4,7 @@
 
 
 # include the helper script
-. "${BASH_SOURCE%/*}/mailutils.sh"
+. "${BASH_SOURCE%/*}/rtUtils.sh"
 
 ###### begin: Edit ######
 # reserve only the last 10 backups
@@ -21,9 +21,6 @@ OUTPUT_DIR="$MOUNTDIR/$OUTPUT_DEVDIR"
 OF="$(date +%Y%m%d_%H%M)-session.tar.gz"
 ###### end: Edit ######
 
-
-# do not report free space
-SKIPFREESPACEMSG=true
 
 
 # checking for mounting problems

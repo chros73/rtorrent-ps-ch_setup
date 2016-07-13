@@ -4,7 +4,7 @@
 
 
 # include the helper script
-. "${BASH_SOURCE%/*}/mailutils.sh"
+. "${BASH_SOURCE%/*}/rtUtils.sh"
 
 # subject of email report
 REPORTSUBJECT="List of Stopped torrents"

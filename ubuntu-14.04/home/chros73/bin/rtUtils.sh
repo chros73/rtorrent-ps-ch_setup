@@ -8,7 +8,7 @@
 #  - can check if rtorrent is running, if not then it starts it in tmux
 #  - can prepare an email report based upon a function multiline output
 #  - certain parts can be enabled/disabled
-# Including usage in a main script: . "${BASH_SOURCE%/*}/mailutils.sh"
+# Including usage in a main script: . "${BASH_SOURCE%/*}/rtUtils.sh"
 
 
 # include common rT helper functions/variables
@@ -26,9 +26,10 @@ EMAILTO="$EMAILFROM"
 SUBJECT="U -"
 ###### end: Edit ######
 
-
+# directory for cookies used bt scripts
+RTCOOKIESDIR="$HOME/.rtcookies"
 # cookie file for storing mounting errors
-MAILHELPERMOUNT="$HOME/.helpers/mount.txt"
+MAILHELPERMOUNT="$RTCOOKIESDIR/flag-mount"
 # initail string of body of email (more info can be added later to it)
 MSG=""
 # flag for sending email or not
