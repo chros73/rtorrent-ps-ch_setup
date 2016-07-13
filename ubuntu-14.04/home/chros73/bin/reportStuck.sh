@@ -3,11 +3,8 @@
 # Usage: reportStuck.sh
 
 
-# name of helper script that will be included
-MAILUTILSSCRIPT="mailutils.sh"
-# include the script
-. "${BASH_SOURCE%/*}/$MAILUTILSSCRIPT"
-
+# include the helper script
+. "${BASH_SOURCE%/*}/mailutils.sh"
 
 # subject of email report
 REPORTSUBJECT="List of Stuck torrents in 'incomplete' dir"

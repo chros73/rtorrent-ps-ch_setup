@@ -3,10 +3,8 @@
 # Usage: doBackup.sh
 
 
-# name of helper script that will be included
-MAILUTILSSCRIPT="mailutils.sh"
 # include the helper script
-. "${BASH_SOURCE%/*}/$MAILUTILSSCRIPT"
+. "${BASH_SOURCE%/*}/mailutils.sh"
 
 ###### begin: Edit ######
 # reserve only the last 10 backups
@@ -33,7 +31,7 @@ if [ ! "$MAILHELPERMOUNTVAL" = true ]; then
     # save session before backup if rtxmlrpc util exists then wait for 5 seconds to be able to complete it
     [ -L "$RTXMLRPCBIN" ] && "$RTXMLRPCBIN" session.save &>/dev/null && sleep 5
     # backup session directory of rtorrent
-    tar -czf "$OUTPUT_DIR/$OF" --exclude-from="$HOMEDIR/bin/$EXCLUDECONF" --files-from "$HOMEDIR/bin/$INCLUDECONF"
+    tar -czf "$OUTPUT_DIR/$OF" --exclude-from="$HOME/bin/$EXCLUDECONF" --files-from "$HOME/bin/$INCLUDECONF"
 
     # delete old backups if the backup was successful
     if [ $? -eq 0 ] ; then

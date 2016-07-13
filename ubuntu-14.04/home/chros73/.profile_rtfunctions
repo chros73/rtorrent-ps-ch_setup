@@ -1,16 +1,15 @@
 #!/bin/bash
-# ~/.profile_functions: this will be included in ~/.profile or can be included in any script
+# ~/.profile_rtfunctions: this will be included in ~/.profile or can be included in any script
 # It contains alises like useful functions.
 
 
+# define base dir for torrents
+RTHOME="/mnt/Torrents"
+
 # python template file to generate the list
 RTORPHANSTEMPLATE="orphans-ch.txt"
-
-# define base dir for torrents (again) if it doesn't exist
-[ -z "$RTHOME" ] && RTHOME="/mnt/Torrents"
-
-# define incomplete dir (again) if it doesn't exist
-[ -z "$INCOMPLETEDIR" ] && INCOMPLETEDIR="$RTHOME/.rtorrent/incomplete"
+# define incomplete dir
+RTINCOMPLETEDIR="$RTHOME/.rtorrent/incomplete"
 
 
 # list orphaned torrents
@@ -21,7 +20,7 @@ rtlistOrphans () {
 
 # list stuck torrents in incomplete directory
 rtlistStuck () {
-    $HOME/bin/rtcontrol --column-headers --stats -qo size.sz,name,alias is_complete=yes "path=$INCOMPLETEDIR/*" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --column-headers --stats -qo size.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 

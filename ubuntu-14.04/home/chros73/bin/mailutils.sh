@@ -11,19 +11,12 @@
 # Including usage in a main script: . "${BASH_SOURCE%/*}/mailutils.sh"
 
 
-# gets home directory (either if main script was run manually or from cron)
-HOMEDIR="${BASH_SOURCE%/*}/.."
-# check for valid HOME entry if not then set it (useful if it runs from cron)
-[ -z "$HOME" ] && HOME="$HOMEDIR"
-# include common rT helper functions
-. "$HOMEDIR/.profile_functions"
-
+# include common rT helper functions/variables
+. "$HOME/.profile_rtfunctions"
 
 ###### begin: Edit ######
 # directory that is mounted
 MOUNTDIR="/media/chros73/wdred"
-# mount point of the above directory
-RTHOME="/mnt/Torrents"
 
 # email_from field when script sends email
 EMAILFROM="username@gmail.com"
@@ -35,16 +28,13 @@ SUBJECT="U -"
 
 
 # cookie file for storing mounting errors
-MAILHELPERMOUNT="$HOMEDIR/.helpers/mount.txt"
+MAILHELPERMOUNT="$HOME/.helpers/mount.txt"
 # initail string of body of email (more info can be added later to it)
 MSG=""
 # flag for sending email or not
 EMAILSEND=false
 # flag for mounting errors (false mmeans no error)
 MAILHELPERMOUNTVAL=false
-
-# flag for skipping mounting check (true means skipping)
-SKIPCHECKMOUNTPOINT=false
 # flag for skipping free space reporting (true means skipping)
 SKIPFREESPACEMSG=false
 
@@ -53,9 +43,9 @@ SSMTPBIN="/usr/sbin/ssmtp"
 # numfmt command with switches (converting numbers regarding to sizes)
 NUMFMT=(numfmt --to=iec-i --suffix=B --format="%3f")
 # full path to rtcontrol util
-RTCONTROLBIN="$HOMEDIR/bin/rtcontrol"
+RTCONTROLBIN="$HOME/bin/rtcontrol"
 # full path to rtxmlrpc util
-RTXMLRPCBIN="$HOMEDIR/bin/rtxmlrpc"
+RTXMLRPCBIN="$HOME/bin/rtxmlrpc"
 
 
 # store the original IFS value and change it to newline char
@@ -155,7 +145,7 @@ checkForEmailSending () {
 
 
 
-# Main script: It will check moint point and check if an email must be sent only if it was asked for it
+# Main script: It will check moint point and check if an email must be sent only if it was asked for it (note: SKIPCHECKMOUNTPOINT hasn't been declared in this script, to be able to ovverride it from a sourcing script!)
 if [ ! "$SKIPCHECKMOUNTPOINT" = true ] ; then
     checkMountPoint
     checkForEmailSending
