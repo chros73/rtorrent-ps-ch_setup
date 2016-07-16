@@ -112,10 +112,16 @@ checkRtStatus () {
 }
 
 
+# Function: get free space on device in Byte
+getFreeSpace () {
+    df -P --block-size=1 "$MOUNTDIR" | grep "$MOUNTDIR" | awk '{print $4}'
+}
+
+
 # Function: Checks mount point and sends email if device is lost, also can report free space info on device
 checkMountPoint () {
     # get free space in Byte
-    FREESPACE=`df -P --block-size=1 "$MOUNTDIR" | grep "$MOUNTDIR" | awk '{print $4}'`
+    FREESPACE=($(getFreeSpace))
     local MAILHELPERMOUNTVALORIG=`cat $MAILHELPERMOUNT`
     MAILHELPERMOUNTVAL=false
     # check for dropped device
