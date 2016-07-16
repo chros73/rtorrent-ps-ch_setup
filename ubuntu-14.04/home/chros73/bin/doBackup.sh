@@ -25,8 +25,8 @@ OF="$(date +%Y%m%d_%H%M)-session.tar.gz"
 
 # checking for mounting problems
 if [ ! "$MAILHELPERMOUNTVAL" = true ]; then
-    # save session before backup if rtxmlrpc util exists then wait for 5 seconds to be able to complete it
-    [ -L "$RTXMLRPCBIN" ] && "$RTXMLRPCBIN" session.save &>/dev/null && sleep 5
+    # save session before backup if rtxmlrpc util exists and rtorrent is running then wait for 5 seconds to be able to complete it
+    [ -L "$RTXMLRPCBIN" ] && [ ! "$MAILHELPERRTSTATUSVAL" = true ] && "$RTXMLRPCBIN" session.save &>/dev/null && sleep 5
     # backup session directory of rtorrent
     tar -czf "$OUTPUT_DIR/$OF" --exclude-from="$HOME/bin/$EXCLUDECONF" --files-from "$HOME/bin/$INCLUDECONF"
 
