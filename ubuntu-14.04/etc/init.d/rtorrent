@@ -31,7 +31,7 @@ NAME=rtorrent
 DDIR="/opt/rtorrent/bin"
 DAEMON=$NAME
 SCRIPTNAME=/etc/init.d/$NAME
-RTXMLRPC="$base/bin/rtxmlrpc"
+RTXMLRPCBIN="$base/bin/rtxmlrpc"
 
 
 
@@ -80,7 +80,7 @@ d_stop() {
     pid=$(status)
     if [ "$pid" != "" ]; then
 	# save session before stopping explicitly (just in case) if rtxmlrpc util exists then wait for 5 seconds to be able to complete it
-	[ -L "$RTXMLRPC" ] && "$RTXMLRPC" session.save &>/dev/null && sleep 5
+	[ -L "$RTXMLRPCBIN" ] && "$RTXMLRPCBIN" session.save &>/dev/null && sleep 5
 	# INT (2, Interrupt from keyboard): normal shutdown ; TERM (15, Termination signal): quick shutdown
 	kill -s INT $pid
     fi
