@@ -43,21 +43,20 @@ allup=${2%.*};
 slowup=${3%.*};
 maxslowup=${4%.*};
 
-# checking parameters
-if [ ! $# -ge 3 ] && ([ ! "$action" == "up" ] || [ ! "$action" == "down" ] || [ ! "$action" == "info" ]); then
-    echo -n "";
-    exit 0;
-fi;
 
-# get mainup speed
-let mainup=${allup// /}-${slowup// /};
-if [ "$mainup" -lt 0 ]; then
-    mainup=0;
-fi;
+# Function: get mainup speed
+getMainUp () {
+    let local mainup=${allup// /}-${slowup// /};
+    if [ "$mainup" -lt 0 ]; then
+	mainup=0;
+    fi;
+    echo -e $mainup
+}
 
-# getting up limit
-if [ "$action" == "up" ]; then
-    let newslowup=${sluplimit// /}-${mainup// /};
+
+# Function: get up speed limit for slowup throttle group
+up () {
+    let local newslowup=${sluplimit// /}-${mainup// /};
     if [ "$newslowup" -gt "$sluplimit" ]; then
 	echo -n $sluplimit;
     elif [ "$newslowup" -gt "$sldownlimit" ]; then
@@ -65,14 +64,33 @@ if [ "$action" == "up" ]; then
     else
 	echo -n $sldownlimit;
     fi
-# getting down limit
-elif [ "$action" == "down" ]; then
+}
+
+
+# Function: get global down speed limit
+down () {
     if [ "$allup" -gt "$alluplimit" ] && [ "$mainup" -gt "$mainuplimit" ] ; then
 	echo -n $gldownlimitmin;
     else
 	echo -n $gldownlimitmax;
     fi;
-# getting info
-elif [ "$action" == "info" ]; then
+}
+
+
+# Function: get info about speed and limits
+info () {
     echo -n "MainUpRate: $mainup , ThrottleUpRate: $slowup , ThrottleLimit: $maxslowup"
+}
+
+
+
+# Main script: checks parameters and fires up one of the actions
+if [ ! $# -ge 3 ] && ([ ! "$action" == "up" ] || [ ! "$action" == "down" ] || [ ! "$action" == "info" ]); then
+    echo -n "";
+    exit 0;
+else
+    mainup=$(getMainUp)
+    $1
 fi;
+
+
