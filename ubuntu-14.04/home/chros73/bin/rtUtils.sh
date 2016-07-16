@@ -5,7 +5,7 @@
 #  - generic 'addMsg', 'writeHelper', 'sendEmail' functions
 #  - can check mount point with 'checkMountPoint' function (with cookies)
 #  - can check free space on device and can report it
-#  - can check if rtorrent is running, if not then it starts it in tmux
+#  - can check if rtorrent is running, if not then it starts it in tmux (with cookies)
 #  - can prepare an email report based upon a function multiline output
 #  - certain parts can be enabled/disabled
 # Including usage in a main script: . "${BASH_SOURCE%/*}/rtUtils.sh"
@@ -30,15 +30,22 @@ SUBJECT="U -"
 RTCOOKIESDIR="$HOME/.rtcookies"
 # cookie file for storing mounting errors
 MAILHELPERMOUNT="$RTCOOKIESDIR/flag-mount"
+# cookie file for storing rtorrent status errors
+MAILHELPERRTSTATUS="$RTCOOKIESDIR/flag-status"
+
 # initail string of body of email (more info can be added later to it)
 MSG=""
 # flag for sending email or not
 EMAILSEND=false
-# flag for mounting errors (false mmeans no error)
+# flag for mounting errors (false means no error)
 MAILHELPERMOUNTVAL=false
+# flag for rtorrent errors (false means no error)
+MAILHELPERRTSTATUSVAL=false
 # flag for skipping free space reporting (true means skipping)
 SKIPFREESPACEMSG=false
 
+# full path to rtorrent init script: you have to set it to be able to use it without password!
+RTINITSCRIPT="/etc/init.d/rtorrent"
 # full path to ssmtp util
 SSMTPBIN="/usr/sbin/ssmtp"
 # numfmt command with switches (converting numbers regarding to sizes)
@@ -49,17 +56,12 @@ RTCONTROLBIN="$HOME/bin/rtcontrol"
 RTXMLRPCBIN="$HOME/bin/rtxmlrpc"
 
 
-# store the original IFS value and change it to newline char
-OIFS=$IFS
-IFS=$'\n'
 
-
-# Function: Adds a string to an existing variable
+# Function: Adds a string to an existing string variable
 # Usage: addMsg VAR "String of text" (e.g.: addMsg MSG "Error: Backup!")
 addMsg () {
-    if [ "${!1}" == "" ]; then
-	MSGSEPARATOR=""
-    else
+    local MSGSEPARATOR=""
+    if [ "${!1}" != "" ]; then
 	MSGSEPARATOR="\n"
 	if [ $1 = SUBJECT ]; then
 	    MSGSEPARATOR=" "
@@ -79,9 +81,34 @@ writeHelper () {
 # Function: Sends email based upon the previously set variables
 # Usage: sendEmail "$MESSAGEBODY" (e.g.: sendEmail "$MSG")
 sendEmail () {
-    FULLEMAIL="To: $EMAILTO\nFrom: $EMAILFROM\nSubject: $SUBJECT\n\n$1"
+    local FULLEMAIL="To: $EMAILTO\nFrom: $EMAILFROM\nSubject: $SUBJECT\n\n$1"
     echo -e "$FULLEMAIL" | "$SSMTPBIN" "$EMAILTO"
     exit
+}
+
+
+# Function: check rtorrent status and try to start it if it's not running
+checkRtStatus () {
+    # checking for rtorrent problems: is it running at all? (rtorrent will delete all the data)
+    local MAILHELPERRTSTATUSVALORIG=`cat $MAILHELPERRTSTATUS`
+    MAILHELPERRTSTATUSVAL=false
+    if [ "$(sudo $RTINITSCRIPT status)" == "" ]; then
+	# rtorrent has stopped for some reason, rty to start it then check it again
+	sudo "$RTINITSCRIPT" start > /dev/null
+	sleep 5
+	if [ "$(sudo $RTINITSCRIPT status)" == "" ]; then
+	    # rtorrent still isn't running: prepare a report about this error
+	    MAILHELPERRTSTATUSVAL=true
+	    if [ ! "$MAILHELPERRTSTATUSVALORIG" = true ]; then
+		addMsg SUBJECT "Error: rtorrent is not running!!!!"
+		addMsg MSG "Error in rtorrent: not running for some reason ... :(\n"
+		addMsg MSG "Uptime: $(uptime)"
+		EMAILSEND=true
+	    fi
+	fi
+    fi
+    # set rtorrent status cookie
+    [[ ! "$MAILHELPERRTSTATUSVALORIG" = "$MAILHELPERRTSTATUSVAL" ]] && writeHelper $MAILHELPERRTSTATUSVAL $MAILHELPERRTSTATUS
 }
 
 
@@ -89,8 +116,9 @@ sendEmail () {
 checkMountPoint () {
     # get free space in Byte
     FREESPACE=`df -P --block-size=1 "$MOUNTDIR" | grep "$MOUNTDIR" | awk '{print $4}'`
-    MAILHELPERMOUNTVALORIG=`cat $MAILHELPERMOUNT`
-    # check for device is being dropped
+    local MAILHELPERMOUNTVALORIG=`cat $MAILHELPERMOUNT`
+    MAILHELPERMOUNTVAL=false
+    # check for dropped device
     if [ "$FREESPACE" == "" ] || [ ! -L "$RTHOME" ] || [ ! -e "$RTHOME" ] ; then
 	MAILHELPERMOUNTVAL=true
 	# prepare email about this error only if it wasn't sent already
@@ -103,9 +131,8 @@ checkMountPoint () {
     else
 	# add info about free space on device if it's required
 	[[ ! "$SKIPFREESPACEMSG" = true ]] && addMsg MSG "Free space before action: $(${NUMFMT[@]} $FREESPACE)\n"
-	MAILHELPERMOUNTVAL=false
-	# check if rtorrent is running, if not it starts it in tmux
-	sudo /etc/init.d/rtorrent start > /dev/null
+	# check whether rtorrent is running, if not try to start it in tmux, then check its status again
+	checkRtStatus
     fi
     # set mounting cookie
     [[ ! "$MAILHELPERMOUNTVALORIG" = "$MAILHELPERMOUNTVAL" ]] && writeHelper $MAILHELPERMOUNTVAL $MAILHELPERMOUNT
@@ -120,7 +147,7 @@ prepareReport () {
 	return
     fi
     # get multiline output of a function (1st param) into array
-    LISTOFDATA=($("$1"))
+    local LISTOFDATA=($("$1"))
     # checking for any result: if there is then prepare the email
     if [ -n "$LISTOFDATA" ]; then
 	EMAILSEND=true
@@ -128,10 +155,11 @@ prepareReport () {
 	[ "$2" != "" ] && addMsg SUBJECT "$2"
 	# adding extra text (3rd param) at the beginning of body if it was specified
 	[ "$3" != "" ] && addMsg MSG "$3"
-	# adding entries in array to email body line by line
-	for ROW in "${LISTOFDATA[@]}"; do
-	    addMsg MSG "$ROW"
+	# adding entries from array to email body line by line, dealing with the last line in a special way
+	for ROW in "${LISTOFDATA[@]::${#LISTOFDATA[@]}-1}"; do
+	    addMsg MSG "\t$ROW"
 	done
+	addMsg MSG "${LISTOFDATA[-1]}"
     fi
 }
 
@@ -145,8 +173,11 @@ checkForEmailSending () {
 
 
 
+# Main script: store the original IFS value and change it to newline char
+OIFS=$IFS
+IFS=$'\n'
 
-# Main script: It will check moint point and check if an email must be sent only if it was asked for it (note: SKIPCHECKMOUNTPOINT hasn't been declared in this script, to be able to ovverride it from a sourcing script!)
+# check moint point and check if an email must be sent only if it was asked for it (note: SKIPCHECKMOUNTPOINT hasn't been declared in this script, to be able to override it from a sourcing script!)
 if [ ! "$SKIPCHECKMOUNTPOINT" = true ] ; then
     checkMountPoint
     checkForEmailSending
