@@ -13,8 +13,8 @@ REPORTSUBJECT="List of Stuck torrents in 'incomplete' dir"
 REPORTBODY="There are stuck torrents in 'incomplete' directory, manual interaction is required."
 
 
-# checking for mounting and rtorrent problems and the existence of rtcontrol util
-if [ ! "$MAILHELPERMOUNTVAL" = true ] && [ ! "$MAILHELPERRTSTATUSVAL" = true ] && [ -L "$RTCONTROLBIN" ]; then
+# checking for rtorrent problems and the existence of rtcontrol util
+if [ ! "$MAILHELPERRTSTATUSVAL" = true ] && [ -L "$RTCONTROLBIN" ]; then
     # prepare report and set optional subject and text for potentional email
     prepareReport rtlistStuck "$REPORTSUBJECT" "$REPORTBODY"
 fi
