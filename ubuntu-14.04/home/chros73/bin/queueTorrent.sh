@@ -1,6 +1,7 @@
 #!/bin/bash
 # Queue management script with rotating (deleting data) capability and category support (that can be included into a main script as well)
 # 1. Downloading queue manager: moves meta files from one of the subdirs of .queue dir into one of the subdirs of .downloading dir (so rtorrent can start to download them)
+#   - its top priority is that it shouldn't break rtorrent in any case
 #   - checks how many meta files are in the .downloading dir: means what the number of active downloads is currently and moves the appropriate number of meta files from one of the subdirs of .queue dir
 #   - size of downloading queue and order of processing is configurable
 #   - doesn't move meta file(s) if:
