@@ -4,6 +4,9 @@ HOME="/home/chros73"
 # run queue management script in every 5 minutes
 0-59/5 * * * *	chros73	"$HOME/bin/queueTorrent.sh"
 
+# run a donwload script every 5 minutes instead of running queue script (note: this is disabled on purpose, it's here only for demonstration)
+#2-59/5 * * * *	chros73	"$HOME/bin/sampleDownload.sh"
+
 # run backup script every night at 01:17 , dismiss any errors
 17 1 * * *	chros73	"$HOME/bin/doBackup.sh" > /dev/null 2>&1
 
