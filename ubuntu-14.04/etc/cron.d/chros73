@@ -1,7 +1,12 @@
 HOME="/home/chros73"
 
+
+# run queue management script in every 5 minutes
+0-59/5 * * * *	chros73	"$HOME/bin/queueTorrent.sh"
+
 # run backup script every night at 01:17 , dismiss any errors
 17 1 * * *	chros73	"$HOME/bin/doBackup.sh" > /dev/null 2>&1
+
 # run report of listing all orphaned data in every 10 days at 05:48
 48 5 */10 * *	chros73	"$HOME/bin/reportOrphans.sh"
 # run report of listing torrents with unusual trackers messages every day at 05:49
