@@ -33,7 +33,7 @@ downloadTorrents () {
     # initialize temp download message for the downloaded data: to be able to insert them altogether into email report
     local TEMPMSGDOWN=""
 
-    # fire up some download command and put the metafiles into one of the subdirs of ".queue" dir
+    # fire up some download command and put the metafiles into one of the "rotating", "unsafe" dirs in ".queue" dir (these are involved in auto-rotating)
 
     # prepare email report about them
     for DOWNLOAD in ${DOWNLOADS[@]}; do
