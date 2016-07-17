@@ -2,13 +2,24 @@
 
 ### Connect to Samba share
 
-If we don't have a name server in our local network then an entry must be put in `C:\Windows\System32\drivers\etc\hosts`.
+If we don't have a name server in our local network then an entry must be put in `C:\Windows\System32\drivers\etc\hosts` for our Ubuntu machine.
 
-After that we can attach it with the following command:
+After that we can map the drive from Windows Explorer (see [#70](https://github.com/chros73/rtorrent-ps_setup/issues/70)):
+* set drive: `U:` , share: `\\ubuntu\wd3`
+* check the boxes for `Reconnect at sign-in` and `Connect using different credentials`
+* user: `chrosGX620lan\chros73` , pass: `foo` , check `Remember credentials`
 
-```
-net use U: \\ubuntu\wd3 /USER:chros73 foo /PERSISTENT:Yes
-```
+
+### Connect via FTP
+
+[FileZilla](https://filezilla-project.org/download.php) is a pretty flexible, opensource FTP client and it's available for every major OS. More importantly it supports [TLS](https://wiki.filezilla-project.org/FTP_over_TLS) authentication.
+
+The following settings under "Site Manager" are suggested for the session:
+* set "Host", "Port"
+* select "FTP - File Transfer protocol" for "Protocol"
+* select "Use explicit FTP over TLS if available" (default setting) for "Encryption"
+* set "User", "Password"
+
 
 ### Font linking on Windows
 
@@ -24,7 +35,7 @@ I suggest to try out 2 fonts at first, DejaVu Sans Condensed will be our main fo
 Install those fonts on Windows, then run the supplied registry patch: `fontlinking-dejavusanscondensed-eversonmono.reg`
 
 I have tried out couple of fonts but DejaVu Sans Condensed was the only one which was good for me (with all of it's drawback, e.g. it's a variable-pitch font).
-You can experiment with others (See Putty section).
+You can experiment with others (See KiTTY section).
 
 
 ### KiTTY configuration
