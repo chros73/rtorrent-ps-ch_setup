@@ -27,20 +27,42 @@ I have tried out couple of fonts but DejaVu Sans Condensed was the only one whic
 You can experiment with others (See Putty section).
 
 
-### Putty configuration
+### KiTTY configuration
 
-Use Putty version 0.64b or greater (to be able to have bold fonts).
+Use [KiTTY](http://www.9bis.net/kitty/) version 0.67.x or greater (it's a patched [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/) fork).
+
+Advantages over `PuTTY`:
+* fully portable
+* auto reconnect on network failure
+* [transparency of the window](http://www.9bis.net/kitty/?page=Transparency)
+
+You have to [rename](http://www.9bis.net/kitty/?page=Download) the `exe` file to `putty.exe`.
 
 The following settings are suggested for the session:
+* Terminal:
+    * uncheck "Use background colour to erase screen"
 * Terminal - Features:
     * x "Disable remote-controlled terminal resizing"
 * Window - Appearance:
     * x "Allow selection of variable-pitch fonts"
     * Font: DejaVu Sans Condensed, size: 9
+* Window - Transparency:
+    * Transparency: 20
+* Window - Transparency:
+    * Window title: `%%h - %%s`
 * Window - Colours:
     * x "Allow terminal to use xterm 256-colour mode"
     * set "Indicate bolded text by changing" to " both"
+* Connection:
+    * x "Attempt to reconnect on system wakeup"
+    * x "Attempt to reconnect on connection failure"
 * Connection - Data:
+    * set "Auto-login username" to your username
     * set "Terminal-type string" to "putty-256color"
+* Connection - SSH - Auth:
+    * set "Private key file for authentication" to point to your `ppk` file (that you generated previously)
 
-Alternatively run the supplied `HKCU-putty_v064b-rtorrent_session.reg` registry patch that has all of these settings and it will create a session profile called rtorrent.
+Alternatively you can copy the supplied `KiTTY` directory that has almost all of these settings and it will create a session profile called `rtorrent-ps`.
+
+This is how the final result look like, using solarized-blue theme:
+![Extended Canvas Screenshot](https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-solarized-blue-kitty-s.png)
