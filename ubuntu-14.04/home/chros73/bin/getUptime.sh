@@ -21,10 +21,10 @@ MONTHYEARD=${DATESTR%,*};
 MONTHD=${MONTHYEARD##*:};
 DAYD=${DATESTR##*,};
 
-# get the correct numbers: substract appropriate numbers from the above values
-YEAR=$((YEARD-70));
-MONTH=$((MONTHD-1));
-DAY=$((DAYD-1));
+# get the correct numbers: substract appropriate numbers from the above values, taking care of possible leading zeros in the values above
+YEAR=$((10#$YEARD-70));
+MONTH=$((10#$MONTHD-1));
+DAY=$((10#$DAYD-1));
 
 
 # get hours, minutes, seconds

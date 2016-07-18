@@ -21,7 +21,8 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
 
-PATH="/home/chros73/bin:$PATH"
+# include common alises like functions and export them
+. ~/.profile_rtfunctions && export RTHOME && export -f rtlistOrphans rtlistStuck rtlistMessages rtlistStopped
 
 # Automatically reattach the rtorrent session or create a new one only if STDIN is a terminal (we are using interactive mode)
 if [ -t 0 ] && [ -z "$TMUX" ]; then 

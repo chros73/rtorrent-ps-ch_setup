@@ -1,0 +1,43 @@
+#!/bin/bash
+# ~/.profile_rtfunctions: this will be included in ~/.profile or can be included in any script
+# It contains alises like useful functions.
+
+
+# define base dir for torrents
+RTHOME="/mnt/Torrents"
+
+# python template file to generate the list
+RTORPHANSTEMPLATE="orphans-ch.txt"
+# define incomplete dir
+RTINCOMPLETEDIR="$RTHOME/.rtorrent/incomplete"
+
+# summary info string for reports
+RTLISTSUMMSGSTUCK="Stuck data size"
+RTLISTSUMMSGMESSAGES="Data size of torrents with tracker message"
+RTLISTSUMMSGSTOPPED="Stopped data size"
+
+
+# list orphaned torrents
+rtlistOrphans () {
+    $HOME/bin/rtcontrol -qO $RTORPHANSTEMPLATE \*
+}
+
+
+# list stuck torrents in incomplete directory
+rtlistStuck () {
+    $HOME/bin/rtcontrol --stats -qo size.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | sed "s#SIZE.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+}
+
+
+# list torrents with unusual trackers messages
+rtlistMessages () {
+    $HOME/bin/rtcontrol --stats --sort-fields=message,path -qo size.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+}
+
+
+# list stopped torrents
+rtlistStopped () {
+    $HOME/bin/rtcontrol --stats --from-view stopped --sort-fields=path -qo size.sz,path,alias \* | sed "s#$RTHOME/##; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTOPPED: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+}
+
+
