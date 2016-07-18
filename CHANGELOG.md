@@ -1,37 +1,27 @@
 # Change Log
 
 ## [0.8.5-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.5-0.9.6) (2016-07-10)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.8.4-0.9.6...0.8.5-0.9.6)
-
 **Implemented enhancements:**
 
 - Modify type of method of d.tm\_downloaded in rtorrent-ps config [\#58](https://github.com/chros73/rtorrent-ps_setup/issues/58)
 - Modify getUptime.sh script to be more efficient [\#57](https://github.com/chros73/rtorrent-ps_setup/issues/57)
 
 ## [0.8.4-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.4-0.9.6) (2016-07-10)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.8.3-0.9.6...0.8.4-0.9.6)
-
 **Implemented enhancements:**
 
 - Add uptime method in rtorrent-ps config [\#56](https://github.com/chros73/rtorrent-ps_setup/issues/56)
 
 ## [0.8.3-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.3-0.9.6) (2016-07-09)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.8.2-0.9.6...0.8.3-0.9.6)
-
 **Implemented enhancements:**
 
 - Add commented out sorting for started view in rtorrent-ps config [\#55](https://github.com/chros73/rtorrent-ps_setup/issues/55)
 
 ## [0.8.2-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.2-0.9.6) (2016-07-09)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.8.1-0.9.6...0.8.2-0.9.6)
-
 **Implemented enhancements:**
 
 - Modify sorting on started view in rtorrent-ps config [\#54](https://github.com/chros73/rtorrent-ps_setup/issues/54)
 
 ## [0.8.1-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.1-0.9.6) (2016-07-08)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.8.0-0.9.6...0.8.1-0.9.6)
-
 **Implemented enhancements:**
 
 - Refactor how sorting, filtering used in rtorrent-ps config [\#53](https://github.com/chros73/rtorrent-ps_setup/issues/53)
@@ -41,8 +31,6 @@
 - Fix newly added deletable torrents don't show up in deletable view [\#52](https://github.com/chros73/rtorrent-ps_setup/issues/52)
 
 ## [0.8.0-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.0-0.9.6) (2016-07-07)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.7.1-0.9.6...0.8.0-0.9.6)
-
 **Implemented enhancements:**
 
 - Finalize rtorrent config files [\#51](https://github.com/chros73/rtorrent-ps_setup/issues/51)
@@ -68,8 +56,6 @@
 - Fix issue with human readable time method [\#41](https://github.com/chros73/rtorrent-ps_setup/issues/41)
 
 ## [0.7.1-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.7.1-0.9.6) (2016-06-29)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.7-0.9.6...0.7.1-0.9.6)
-
 **Implemented enhancements:**
 
 - Add more checks before moving and deleting data [\#33](https://github.com/chros73/rtorrent-ps_setup/issues/33)
@@ -79,8 +65,6 @@
 - Fix bug in checking data full path [\#32](https://github.com/chros73/rtorrent-ps_setup/issues/32)
 
 ## [0.7-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.7-0.9.6) (2016-06-28)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.6-0.9.6...0.7-0.9.6)
-
 **Implemented enhancements:**
 
 - Add an extra check before moving data and meta files [\#31](https://github.com/chros73/rtorrent-ps_setup/issues/31)
@@ -90,8 +74,6 @@
 - Fix bug with modifying slots [\#30](https://github.com/chros73/rtorrent-ps_setup/issues/30)
 
 ## [0.6-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.6-0.9.6) (2016-06-26)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.5-0.9.6...0.6-0.9.6)
-
 **Implemented enhancements:**
 
 - Add an extra check before deleting data [\#29](https://github.com/chros73/rtorrent-ps_setup/issues/29)
@@ -100,8 +82,6 @@
 - Remove unused nginx config files [\#26](https://github.com/chros73/rtorrent-ps_setup/issues/26)
 
 ## [0.5-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.5-0.9.6) (2016-06-24)
-[Full Changelog](https://github.com/chros73/rtorrent-ps_setup/compare/0.4-0.9.6...0.5-0.9.6)
-
 **Implemented enhancements:**
 
 - Modify how delete-queue is handled [\#25](https://github.com/chros73/rtorrent-ps_setup/issues/25)
@@ -114,7 +94,9 @@
 - Add more color configs [\#22](https://github.com/chros73/rtorrent-ps_setup/issues/22)
 - Add additional color configs [\#21](https://github.com/chros73/rtorrent-ps_setup/issues/21)
 - Comment out unused pyroscope features [\#20](https://github.com/chros73/rtorrent-ps_setup/issues/20)
+- Lower dns timeout and refactor network related commands [\#19](https://github.com/chros73/rtorrent-ps_setup/issues/19)
 - Add support for rtorrent-ps-ch [\#18](https://github.com/chros73/rtorrent-ps_setup/issues/18)
+- Modify views [\#17](https://github.com/chros73/rtorrent-ps_setup/issues/17)
 - Add support for delete-queue [\#16](https://github.com/chros73/rtorrent-ps_setup/issues/16)
 - Rename category directories to be able to have unique first letter [\#15](https://github.com/chros73/rtorrent-ps_setup/issues/15)
 - Rename main directories of metafiles [\#14](https://github.com/chros73/rtorrent-ps_setup/issues/14)
@@ -128,17 +110,11 @@
 - Regularly send scrape request to trackers [\#5](https://github.com/chros73/rtorrent-ps_setup/issues/5)
 - Fix type of some methods in rtorrent config files that can cause problems in later versions [\#4](https://github.com/chros73/rtorrent-ps_setup/issues/4)
 - Handle leftover pid file upon crash in init script [\#3](https://github.com/chros73/rtorrent-ps_setup/issues/3)
+- Rename a function to status in init script [\#2](https://github.com/chros73/rtorrent-ps_setup/issues/2)
 
 **Fixed bugs:**
 
 - Fix small bugs [\#11](https://github.com/chros73/rtorrent-ps_setup/issues/11)
-
-**Closed issues:**
-
-- Lower dns timeout and refactor network related commands [\#19](https://github.com/chros73/rtorrent-ps_setup/issues/19)
-- Modify views [\#17](https://github.com/chros73/rtorrent-ps_setup/issues/17)
-- init script [\#2](https://github.com/chros73/rtorrent-ps_setup/issues/2)
-- Naming [\#1](https://github.com/chros73/rtorrent-ps_setup/issues/1)
 
 
 

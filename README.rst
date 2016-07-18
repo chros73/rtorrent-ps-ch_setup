@@ -14,3 +14,8 @@ Introduction
 ------------
 
 
+
+Change log
+----------
+
+See `CHANGELOG.md <https://github.com/chros73/rtorrent-ps_setup/blob/master/CHANGELOG.md>`_ for more details.
