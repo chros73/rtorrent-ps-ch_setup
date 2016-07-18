@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.9-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9-0.9.6) (2016-07-18)
+**Implemented enhancements:**
+
+- Add meaningful information into main readme file [\#73](https://github.com/chros73/rtorrent-ps_setup/issues/73)
+- Add separate change log file [\#72](https://github.com/chros73/rtorrent-ps_setup/issues/72)
+- Add on-the-road config instructions for using free apps on Android  [\#71](https://github.com/chros73/rtorrent-ps_setup/issues/71)
+- Modify config instruction in Windows section [\#70](https://github.com/chros73/rtorrent-ps_setup/issues/70)
+- Replace PuTTY with KiTTY in Windows config section [\#69](https://github.com/chros73/rtorrent-ps_setup/issues/69)
+- Add sample download script to demonstrate usage of inclusion of queue script [\#68](https://github.com/chros73/rtorrent-ps_setup/issues/68)
+- Add queue management script with rotating capability and category support [\#66](https://github.com/chros73/rtorrent-ps_setup/issues/66)
+- Refactor getLimit script [\#65](https://github.com/chros73/rtorrent-ps_setup/issues/65)
+- Modify cron related scripts and variables [\#64](https://github.com/chros73/rtorrent-ps_setup/issues/64)
+- Add more useful email reports [\#63](https://github.com/chros73/rtorrent-ps_setup/issues/63)
+- Add an email report about all orphaned data [\#62](https://github.com/chros73/rtorrent-ps_setup/issues/62)
+- Add a backup script for session directory of rtorrent [\#61](https://github.com/chros73/rtorrent-ps_setup/issues/61)
+- Add general script with helper functions [\#60](https://github.com/chros73/rtorrent-ps_setup/issues/60)
+- Add external save session command into init script [\#59](https://github.com/chros73/rtorrent-ps_setup/issues/59)
+
+**Fixed bugs:**
+
+- Fix getUptime script in certain conditions [\#67](https://github.com/chros73/rtorrent-ps_setup/issues/67)
+
 ## [0.8.5-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.8.5-0.9.6) (2016-07-10)
 **Implemented enhancements:**
 
