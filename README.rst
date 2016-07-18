@@ -92,8 +92,8 @@ Installation
 
 "Okie, I kind'a like it. What should I do now?" Well, it won't be a 5 minutes task, but let's try to summarize it:
 
--  install ``rtorrent-PS-CH` and ``pyrocore`` utilities
--  go through all the files in this project and modify them accourding to your setup/needs
+-  install ``rtorrent-PS-CH`` and ``pyrocore`` utilities
+-  go through all the files in this project and modify them according to your setup/needs
 -  if you find a missing command on your system then install it (sorry I don't have a list of them)
 -  check every command switch whether it's compatible with your system
 
