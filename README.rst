@@ -1,7 +1,7 @@
 Automated rTorrent-PS configuration
 ===================================
 
-An almost completely automated setup with the patched version of rTorrent-PS, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ that doens't need any additional UI only an SSH client (with the help of ``tmux``), including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of rTorrent-PS, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doens't need any additional UI only an SSH client (with the help of ``tmux``), including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
@@ -29,7 +29,6 @@ Limitation
 
 "What?! Is there any?!" Well, yes. :) The following are not supported (mainly because of ``auto-rotating torrents`` feature in queue script and lack of interest :) ):
 
--  handling of magnet links
 -  multiple disk device support (only 1 disk is supported)
 
 
@@ -42,6 +41,7 @@ Features
 -  disk free space manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_) : it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script.)
 -  favouring one group of torrents over the rest of them (read more: `#13 <https://github.com/chros73/rtorrent-ps_setup/issues/13>`_)
 -  hash-checking dropped data in ``incomplete`` dir and putting meta file into one the subdirs of ``.downloading`` dir
+-  limited magnet link support (read more: `#74 <https://github.com/chros73/rtorrent-ps_setup/issues/74>`_)
 -  sending email reports automatically
 -  backup session dir of ``rtorrent``
 -  auto-starting `rtorrent` in ``tmux`` if it's not running (with the help of an init script)
