@@ -1,7 +1,7 @@
 Automated rTorrent-PS configuration
 ===================================
 
-An almost completely automated setup with the patched version of rTorrent-PS, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doens't need any additional UI only an SSH client (with the help of ``tmux``), including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of rTorrent-PS, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
@@ -27,7 +27,7 @@ This setup runs on a laptop from 2008 with dualcore CPU and 4GB of RAM with Ubun
 Limitation
 ----------
 
-"What?! Is there any?!" Well, yes. :) The following are not supported (mainly because of ``auto-rotating torrents`` feature in queue script and lack of interest :) ):
+"What?! Is there any?!" Well, yes. :) The following is not supported (mainly because of ``auto-rotating torrents`` feature in queue script and lack of interest :) ):
 
 -  multiple disk device support (only 1 disk is supported)
 
@@ -92,7 +92,7 @@ Installation
 
 "Okie, I kind'a like it. What should I do now?" Well, it won't be a 5 minutes task, but let's try to summarize it:
 
--  install ``rtorrent-PS-CH`` and ``pyrocore`` utilities
+-  install `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) and `pyrocore  <https://github.com/pyroscope/pyrocore>`_ utilities
 -  go through all the files in this project and modify them according to your setup/needs
 -  if you find a missing command on your system then install it (sorry I don't have a list of them)
 -  check every command switch whether it's compatible with your system
