@@ -29,7 +29,7 @@ Limitation
 
 "What?! Is there any?!" Well, yes. :) The following is not supported (mainly because of ``auto-rotating torrents`` feature in queue script and lack of interest :) ):
 
--  multiple disk device support (only 1 disk is supported)
+-  multiple disk device support (only 1 disk is supported) (read more: `#77 <https://github.com/chros73/rtorrent-ps_setup/issues/77>`_)
 
 
 Features
