@@ -40,10 +40,10 @@ trackers.numwant.set = 100
 pieces.memory.max.set = 2048M
 
 # Limit the number of connections rtorrent can accept/make (sockets)
-network.max_open_sockets.set = 768
+network.max_open_sockets.set = 999
 
 # Limit the number of open files rtorrent can keep open (you have to modify the system wide settings with ulimit!!!) (set_max_open_files)
-network.max_open_files.set = 1999
+network.max_open_files.set = 999
 
 # Limit the number simultanous of HTTP request (used by announce or scrape requests) (default 32) (set_max_open_http)
 network.http.max_open.set = 99

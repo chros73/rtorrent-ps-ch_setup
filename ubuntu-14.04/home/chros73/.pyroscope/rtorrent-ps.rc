@@ -92,8 +92,8 @@ schedule2 = view.name,10,20,((view.sort,name))
 branch=pyro.extended=,"view.collapsed.toggle=started"
 branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.last_active="
 branch=pyro.extended=,"view.sort_current = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.last_active="
-# !!! Only enable sorting on started view if you have rtorrent-PS-CH >= v1.3 or rtorrent/rtorrent-PS with the fix !!!
-#schedule2 = sort_started,12,20,((view.sort,started))
+# !!! Sorting on Started view requires rtorrent-PS-CH >= v1.3 or rtorrent/rtorrent-PS with the fix !!!
+schedule2 = sort_started,12,20,((view.sort,started))
 
 # UI/VIEW: SORT the collapsed STOPPED view (view #4) by DOWNLOADED TIME desc, group by COMPLETE, THROTTLE  (Note: do NOT SCHEDULE sorting/filtering on STOPPED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
 # Items are grouped into complete, incomplete in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by tm_downloaded field desc.
