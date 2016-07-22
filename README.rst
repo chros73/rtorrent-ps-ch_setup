@@ -75,6 +75,12 @@ Basic usage
 It's really that simple. :)
 
 
+Hints and possible issues
+-------------------------
+
+See issue `#76 <https://github.com/chros73/rtorrent-ps_setup/issues/76>`_ for more details.
+
+
 Migration
 ---------
 
