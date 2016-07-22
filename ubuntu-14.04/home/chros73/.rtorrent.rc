@@ -74,6 +74,7 @@ method.insert = d.remove_data.helper, simple|private, "d.remove_symlink=;execute
 # Deletes data of a torrent and removes symlink for its metafile  (calls 'd.remove_data.helper' if data dir/file of a torrent exist and its data is not bogus or prints out an error message)
 method.insert = d.remove_data, simple, "branch=\"and={d.name=,d.data_full_path_exist=,\\\"or=d.compare_incomplete_path=,d.compare_data_path=\\\"}\",d.remove_data.helper=,d.remove_data.error.print=$d.get_data_full_path="
 # Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir and their data dir/file exist and which are not partially done magnet-meta downloads.
+# !!! 'd.is_meta' command requires rtorrent-PS-CH >= v1.4 or rtorrent/rtorrent-PS with the patch !!!
 #temp#method.set_key = event.download.erased, remove_files, "branch=\"and={\\\"or=not=$d.is_meta=,d.is_not_partially_done=\\\",\\\"or=d.custom=unsafe_data,d.compare_incomplete_path=\\\"}\",d.remove_data="
 method.set_key = event.download.erased, remove_files, "branch=\"and={\\\"or=not=$d.is_meta=,d.is_not_partially_done=\\\",\\\"or=d.custom=unsafe_data,d.compare_incomplete_path=\\\"}\",d.remove_data="
 ### end: Delete data (dir/files) ###
