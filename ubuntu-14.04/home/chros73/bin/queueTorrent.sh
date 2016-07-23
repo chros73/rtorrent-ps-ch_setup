@@ -112,9 +112,10 @@ makeFreeSpace () {
 		local DATASIZE=$(${LSTORGETSIZE[@]} "$METAFILEPATH")
 		# total deletable data size so far
 		let DELSIZE=$DELSIZE+$DATASIZE
-		# getting the name of meta file from full path for logging purposes
+		# getting the name of meta file from full path for logging purposes (!!! dealing with multiple dirs hence the 2 substitution)
 		for DIRMOD in ${DELDIRMOD[@]}; do
-		    METAFILE="${METAFILEPATH#$DIRMOD/}"
+		    local METAFILE="${METAFILEPATH#$DIRMOD/}"	# unsafe
+		    METAFILE="${METAFILE#$DELDIRMOD/}"		# delqueue & rotating
 		done
 		# delete the meta file itself (rtorrent will delete the data): in the case of '.delqueue' dir handle symlinks
 		if [ "$DELDIR" == "$DELQUEUEDIR" ]; then

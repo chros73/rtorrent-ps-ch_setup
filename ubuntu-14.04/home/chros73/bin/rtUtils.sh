@@ -22,8 +22,8 @@ MOUNTDIR="/media/chros73/wdred"
 EMAILFROM="username@gmail.com"
 # email_to field when script sends email
 EMAILTO="$EMAILFROM"
-# initial string of subject of email (more info can be added later to it)
-SUBJECT="U -"
+# initial prefix of subject of email, can be overriden before sourcing this script
+EMAILSUBJECTPREFIX=${EMAILSUBJECTPREFIX='U - '}
 ###### end: Edit ######
 
 # directory for cookies used bt scripts
@@ -33,6 +33,8 @@ MAILHELPERMOUNT="$RTCOOKIESDIR/flag-mount"
 # cookie file for storing rtorrent status errors
 MAILHELPERRTSTATUS="$RTCOOKIESDIR/flag-status"
 
+# string of email subject (more info can be added later to it)
+SUBJECT="$EMAILSUBJECTPREFIX"
 # initail string of body of email (more info can be added later to it)
 MSG=""
 # flag for sending email or not
@@ -61,11 +63,10 @@ RTXMLRPCBIN="$HOME/bin/rtxmlrpc"
 # Usage: addMsg VAR "String of text" (e.g.: addMsg MSG "Error: Backup!")
 addMsg () {
     local MSGSEPARATOR=""
-    if [ "${!1}" != "" ]; then
+    if [ $1 = SUBJECT ]; then
+	[ "$SUBJECT" != "$EMAILSUBJECTPREFIX" ] && MSGSEPARATOR=", "
+    elif [ "${!1}" != "" ]; then
 	MSGSEPARATOR="\n"
-	if [ $1 = SUBJECT ]; then
-	    MSGSEPARATOR=" "
-	fi
     fi
     read -r $1 <<< "${!1}${MSGSEPARATOR}${2}"
 }

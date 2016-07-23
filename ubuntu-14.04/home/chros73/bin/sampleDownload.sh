@@ -6,6 +6,8 @@
 
 # disbale running queue script during inclusion: run it directly after gathering all the data (note: it has to be defined before inclusion!)
 SKIPMANAGEQUEUE=true
+# override the default subject prefix of email report (more info can be appanded to the subject it later)
+EMAILSUBJECTPREFIX="SomeSite - "
 # include the queue script
 . "${BASH_SOURCE%/*}/queueTorrent.sh"
 # disable email reporting about queued torrents: prepare reporting in this script instead (note: all similar options have to be defined after inclusion!)
@@ -13,8 +15,6 @@ SKIPQUEUESTATS=true
 
 
 
-# override the default subject of email report (more info can be appanded to it later)
-SUBJECT="Ubuntu -"
 # Define more necessary variables (note: these are commented out in this sample script)
 : '
 # some info
