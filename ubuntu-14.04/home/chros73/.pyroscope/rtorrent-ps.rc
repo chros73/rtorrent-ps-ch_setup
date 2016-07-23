@@ -125,7 +125,7 @@ branch=pyro.extended=,"view.sort_new     = seeding,\"compare=+-,d.throttle_name=
 branch=pyro.extended=,"view.sort_current = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_current = seeding,greater=d.up.rate="
 schedule2 = sort_filter_seeding,12,20,((view.sort,seeding))
 
-# UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and in every 20 seconds
+# UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by download and then upload speed desc.
 view.filter = leeching,"and={not=$d.complete=,d.peers_connected=}"
 branch=pyro.extended=,"view.sort_new     = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = leeching,greater=d.down.rate="
@@ -205,7 +205,7 @@ branch=pyro.extended=,"view.sort_new     = category,\"compare=+,d.get_data_full_
 branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.get_data_full_path=\"","view.sort_current = category,less=d.get_data_full_path="
 branch=pyro.extended=,"schedule2 = bind_category,0,0,\"ui.bind_key=download_list,@,ui.current_view.set=category\""
 
-# UI/VIEW: ADD collapsed DELETABLE view  (bound to '?' in rT-PS)     SORT it by DOWNLOADED time, group by 'unsafe_data' desc, THROTTLE desc . Show deletable torrents.
+# UI/VIEW: ADD collapsed DELETABLE view  (bound to '?' in rT-PS)     SORT it by DOWNLOADED TIME, group by 'unsafe_data' desc, THROTTLE desc . Show deletable torrents.
 view.add = deletable
 view.filter = deletable,d.custom=unsafe_data
 branch=pyro.extended=,"view.collapsed.toggle=deletable"
