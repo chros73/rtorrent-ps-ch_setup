@@ -4,18 +4,6 @@ Additions
 .. contents:: **Contents**
 
 
-Extra Commands in rTorrent config files
----------------------------------------
-
-d.add_to_delqueue=
-^^^^^^^^^^^^^^^^^^
-Adds torrent into delete queue.
-
-d.remove_from_delqueue=
-^^^^^^^^^^^^^^^^^^^^^^^
-Removes torrent from delete queue.
-
-
 Standard Views in rTorrent
 --------------------------
 
@@ -71,6 +59,143 @@ end   End
 pgup  Pageg Up
 pgdn  Page Down
 ====  ========================================
+
+
+
+Extra Attributes in rTorrent config files
+---------------------------------------
+
+The following custom field attributes are added in rTorrent config files.
+
+unsafe_data
+^^^^^^^^^^^
+Determines whether data of a torrent is deletable.
+
+-  ``unsafe_data`` : values ``[|0|1|2]``, ``1`` means ``unsafe_data``, ``2`` means ``unsafe_data in delete queue``
+
+data_dir
+^^^^^^^^
+Determines the sub-directory (category) for data of a torrent. It's used with watch directories and continously updated during the lifetime of a torrent.
+
+-  ``data_dir`` : name of category, e.g. ``unsafe``, ``rotating``
+
+meta_dir
+^^^^^^^^
+Determines the sub-directory (category) for meta file of a torrent. It's used with watch directories and continously updated during the lifetime of a torrent.
+
+-  ``meta_dir`` : name of category, e.g. ``unsafe``, ``rotating``
+
+tm_downloaded
+^^^^^^^^^^^^^^
+Timestamp, time the torrent file was downloaded (created locally).
+
+tm_loaded
+^^^^^^^^^^^^^^
+Timestamp, time the torrent was loaded into client.
+
+tm_started
+^^^^^^^^^^^^^^
+Timestamp, first time the torrent was started.
+
+tm_completed
+^^^^^^^^^^^^^^
+Timestamp, time of completion of the torrent.
+
+last_active
+^^^^^^^^^^^^^^
+Timestamp, last time the torrent had peers.
+
+activations
+^^^^^^^^^^^^^^
+Activation intervals.
+
+tm_last_scrape
+^^^^^^^^^^^^^^
+Timestamp, last time when a scrape request was sent for the torrent.
+
+
+Extra Commands in rTorrent config files
+---------------------------------------
+
+The following commands can be used in rtorrent with ``^x``.
+
+d.move_to=category_name,special_group,unsafe_data
+^^^^^^^^^^^^^^^^^^
+Moves data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and updates all necessary attributes of it.
+
+-  ``category_name`` : one of the category directories, e.g. ``unsafe``, ``songs``, etc
+-  ``special_group`` : boolean, values ``[|0|1]``, ``1`` means special group 
+-  ``unsafe_data`` : values ``[|0|1|2]``, ``1`` means ``unsafe_data``, ``2`` means ``unsafe_data in delete queue``
+
+Example usage: ``d.move_to=rotating,1,1``, ``d.move_to=rotating,1,2``, ``d.move_to=fullseed,1,``, ``d.move_to=unsafe,,1``, ``d.move_to=unsafe,,2``, ``d.move_to=various,,`` 
+
+d.move_meta_to=category_name
+^^^^^^^^^^^^^^^^^^
+Moves a finished, stucked meta file from the downloading directory into its final place (thanks to the simetimes missing ``meta_dir`` custom field value, rtorrent bug on OpenWRT?). It can also be useful if a category name is changed.
+
+-  ``category_name`` : one of the category directories, e.g. ``unsafe``, ``songs``, etc
+
+Example usage: ``d.move_meta_to=rotating``, ``d.move_meta_to=fullseed``, ``d.move_meta_to=unsafe``, ``d.move_meta_to=various`` 
+
+d.get_data_full_path=
+^^^^^^^^^^^^^^^^^^
+Gets the full path of data of a torrent (it's a workaround for the possibly empty `d.base_path` attribute).
+
+d.remove_data=
+^^^^^^^^^^^^^^
+Deletes data of a torrent if data dir/file of a torrent exists and its data is not bogus and removes symlink for its metafile if it exists or prints out an error message.
+
+d.add_to_delqueue=
+^^^^^^^^^^^^^^^^^^
+Adds torrent to delete queue by creating a symlink in ``.delqueue`` dir to its metafile and setting ``unsafe_data`` custom variable to ``2``. This command is bind to ``}`` key.
+
+d.remove_from_delqueue=[unsafe_data]
+^^^^^^^^^^^^^^^^^^^^^^^
+Removes torrent from delete queue by deleting its symlink if it exists from ``.delqueue`` dir. This command is bind to ``}`` key.
+
+-  ``unsafe_data`` : optional parameter, values ``[|0|1]``, ``1`` means ``unsafe_data``
+
+Usage: ``d.remove_from_delqueue=``, ``d.remove_from_delqueue=1``
+
+d.fix_delqueue_flag=
+^^^^^^^^^^^^^^^^^^
+Fixes ``unsafe_data`` values depending on a symlink in ``.delqueue`` directory exists or not. Useful if symlinks are sometimes created manually or by a script in ``.delqueue`` dir.
+
+d.modify_slots_both=
+^^^^^^^^^^^^^^^^^^
+Modifies the ``peers_min``, ``peers_max``, ``max_uploads`` values of a torrent for both downloading and uploading based on which group (special or not) it belongs to.
+
+d.last_scrape.send_set=
+^^^^^^^^^^^^^^^^^^
+Sends scrape request for a torrent, sets its ``tm_last_scrape`` timestamp custom field and saves its session. This command is bind to ``#`` key.
+
+It won't affect the operation of rtorrent, but nice to have these values updated. This info is only updated when rtorrent starts or a torrent is added by default. Although this setup regularly updates scrape information for all torrents (even stopped ones), sometimes this command can be useful.
+
+d.last_active=
+^^^^^^^^^^^^^^
+Returns the value of ``last_active`` timestamp custom field of a torrent or current timestamp if it has peers.
+
+uptime=
+^^^^^^^
+Returns uptime (with the help of ``getUptime.sh`` script) in the form of ``Up: 6 years, 5 months, 18 days, 02:39:57``. Year/month info isn't shown if their value is 0.
+
+hrf_time=timestamp
+^^^^^^^
+Displays any valid timestamp value in human readable format or print the value itself (e.g.: ``30/06/2013 23:47:33``).
+
+Usage: ``hrf_time=$d.creation_date=``, ``hrf_time=$d.custom=tm_last_scrape``
+
+i=
+^^
+Displays the current rate information in the form of ``MainUpRate: 1440 , ThrottleUpRate: 92 , ThrottleLimit: 100``. Depricated, since a more compact and always updated form is represented by ``rtorrent-ps-ch`` in the left part of status bar.
+
+pyro.import=rtconfig_filename
+^^^^^^^^^^^^
+Imports the specified config file from ``~/.pyroscope/`` directory.
+
+-  ``rtconfig_filename`` : name of rtorrent config file in ``~/.pyroscope/`` directory, e.g. ``rtorrent-ps.rc``, ``color_scheme256-happy_pastel.rc``
+
+Usage: pyro.import="color_scheme256-happy_pastel.rc"
 
 
 Extra Bash functions
