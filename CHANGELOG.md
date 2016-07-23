@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.9.1-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.1-0.9.6) (2016-07-23)
+**Implemented enhancements:**
+
+- Modify 2 default rtorrent config values and enable sorting on Started view by default [\#75](https://github.com/chros73/rtorrent-ps_setup/issues/75)
+- Add limited magnet link support [\#74](https://github.com/chros73/rtorrent-ps_setup/issues/74)
+
+**Fixed bugs:**
+
+- Fix small reporting bugs [\#78](https://github.com/chros73/rtorrent-ps_setup/issues/78)
+
 ## [0.9-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9-0.9.6) (2016-07-18)
 **Implemented enhancements:**
 
