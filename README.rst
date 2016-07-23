@@ -35,13 +35,14 @@ Limitation
 Features
 --------
 
-"OK, I can live with those, so what can it do?" Good question, let's see (most important ones come first):
+"OK, I can live with that, so what can it do?" Good question, let's see (most important ones come first):
 
 -  downloading queue manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_)
 -  disk free space manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_) : it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script.)
 -  favouring one group of torrents over the rest of them (read more: `#13 <https://github.com/chros73/rtorrent-ps_setup/issues/13>`_)
 -  hash-checking dropped data in ``incomplete`` dir and putting meta file into one the subdirs of ``.downloading`` dir
 -  limited magnet link support (read more: `#74 <https://github.com/chros73/rtorrent-ps_setup/issues/74>`_)
+-  regularly updates scrape information for all torrents (read more: `#5 <https://github.com/chros73/rtorrent-ps_setup/issues/5>`_)
 -  sending email reports automatically
 -  backup session dir of ``rtorrent``
 -  auto-starting `rtorrent` in ``tmux`` if it's not running (with the help of an init script)
@@ -55,9 +56,14 @@ Useful additions in rtorrent
 
 "Sounds awesome! What else?" There are extra stuff defined in ``rtorrent`` config files (half of them is created by ``pyroscope``):
 
--  commands: ``d.move_to``, ``uptime``, ``pyro.import``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.move_meta_to``, ``d.modify_slots_both``, ``i``, ``hrf_time``, ``d.last_scrape.send_set``, ``d.last_active``
--  views: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged (``.`` toggle tag, ``T`` clear view), ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable
--  keyboard shortcuts: ``*`` toggle collapsed/expanded display, ``#`` send manual scrape request, ``}`` toggle unsafe_data, ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``
+-  `attributes <Additions.rst#extra-attributes-in-rtorrent-config-files>`_: ``unsafe_data``, ``data_dir``, ``meta_dir``, ``tm_downloaded``, ``tm_loaded``, ``tm_started``, ``tm_completed``, ``last_active``, ``activations``, ``tm_last_scrape`` 
+-  `commands <Additions.rst#extra-commands-in-rtorrent-config-files>`_: ``d.move_to``, ``d.move_meta_to``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.last_active``, ``uptime``, ``hrf_time``, ``i``, ``pyro.import``
+-  `views <Additions.rst#extra-views-in-rtorrent>`_: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged (``.`` toggle tag, ``T`` clear view), ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable
+-  `keyboard shortcuts <Additions.rst#extra-keyboard-shortcuts-in-rtorrent>`_: ``*`` toggle collapsed/expanded display, ``#`` send manual scrape request, ``}`` toggle unsafe_data, ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``
+-  `Bash functions <Additions.rst#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``
+-  `Bash scripts <Additions.rst#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``getLimits.sh``, ``getUptime.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
+
+See `Additions.rst <Additions.rst>`_ for more details.
 
 
 Basic usage
@@ -68,9 +74,9 @@ Basic usage
 -  download/upload/copy a torrent file into one the subdirs of ``.queue`` dir (the queue script will pick it)
 -  alternatively put hash-checkable data into ``incomplete`` dir and put its meta file into one the subdirs of ``.downloading`` dir (hash-checking will start immediately)
 -  when download/hash-check is finished data will be moved into it's final place
--  you can move it to a different category later using this command in ``rtorrent``: ``d.move_to=unsafe,1,2``
--  you can simply put it into delete queue by pressing ``}`` multiple times
--  you can still delete a torrent manually if you insist by ``^D^D``
+-  you can move it to a different category later using this command in ``rtorrent``: `d.move_to=unsafe,1,2 <Additions.rst#d-move-to-category-name-special-group-unsafe-data>`_
+-  you can simply put it into delete queue by pressing `} <Additions.rst#extra-keyboard-shortcuts-in-rtorrent>`_ key multiple times
+-  you can still delete a torrent manually if you insist by ``^d^d``
 
 It's really that simple. :)
 
