@@ -112,6 +112,12 @@ Installation
 "Oh, my ... That's a lot of work!" Well, it took way more time to create it and document it. :) Good news is: you only have to do it once. :)
 
 
+Performance tuning
+------------------
+
+"Huhh, I finally managed to set it up, but what values should I use in rTorrent config?" Take a look at the  `official WIKI page <https://github.com/rakshasa/rtorrent/wiki/Performance-Tuning>`_.
+
+
 Change log
 ----------
 

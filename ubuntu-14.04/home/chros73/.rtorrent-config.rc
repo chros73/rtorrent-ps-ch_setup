@@ -19,7 +19,8 @@ throttle.max_peers.normal.set = 100
 throttle.min_peers.seed.set = -1
 throttle.max_peers.seed.set = -1
 
-# Maximum number of simultanious uploads per torrent. (upload slots!) (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favouring section of main config file). (max_uploads)
+# Maximum number of simultaneous downloads and uploads slots per torrent (`max_uploads`) Default: `50` (Applies to Special group. Slowup group values will be overriden by per torrent settings in Favouring section of main config file). (max_uploads)
+throttle.max_downloads.set = 50
 throttle.max_uploads.set = 50
 
 # Throttles rates for (groups of) downloads or IP ranges. (throttle_up) These throttles borrow bandwidth from the global throttle and thus are limited by it too.
