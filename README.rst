@@ -17,7 +17,7 @@ It's all about seeding data all the time (unfortunately we have to download it b
 
 The whole setup is based on an advanced version of the `Stefano's idea of download manager <http://www.stabellini.net/rtorrent-howto.txt>`_: it relies on moving data AND meta files all around the place. Please take the time and read more about this here: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_
 
-It also includes some really unique ideas, so there's no need for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs ``every`` torrent all the time, favours one group of torrents over the rest of them and if it run out of space it'll try to create more by deleting old ones. These features make this setup sooo powerful! :)
+It also includes some really unique ideas, so there's no need for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs ``every`` torrent all the time, `favours one group of torrents over the rest of them <FavoringGroupOfTorrents.md>`_ and if it run out of space it'll try to create more by deleting old ones. These features make this setup sooo powerful! :)
 
 This setup runs on a laptop from 2008 with dualcore CPU and 4GB of RAM with Ubuntu 14.04 (probably all other Debian flavor works fine, I don't know about the rest) and a 4TB HDD hooked up via ESATA with a net connection of 74/20 Mbps. It never stops until it gets power. :)
 
@@ -39,7 +39,7 @@ Features
 
 -  downloading queue manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_)
 -  disk free space manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_) : it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script.)
--  favouring one group of torrents over the rest of them (read more: `#13 <https://github.com/chros73/rtorrent-ps_setup/issues/13>`_)
+-  favouring one group of torrents over the rest of them (read more: `FavoringGroupOfTorrents.md <FavoringGroupOfTorrents.md>`_)
 -  hash-checking dropped data in ``incomplete`` dir and putting meta file into one the subdirs of ``.downloading`` dir
 -  limited magnet link support (read more: `#74 <https://github.com/chros73/rtorrent-ps_setup/issues/74>`_)
 -  regularly updates scrape information for all torrents (read more: `#5 <https://github.com/chros73/rtorrent-ps_setup/issues/5>`_)
