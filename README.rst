@@ -8,5 +8,8 @@ An almost completely automated setup with the patched version of rTorrent-PS, `r
    :alt: Extended Canvas Screenshot
 
 
-"Interesting. Can I read more about it?" Sure, take a look at the `WIKI <https://github.com/chros73/rtorrent-ps_setup/wiki>`_ for more information (that is also included in ``docs`` directory).
+
+"Interesting. Can I read more about it?"
+
+Sure, take a look at the `WIKI pages <https://github.com/chros73/rtorrent-ps_setup/wiki>`_ for more information (that are also included in ``docs`` directory).
 
