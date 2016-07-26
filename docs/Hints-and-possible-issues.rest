@@ -1,0 +1,44 @@
+Hints and possible issues
+=========================
+
+.. contents:: **Contents**
+
+
+Download registered as completed, but hash check returned unfinished chunks
+-------------------------------------
+
+* `From manual <https://github.com/rakshasa/rtorrent/wiki/User-Guide#common-error-messages>`_: "This message is caused by deleting/modifying the downloaded file after a torrent is marked as complete. You could set the ``create/resize queued`` flags on all files of the torrent by pressing ``^e`` in main view":
+
+  * ``^k`` + ``^e`` + ``^s`` (it will start to download the whole torrent again, probably :( )
+
+* Maybe the data file/directory couldn't be moved to the target directory
+
+  * there is already a file/directory with the same name: move or delete the previous download , move this new one, and start it (the queue script and rtorrent config should handle this situation now.)
+
+
+Inactive: Tracker: [Could not parse bencoded data] and torrent is in Closed state
+-------------------------------------
+
+* wait till the tracker in question doesn't emit HTTP 500 responses any more, which is the most common cause for that error message
+
+* if there's no problem with the tracker (other torrents working well), then you have to manually stop then start the torrent:
+
+  * ``d.stop=`` and ``d.start=``  (or with ``^k`` + ``^s`` + ``SHIFT+I``)
+
+
+Rotating part of queue script isn't working:
+-------------------------------------
+
+* either we ran out of disk space
+
+* or ``rtorrent`` isn't running
+
+* or ``rtorrent.lock`` file (in ``.session`` dir) is empty (thanks to we ran out space previously)!!!!!
+
+  * stop ``rtorrent`` manually with ``kill -s INT $pid`` , then start it again! (then check the contents of lock file)
+
+
+Stop downloading of a torrent but still uploading it
+-------------------------------------
+
+* set the priority of all the files to off

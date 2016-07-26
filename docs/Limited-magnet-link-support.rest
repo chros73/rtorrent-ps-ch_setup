@@ -1,0 +1,40 @@
+Limited magnet link support
+===========================
+
+.. contents:: **Contents**
+
+
+The problem
+---------------------
+
+Magnet links are really problematic with ``rtorrent``, just to name a few:
+
+* enabling ``udp tracker`` / ``dht`` support can cause various issues (e.g. it can mess up normal ``http/https`` requests)
+
+* created meta file by ``rtorrent`` is invalid (that means it can't be used to determine the size of the torrent with ``lstor``)
+
+Strong recommendation is that do not use magnet links with ``rtorrent``, use a different client for them.
+
+Although sometimes it still can be useful to grab something via magnet links (using only ``http/https`` trackers).
+
+
+Solution
+--------
+
+* requires ``rTorrent-PS-CH v1.4-0.9.6`` or newer (includs a new command ``d.is_meta`` in ``rtorrent``)
+
+* they can't be used with ``queue`` script (created meta file by ``rtorrent`` is invalid), so there's only manual support for them
+
+* use ``addMagnetLink.sh`` script that will create ``magnet torrent file`` from ``Magnet URI`` into one of the watch directories (categories) (one of the subdirs of ``.downloading`` dir) with the help of ncursed dialog for category selection
+
+Usage: ``addMagnetLink.sh "magnet:?xt=urn:btih:foobar..."``
+
+
+Final note
+----------
+
+Torrents created in this way:
+
+* can't be picked up by the ``queue`` script: check available disk space manually before adding one (if there isn't enough then free up some) 
+
+* won't be deleted by the ``queue`` script, no matter what category they are: you have to manage them manually
