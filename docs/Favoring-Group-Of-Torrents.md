@@ -118,7 +118,7 @@ method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.g
 
 ### Helper script
 
-Since we can't do basic arithmetic operations in `rTorrent` config files, we need the [`getLimits.sh`](ubuntu-14.04/home/chros73/bin/getLimits.sh) external script that will do this for us.
+Since we can't do basic arithmetic operations in `rTorrent` config files, we need the [`getLimits.sh`](https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/getLimits.sh) external script that will do this for us.
 
 It can do 3 things:
 - gets new uprate limit for `slowup` throttle (based upon the configured variables and the given parameters)
