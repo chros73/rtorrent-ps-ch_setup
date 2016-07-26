@@ -41,7 +41,7 @@ Features
 -  disk free space manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_) : it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script.)
 -  favouring one group of torrents over the rest of them (`read more <Favoring-Group-Of-Torrents>`_)
 -  hash-checking dropped data in ``incomplete`` dir and putting meta file into one the subdirs of ``.downloading`` dir
--  limited magnet link support (read more: `#74 <https://github.com/chros73/rtorrent-ps_setup/issues/74>`_)
+-  limited magnet link support (`read more <Limited-magnet-link-support>`_)
 -  regularly updates scrape information for all torrents (read more: `#5 <https://github.com/chros73/rtorrent-ps_setup/issues/5>`_)
 -  sending email reports automatically
 -  backup session dir of ``rtorrent``
@@ -84,7 +84,7 @@ It's really that simple. :)
 Hints and possible issues
 -------------------------
 
-See issue `#76 <https://github.com/chros73/rtorrent-ps_setup/issues/76>`_ for more details.
+See `Hints and possible issues <Hints-and-possible-issues>`_ WIKI page for more details.
 
 
 Migration
