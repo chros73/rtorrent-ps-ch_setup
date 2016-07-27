@@ -1,0 +1,117 @@
+Queue Manager
+=============
+
+.. contents:: **Contents**
+
+
+Introduction
+------------
+
+Don't be scared about the length of this page! :) The idea and its realization is really simple, only the documentation is long. :)
+
+The core concept of the setup is completely based on moving ``data`` AND ``meta`` files all around the place:
+
+* there's a ``.downloading`` directory with ``categories`` (sub-directories) with which ``rtorrent`` will start downloading new torrents (these are the watch directories in `.rtorrent-config.rc <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent-config.rc#L69>`_) 
+
+* when a download is finished ``rtorrent`` moves their ``data`` from ``incomplete`` directory AND ``meta`` files (from one of the sub-directories of ``.downloading`` directory) into their final place (meaning one of the sub-directories of ``.completed`` directory for ``meta`` files and one of the sub-directories of the main directory for ``data``). The ``.downloading`` directories get empty all the time in this way.
+
+* the ``.queue`` directory with ``categories`` (sub-directories) contain ``meta`` files that should be moved into one of the sub-directories of ``.downloading`` dir to be able to start them by ``rtorrent`` when there's free slot in the ``downloading queue``
+
+* there are 3 predefined ``categories/directory`` for ``rotating`` (deleting data) torrents: 
+
+  * ``rotating`` (means ``special`` group) and ``unsafe`` categories
+  * ``.delqueue`` directory: it should contain only ``symlinks`` to deletable meta files
+
+* there's also an `unsafe_data <Additions#unsafe-data>`_ custom variable defined in ``rtorrent`` that makes torrents deletable (value ``2`` means that the torrent is in delete-queue, meaning ``.delqueue`` directory)
+
+
+Queue Manager
+-------------
+
+There's only 1 small `queueTorrent.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_ ``queue manager`` script with ``rotating`` (deleting data) capability and ``category`` support, that realize all the above mentioned tasks.
+
+It contains 2 functionality:
+
+* ``downloading queue manager`` that will queue torrents if there's free slot and free disk space for them
+
+* ``disk free space manager`` that will delete data to make free space for the newcomers
+
+It runs from `cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ in every 5 minutes.
+
+
+Downloading queue manager
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Moves ``meta`` files from one of the sub-directories of ``.queue`` directory into one of the sub-directories of ``.downloading`` directory, so ``rtorrent`` can start to download them.
+
+* its top priority is that it shouldn't break ``rtorrent`` in any case
+
+* it checks how many meta files are in the ``.downloading`` directory:
+
+  * what the number of ``active downloads`` is currently and moves the appropriate number of ``meta`` files from one of the sub-directories of ``.queue`` directory
+
+* ``size of downloading queue`` and ``order of processing`` are configurable
+
+* it runs disk free space manager every time, even when there's nothing to be queued! (except for when ``rtorrent`` is stopped)
+
+* it can send report about all the action that was made (some of them are configurable)
+
+* it doesn't move meta file(s) if:
+
+  * ``rtorrent`` stopped running
+
+  * there's not ``enough disk space`` for the queueable torrents, even after trying to make more
+
+  * target ``data`` directory/file (in one of the sub-directories of ``incomplete`` directory) OR ``meta`` file (in one of the sub-directories of ``.downloading`` directory) exists
+
+    * it moves ``meta`` file into ``.duplicated`` directory and appends current time to the moved ``meta`` filename in this case
+
+
+Note:
+
+* if a ``meta`` file is placed directly into one of the sub-directories of ``.downloading`` directory (watch directories) then downloading will start immediately without the interaction of ``Queue Manager``
+
+  * ``hash-checkable`` ``data/meta`` files should be used in this way:
+
+    * ``hash-checkable data`` should be placed into ``incomplete`` directory and its ``meta`` file into one the sub-directories of ``.downloading`` directory, hash-checking will start immediately
+
+* the categories directory structure has to be created 4 times in this way:
+
+  * in: ``/mnt/Torrents``, ``.queue``, ``.downloading``, ``.completed`` directories
+
+
+
+Disk free space manager
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Deletes ``meta`` files from the predefined ``rotating``, ``unsafe`` category directories and from ``.delqueue`` directory, so ``rtorrent`` can delete their data!
+
+* ``rtorrent`` is configured to only delete their data if their `unsafe_data <Additions#unsafe-data>`_ custom variable is set to ``1`` or ``2`` !
+
+* processing order of deleting ``meta`` files is the following:
+
+  * from ``.delqueue`` directory (containing ``symlinks``) in reverse order, oldest first
+
+  * from the predefined ``rotating``, ``unsafe`` category directories in reverse order, oldest first, handling them altogether at the same time!
+
+* enabling this part of the script is configurable, it's disabled by default for safety reason:
+
+  * it can be enabled by setting ``AUTOROTATETORRENTS=true``
+
+* it only should be run by the ``downloading queue manager``
+
+* amount of ``reserved disk space`` is configurable
+
+* it waits for 15 seconds after successful deletion of all ``meta`` files for letting ``rtorrent`` to finish deleting data
+
+* it can send report about all the deleted torrents (configurable)
+
+* doesn't delete ``meta`` file(s) if:
+
+  * this functionality is ``disabled``
+
+  * there's ``enough disk space``
+
+  * there's ``nothing to be deleted`` from the defined ``rotating``, ``unsafe`` categories and ``.delqueue`` directory
+
+

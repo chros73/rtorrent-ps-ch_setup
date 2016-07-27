@@ -15,7 +15,7 @@ Introduction
 
 It's all about seeding data all the time (unfortunately we have to download it before :) ) until we can. This is not the official ``pyroscope`` way to do things, I have to start with this. :) The project has been started around late 2014 with the curiosity of how many really useful things can be done with pure ``rtorrent``. As it turned out a lot.
 
-The whole setup is based on an advanced version of the `Stefano's idea of download manager <http://www.stabellini.net/rtorrent-howto.txt>`_: it relies on moving data AND meta files all around the place. Please take the time and read more about this here: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_
+The whole setup is based on an advanced version of the `Stefano's idea of download manager <http://www.stabellini.net/rtorrent-howto.txt>`_: it relies on moving data AND meta files all around the place. Please take the time and read more about the `Queue Manager <Queue-Manager>`_.
 
 It also includes some really unique ideas, so there's no need for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs ``every`` torrent all the time, `favours one group of torrents over the rest of them <Favoring-Group-Of-Torrents>`_ and if it run out of space it'll try to create more by deleting old ones. These features make this setup sooo powerful! :)
 
@@ -37,8 +37,11 @@ Features
 
 *"OK, I can live with that, so what can it do?"* Good question, let's see (most important ones come first):
 
--  downloading queue manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_)
--  disk free space manager (read more: `#66 <https://github.com/chros73/rtorrent-ps_setup/issues/66>`_) : it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script.)
+-  downloading queue manager (`read more <Queue-Manager#downloading-queue-manager>`_)
+-  disk free space manager (`read more <Queue-Manager#disk-free-space-manager>`_) 
+
+  - it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script)
+
 -  favouring one group of torrents over the rest of them (`read more <Favoring-Group-Of-Torrents>`_)
 -  hash-checking dropped data in ``incomplete`` dir and putting meta file into one the subdirs of ``.downloading`` dir
 -  limited magnet link support (`read more <Limited-magnet-link-support>`_)
