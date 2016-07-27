@@ -43,14 +43,14 @@ Features
   - it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script)
 
 -  favouring one group of torrents over the rest of them (`read more <Favoring-Group-Of-Torrents>`_)
--  hash-checking dropped data in ``incomplete`` dir and putting meta file into one the subdirs of ``.downloading`` dir
+-  hash-checking dropped data (`read more <Hints-and-possible-issues#hash-checking-existing-data-for-seeding-purposes>`_)
 -  limited magnet link support (`read more <Limited-magnet-link-support>`_)
--  regularly updates scrape information for all torrents (read more: `#5 <https://github.com/chros73/rtorrent-ps_setup/issues/5>`_)
+-  regularly updates scrape information for all torrents (`read more <Auto-Scraping>`_)
 -  sending email reports automatically
 -  backup session dir of ``rtorrent``
 -  auto-starting `rtorrent` in ``tmux`` if it's not running (with the help of an init script)
--  providing config files / instructions for setting up / using FTP , Samba, SSH
--  providing instructions for using it On-the-Road with an Android device
+-  providing config files / instructions for setting up / using FTP , Samba, SSH (e.g. for `Windows <Windows-8.1>`_)
+-  providing instructions for using it On-the-Road with an Android device (`read more <Android-5.0>`_)
 -  and a lot more :)
 
 

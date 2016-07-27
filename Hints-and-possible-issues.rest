@@ -42,3 +42,10 @@ Stop downloading of a torrent but still uploading it
 -------------------------------------
 
 * set the priority of all the files to off
+
+
+Hash-checking existing data for seeding purposes
+-------------------------------------
+
+* place ``hash-checkable data`` into ``incomplete`` directory and its ``meta`` file into one the sub-directories of ``.downloading`` directory
+* hash-checking will start immediately
