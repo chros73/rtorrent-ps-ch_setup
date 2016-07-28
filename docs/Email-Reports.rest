@@ -1,0 +1,189 @@
+Email Reports
+=============
+
+The system can send automatic email reports about various activities with the help of `ssmtp <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ and `cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ and you can easily create your own.
+
+.. contents:: **Contents**
+
+
+Reports by Queue Manager
+------------------------
+
+`Queue Manager <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_ sends email reports about its regular activity or about various problems.
+
+Regular report
+^^^^^^^^^^^^^^
+
+It can include 3 different activities in its regular reports (all of them are configurable and enabled by default):
+
+* deleted torrents by `Disk free space manager <Queue-Manager#disk-free-space-manager>`_
+* duplicated torrents in ``incomplete`` directory by `Downloading queue manager <Queue-Manager#downloading-queue-manager>`_
+* queued torrents by `Downloading queue manager <Queue-Manager#downloading-queue-manager>`_
+
+A possible email report that includes all 3 components looks like this:
+
+* subject: ``U - Making Free space, Duplicated torrents!, Queued 3 torrents``
+
+.. code-block::
+
+   Free space before action: 5GiB
+   
+   Deleted torrents (free space required: 4.0GiB + 2.9GiB - 5GiB = 1.9GiB):
+        275MiB - gasslight2015-08-01.flac16
+        3.3GiB - Pushing Through the Pavement Remixes
+   Deleted data size: 3.6GiB
+   
+   
+   Duplicated torrents has been moved into duplicated directory, manual interaction is required.
+         18MiB - HealthFoodChoicesInThailand
+        8.3MiB - 050815LOSHIJOSDELBOLERO
+   
+   
+   Queued 3 torrents:
+        1.8GiB - Atlantic Anime Blend Ezine
+      256.5MiB - Baen_CD-08-Into_the_Looking_Glass.iso
+      912.1MiB - JPFO 2A Today for the USA MP4
+   
+   Downloadable data size: 2.9GiB
+
+
+Reports about problems
+^^^^^^^^^^^^^^
+
+It will also notify you about various problems.
+
+Insufficient disk space
+""""""""""""""
+
+It can happen that deletion wasn't successful, it sends a report with subject ``U - Error: insufficient disk space!!!!`` like this:
+
+.. code-block::
+
+   Free space before action: 5GiB
+   
+   Error in disk space: deleting from rotating directories wasn't enough... :(
+      You have to fix it manually :(
+   Uptime:  18:30:18 up 61 days, 10 min,  1 user,  load average: 0.07, 0.08, 0.04
+
+
+``rTorrent`` is stopped
+""""""""""""""
+
+It can happen that ``rTorrent-PS-CH`` stopped running, it sends a report with subject ``U - Error: rtorrent is not running!!!!`` like this:
+
+.. code-block::
+
+   Free space before action: 5GiB
+   
+   Error in rtorrent: not running for some reason ... :(
+   
+   Uptime:  18:30:18 up 61 days, 10 min,  1 user,  load average: 0.07, 0.08, 0.04
+
+
+Dropped HDD
+""""""""""""""
+
+It can happen that mounted HDD was dropped, it sends a report with subject ``U - Error: Mount!!!!`` like this:
+
+.. code-block::
+
+   Error in mount: probably the HDD got lost again ... :(
+   Uptime:  18:30:18 up 61 days, 10 min,  1 user,  load average: 0.07, 0.08, 0.04
+
+
+
+Other useful reports
+-------------
+
+These reports use ``rtcontrol`` command from ``pyrocore`` utilities and are created as `bash functions <Additions#extra-bash-functions>`_ in `~/.profile_rtfunctions <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_ to be able to be used at the command line as well.
+
+
+Orphaned torrents
+^^^^^^^^^^^^^^
+
+It can happen that data of a torrent gets abandoned, consuming only disk space but actually not used by ``rTorrent-PS-CH``.
+
+`reportOrphans.sh <Additions#reportorphans-sh>`_ lists orphaned torrents, runs in every 10 day as a reminder, a possible email report with subject ``U - List of Orphaned torrents`` looks like this:
+
+.. code-block::
+
+   Free space before action: 6.6GiB
+   
+   There are orphaned torrents, manual interaction is required.
+        1.8 GiB - incomplete/Atlantic Anime Blend Ezine
+      256.5 MiB - apps/Baen_CD-08-Into_the_Looking_Glass.iso
+      912.1 MiB - songs/JPFO 2A Today for the USA MP4
+
+   Orphaned data size: 2.9 GiB
+
+
+
+Torrents with unusual tracker message
+^^^^^^^^^^^^^^
+
+It can happen that a torrent gets deleted from the tracker, consuming only disk space but actually can not be used by ``rTorrent-PS-CH``.
+
+`reportMessages.sh <Additions#reportmessages-sh>`_ lists torrents with unusual tracker message, runs every day as a reminder, a possible email report with subject ``U - List of torrents with unusual Tracker Message`` looks like this:
+
+.. code-block::
+
+   Free space before action: 6.6GiB
+   
+   There are torrents with unusual tracker message, manual interaction is required.
+        1.8 GiB   incomplete/Atlantic Anime Blend Ezine   mininova.org
+            Tracker: [Failure reason "torrent not registered with this tracker"]
+      256.5 MiB   apps/Baen_CD-08-Into_the_Looking_Glass.iso   bt1.archive.org
+            Tracker: [Failure reason "torrent not registered with this tracker"]
+      912.1 MiB   songs/JPFO 2A Today for the USA MP4   mininova.org
+            Tracker: [Failure reason "torrent not registered with this tracker"]
+
+   Data size of torrents with tracker message:    2.9 GiB
+
+
+Stopped torrents
+^^^^^^^^^^^^^^
+
+This setup ``never`` stops any torrent, all the torrents are running all the time. If this happens that means something is wrong with those ones.
+
+`reportStopped.sh <Additions#reportstopped-sh>`_ lists stopped torrents, runs every day as a reminder, a possible email report with subject ``U - List of Stopped torrents`` looks like this:
+
+.. code-block::
+
+   Free space before action: 6.6GiB
+   
+   There are stopped torrents, manual interaction is required.
+      256.5 MiB   apps/Baen_CD-08-Into_the_Looking_Glass.iso   bt1.archive.org
+      912.1 MiB   songs/JPFO 2A Today for the USA MP4   mininova.org
+
+   Stopped data size:    1.1 GiB
+
+
+Stuck torrents in ``incomplete`` directory
+^^^^^^^^^^^^^^
+
+Normally, all the data of torrents get moved from ``incomplete`` directory into their final category when their download is finished. If this happens that means that target ``data`` directory/file (in one of the sub-directories of ``main`` directory) OR ``meta`` file (in one of the sub-directories of ``.completed`` directory) exists.
+
+`reportStuck.sh <Additions#reportstuck-sh>`_ lists stuck torrents in ``incomplete`` directory, runs every day as a reminder, a possible email report with subject ``U - List of Stuck torrents in 'incomplete' dir`` looks like this:
+
+.. code-block::
+
+   Free space before action: 6.6GiB
+   
+   There are stuck torrents in 'incomplete' directory, manual interaction is required.
+      256.5 MiB   Baen_CD-08-Into_the_Looking_Glass.iso   bt1.archive.org
+      912.1 MiB   JPFO 2A Today for the USA MP4   mininova.org
+
+   Stuck data size:    1.1 GiB
+
+
+Creating your own
+^^^^^^^^^^^^^^
+
+You can easily create your own report with the help of ``rtcontrol``, this is what needs to be done:
+
+* create a new bash function in `~/.profile_rtfunctions <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_
+* export the new function in `.profile <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile#L24>`_ like the rest are to be able to be used at the command line as well
+* copy and modify an existing report script to your needs in `~/bin/ <https://github.com/chros73/rtorrent-ps_setup/tree/master/ubuntu-14.04/home/chros73/bin>`_ 
+* add the new report script to `cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_
+
+That's it. :)

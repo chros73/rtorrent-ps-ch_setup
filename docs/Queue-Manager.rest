@@ -54,7 +54,7 @@ Moves ``meta`` files from one of the sub-directories of ``.queue`` directory int
 
 * it runs disk free space manager every time, even when there's nothing to be queued! (except for when ``rtorrent`` is stopped)
 
-* it can send report about all the action that was made (some of them are configurable)
+* it can send `email report <Email-Reports#reports-by-queue-manager>`_ about all the action that was made (all of them are configurable)
 
 * it doesn't move meta file(s) if:
 
@@ -104,7 +104,7 @@ Deletes ``meta`` files from the predefined ``rotating``, ``unsafe`` category dir
 
 * it waits for 15 seconds after successful deletion of all ``meta`` files for letting ``rtorrent`` to finish deleting data
 
-* it can send report about all the deleted torrents (configurable)
+* it can send `email report <Email-Reports#reports-by-queue-manager>`_ about all the deleted torrents (configurable)
 
 * doesn't delete ``meta`` file(s) if:
 
