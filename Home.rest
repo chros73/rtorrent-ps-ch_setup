@@ -1,7 +1,7 @@
 Automated rTorrent-PS configuration
 ===================================
 
-An almost completely automated setup with the patched version of rTorrent-PS, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
@@ -13,15 +13,17 @@ An almost completely automated setup with the patched version of rTorrent-PS, `r
 Introduction
 ------------
 
-It's all about seeding data all the time (unfortunately we have to download it before :) ) until we can. This is not the official ``pyroscope`` way to do things, I have to start with this. :) The project has been started around late 2014 with the curiosity of how many really useful things can be done with pure ``rtorrent``. As it turned out a lot.
+It's all about seeding data all the time until we can (unfortunately we have to download it before :) ). This is not the `official PyroScope way <https://github.com/pyroscope/pimp-my-box>`_ to do things, I have to start with this. :) The project has been started around late 2014 with the curiosity of how many really useful things can be done with pure ``rtorrent``. As it turned out a lot.
 
-The whole setup is based on an advanced version of the `Stefano's idea of download manager <http://www.stabellini.net/rtorrent-howto.txt>`_: it relies on moving data AND meta files all around the place. Please take the time and read more about the `Queue Manager <Queue-Manager>`_.
+The whole setup is based on an advanced version of `Stefano's idea of download manager <http://www.stabellini.net/rtorrent-howto.txt>`_: it relies on moving data AND meta files all around the place. Please take the time and read more about `Queue Manager <Queue-Manager>`_.
 
-It also includes some really unique ideas, so there's no need for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs ``every`` torrent all the time, `favours one group of torrents over the rest of them <Favoring-Group-Of-Torrents>`_ and if it run out of space it'll try to create more by deleting old ones. These features make this setup sooo powerful! :)
+It also includes some really unique ideas, so there's **no need** for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs **every** torrent all the time, `favours one group of torrents over the rest of them <Favoring-Group-Of-Torrents>`_ and if it run out of space it'll try to create more by `deleting old ones <Queue-Manager#disk-free-space-manager>`_. These features alone make this setup so powerful! :)
 
 This setup runs on a laptop from 2008 with dualcore CPU and 4GB of RAM with Ubuntu 14.04 (probably all other Debian flavor works fine, I don't know about the rest) and a 4TB HDD hooked up via ESATA with a net connection of 74/20 Mbps. It never stops until it gets power. :)
 
-"Why is it just almost completely automated?" Well, because you, dear adventurer, have to figure out by yourself how to automate downloading of torrents.
+*"How come that title mentions rTorrent-PS but intro says requires rTorrent-PS-CH ?"* Useful enchancements / fixes has been created along the way, hopefully all will be merged back into ``rTorrent-PS`` one day.
+
+*"Why is it just almost completely automated?"* Well, because you, dear adventurer, have to figure out by yourself how to automate downloading of torrents.
 
 
 Limitation
@@ -57,12 +59,12 @@ Features
 Useful additions in rtorrent
 ----------------------------
 
-*"Sounds awesome! What else?"* There are extra stuff defined in ``rtorrent`` config files (half of them is created by ``pyroscope``):
+*"Sounds awesome! What else?"* There are extra stuff defined in all over the setup:
 
--  `attributes <Additions#extra-attributes-in-rtorrent-config-files>`_: ``unsafe_data``, ``data_dir``, ``meta_dir``, ``tm_downloaded``, ``tm_loaded``, ``tm_started``, ``tm_completed``, ``last_active``, ``activations``, ``tm_last_scrape`` 
--  `commands <Additions#extra-commands-in-rtorrent-config-files>`_: ``d.move_to``, ``d.move_meta_to``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.last_active``, ``uptime``, ``hrf_time``, ``i``, ``pyro.import``
--  `views <Additions#extra-views-in-rtorrent>`_: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged (``.`` toggle tag, ``T`` clear view), ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable
--  `keyboard shortcuts <Additions#extra-keyboard-shortcuts-in-rtorrent>`_: ``*`` toggle collapsed/expanded display, ``#`` send manual scrape request, ``}`` toggle unsafe_data, ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``
+-  `attributes <Additions#extra-attributes-in-rtorrent-config-files>`_ in rtorrent: ``unsafe_data``, ``data_dir``, ``meta_dir``, ``tm_downloaded``, ``tm_loaded``, ``tm_started``, ``tm_completed``, ``last_active``, ``activations``, ``tm_last_scrape`` 
+-  `commands <Additions#extra-commands-in-rtorrent-config-files>`_ in rtorrent: ``d.move_to``, ``d.move_meta_to``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.last_active``, ``uptime``, ``hrf_time``, ``i``, ``pyro.import``
+-  `views <Additions#extra-views-in-rtorrent>`_ in rtorrent: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged (``.`` toggle tag, ``T`` clear view), ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable
+-  `keyboard shortcuts <Additions#extra-keyboard-shortcuts-in-rtorrent>`_ in rtorrent: ``*`` toggle collapsed/expanded display, ``#`` send manual scrape request, ``}`` toggle unsafe_data, ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``
 -  `Bash functions <Additions#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``
 -  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``getLimits.sh``, ``getUptime.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
 
@@ -87,7 +89,7 @@ It's really that simple. :)
 Hints and possible issues
 -------------------------
 
-See `Hints and possible issues <Hints-and-possible-issues>`_ WIKI page for more details.
+*"It indeed looks easy. What if I encounter a problem?"* Then see `Hints and possible issues <Hints-and-possible-issues>`_ WIKI page for more details.
 
 
 Migration
@@ -99,7 +101,7 @@ Migration
 -  set up everything according to the new setup
 -  `hash-ckeck all the existing data <Hints-and-possible-issues#hash-checking-existing-data-for-seeding-purposes>`_ with the new setup (it will take care about everything else)
 
-"Woow! But what about my previous local stats?" Well, nothing comes for free. :)
+*"Woow! But what about my previous local stats?"* Well, nothing comes for free. :)
 
 
 Installation
@@ -107,12 +109,12 @@ Installation
 
 *"Okie, I kind'a like it. What should I do now?"* Well, it won't be a 5 minutes task, but let's try to summarize it:
 
--  install `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
+-  install `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (v1.4-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
 -  go through all the files in this project and modify them according to your setup/needs
 -  if you find a missing command on your system then install it (sorry I don't have a list of them)
 -  check every command switch whether it's compatible with your system
 
-"Oh, my ... That's a lot of work!" Well, it took way more time to create it and document it. :) Good news is: you only have to do it once. :)
+*"Oh, my ... That's a lot of work!"* Well, it took way more time to create it and document it. :) Good news is: you only have to do it once. :)
 
 
 Performance tuning
@@ -124,13 +126,13 @@ Performance tuning
 Change log
 ----------
 
-See `CHANGELOG.md <https://github.com/chros73/rtorrent-ps_setup/blob/master/CHANGELOG.md>`_ for more details.
+*"All's good now."* See `CHANGELOG.md <https://github.com/chros73/rtorrent-ps_setup/blob/master/CHANGELOG.md>`_ for more details.
 
 
 Disclaimer
 ----------
 
-Be careful! This setup ``can`` and ``will`` delete your data if you ask for it!
+*"I just got data deleted!"* **Be careful!** This setup **can** and **will** delete your data if you ask for it!
 
 Only enable ``auto-rotating torrents`` feature in queue script (it's disabled by default) if you understand the basic concept of this setup and you configured everything as it should be!
 
@@ -140,7 +142,7 @@ This setup doesn't take any responsibility for data loss for any reason.
 Acknowledgement
 ---------------
 
-Thanks to the following people, sites:
+*"That's awesome!"* Thanks to the following people, sites:
 
 -  `Rakshasa <https://github.com/rakshasa>`_ for this amazing `client <https://github.com/rakshasa/rtorrent>`_
 -  `Pyroscope <https://github.com/pyroscope>`_ for his truly beautiful `rtorrent-ps patches <https://github.com/pyroscope/rtorrent-ps>`_ , `pyrocore utilities <https://github.com/pyroscope/pyrocore>`_ , `wiki of rutorrent <http://community.rutorrent.org/>`_ for useful examples
