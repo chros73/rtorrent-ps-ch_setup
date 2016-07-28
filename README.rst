@@ -1,7 +1,7 @@
 Automated rTorrent-PS configuration
 ===================================
 
-An almost completely automated setup with the patched version of rTorrent-PS, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
