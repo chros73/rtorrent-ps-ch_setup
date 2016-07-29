@@ -23,7 +23,7 @@ This setup runs on a laptop from 2008 with dualcore CPU and 4GB of RAM with Ubun
 
 *"How come that title mentions rTorrent-PS but intro says requires rTorrent-PS-CH ?"* Useful enchancements / fixes has been created along the way, hopefully all will be merged back into ``rTorrent-PS`` one day.
 
-*"Why is it just almost completely automated?"* Well, because you, dear adventurer, have to figure out by yourself how to automate downloading of torrents.
+*"Why is it just almost completely automated?"* Well, because you, dear adventurer, have to figure out by yourself how to automate downloading of torrents, e.g. using `flexget <http://flexget.com>`_ or writing your own script (there's also a `sample download <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/sampleDownload.sh>`_ script).
 
 
 Limitation
@@ -107,12 +107,12 @@ Migration
 Installation
 ------------
 
-*"Okie, I kind'a like it. What should I do now?"* Well, it won't be a 5 minutes task, but let's try to summarize it:
+*"Okie, I kind'a like it. What should I do now?"* Well, go through the detailed `Installation instructions <Installation-instructions>`_, although it won't be a 5 minutes task :) , so let's summarize it first:
 
--  install `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (v1.4-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
+-  install ``rTorrent-PS-CH`` (v1.4-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
 -  go through all the files in this project and modify them according to your setup/needs
--  if you find a missing command on your system then install it (sorry I don't have a list of them)
--  check every command switch whether it's compatible with your system
+-  if you find a missing command on your system then install it (although every command should be covered by the Installation instructions)
+-  if you don't use a Debian based OS then you have to check every command switch whether it's compatible with your system
 
 *"Oh, my ... That's a lot of work!"* Well, it took way more time to create it and document it. :) Good news is: you only have to do it once. :)
 
