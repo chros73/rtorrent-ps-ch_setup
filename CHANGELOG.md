@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.9.2-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.2-0.9.6) (2016-07-30)
+**Implemented enhancements:**
+
+- Add sshd config to the setup [\#88](https://github.com/chros73/rtorrent-ps_setup/issues/88)
+- Docs: Add Installation instructions WIKI page [\#87](https://github.com/chros73/rtorrent-ps_setup/issues/87)
+- Docs: Add Email Reports WIKI page [\#86](https://github.com/chros73/rtorrent-ps_setup/issues/86)
+- Docs: Add Auto-Scraping WIKI page [\#85](https://github.com/chros73/rtorrent-ps_setup/issues/85)
+- Docs: Add Queue Manager WIKI page [\#84](https://github.com/chros73/rtorrent-ps_setup/issues/84)
+- Docs: Add Hints and Magnet link WIKI pages [\#83](https://github.com/chros73/rtorrent-ps_setup/issues/83)
+- Docs: Move all the docs files to WIKI and also include them in a docs dir [\#82](https://github.com/chros73/rtorrent-ps_setup/issues/82)
+- Docs: Add separate FavoringGroupOfTorrents file [\#81](https://github.com/chros73/rtorrent-ps_setup/issues/81)
+- Docs: Add Performance Tuning section into main readme file [\#80](https://github.com/chros73/rtorrent-ps_setup/issues/80)
+- Docs: Add separate Additions file [\#79](https://github.com/chros73/rtorrent-ps_setup/issues/79)
+
 ## [0.9.1-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.1-0.9.6) (2016-07-23)
 **Implemented enhancements:**
 
