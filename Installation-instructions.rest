@@ -69,6 +69,19 @@ This setup assumes that a symlink called ``Torrents`` are created in ``/mnt`` di
 
    ln -s /media/chros/wdred/Torrents /mnt/Torrents
 
+SSH server
+"""""""""
+
+You can install ``openssh-server`` by:
+
+.. code-block::
+
+   apt-get install openssh-server openssh-client
+
+You also want to enable `SSH key authentication <https://help.ubuntu.com/lts/serverguide/openssh-server.html#openssh-keys>`_ to automate login process via SSH without the need of a password. This has to be done under your regular user account.
+
+Here is an `example config <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/ssh/sshd_config>`_, modify the ``AllowUsers`` directive in it, along with instructions how to connect to it from `Windows <Windows-8.1#connect-via-ssh>`_ and `Android <Android-5.0#connect-via-ssh>`_ devices.
+
 Samba server
 """""""""
 
@@ -187,10 +200,14 @@ Reboot
 If everything seems to work then reboot the OS: ``rTorrent-PS-CH`` should be automatically started in ``tmux`` and you can manually or will be automatically attach to that session.
 
 
-SSH key auth
+Backup your system
 ^^^^^^
 
-You also want to setup an SSH server and enable `SSH key authentication <https://help.ubuntu.com/lts/serverguide/openssh-server.html>`_ to automate login process via SSH.
+Don't forget, more precisely, don't be lazy to **create a full system backup**!
+
+You can create a similar script as `doBackup.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, take a look at e.g. this `article <https://help.ubuntu.com/community/BackupYourSystem/TAR>`_ that may give you good advise what to backup.
+
+One day you will be grateful for the effort you're doing now. :)
 
 
 Summary
