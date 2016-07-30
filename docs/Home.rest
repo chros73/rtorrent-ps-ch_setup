@@ -78,7 +78,7 @@ Basic usage
 
 -  download/upload/copy a torrent file into one the subdirs of ``.queue`` dir (the queue script will pick it)
 -  alternatively put hash-checkable data into ``incomplete`` dir and put its meta file into one the subdirs of ``.downloading`` dir (hash-checking will start immediately)
--  when download/hash-check is finished data will be moved into it's final place
+-  when download/hash-check is finished data and meta will be moved into it's final place
 -  you can move it to a different category later using this command in ``rtorrent``: `d.move_to=unsafe,1,2 <Additions#d-move-to-category-name-special-group-unsafe-data>`_
 -  you can simply put it into delete queue by pressing `} <Additions#extra-keyboard-shortcuts-in-rtorrent>`_ key multiple times
 -  you can still delete a torrent manually if you insist by ``^d^d``

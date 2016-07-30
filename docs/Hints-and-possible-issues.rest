@@ -49,3 +49,19 @@ Hash-checking existing data for seeding purposes
 
 * place ``hash-checkable data`` into ``incomplete`` directory and its ``meta`` file into one the sub-directories of ``.downloading`` directory
 * hash-checking will start immediately
+
+
+Changing announce URL of a tracker
+-------------------------------------
+
+Sometimes a regular tracker URL is changed for whatever reason and as a result, all the existing torrents stop working. Although there's an example how to change it on-the-fly with the help of `rtcontrol <http://pyrocore.readthedocs.io/en/latest/advanced.html#executing-xmlrpc-commands>`_ utility, but after several restarts it didn't seem to be a reliable way to deal with this problem. If it works for you, then problem solved already. :)
+
+What definitely will work is modifying the actual ``*.torrent`` and ``*.torrent.libtorrent_resume`` files in ``.session`` directory for every affected torrents:
+
+* stop ``rtorrent`` (also disable any script in ``cron`` that can start it)
+* make a backup of the whole ``.session`` directory first
+* search for ``old/tracker/url`` in ``.session`` directory and copy them somewhere (also backup them as well)
+* change these ULRs to the new one: beware that you have to modify the integer before it (`Bencode <https://en.wikipedia.org/wiki/Bencode>`_)
+* try it out with only 1, if it works then you can modify the rest
+* copy back all the modified ``*.torrent`` and ``*.torrent.libtorrent_resume`` files into ``.session`` directory
+* start ``rtorrent`` (also enable the previously disabled scripts in ``cron``)
