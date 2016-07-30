@@ -25,12 +25,17 @@ LogLevel INFO
 
 # Authentication:
 LoginGraceTime 120
-PermitRootLogin without-password
+# Disable root login completely
+#PermitRootLogin without-password
+PermitRootLogin no
 StrictModes yes
 
 RSAAuthentication yes
 PubkeyAuthentication yes
 #AuthorizedKeysFile	%h/.ssh/authorized_keys
+
+# Only allow the following users to connect
+AllowUsers chros73
 
 # Don't read the user's ~/.rhosts and ~/.shosts files
 IgnoreRhosts yes
