@@ -17,7 +17,7 @@ Key  View            Updated  Collapsed  Sorting, filtering properties
  5   ``complete``             *          sorted by ``completed time`` desc
  6   ``incomplete``           *          sorted by ``download and upload speed`` desc, group by ``open`` desc, ``throttle``
  7   ``hashing``                         sorted by ``loaded time`` desc, group by ``throttle``
- 8   ``seeding``     20 sec  *          sorted by ``upload speed`` desc, group by ``throttle``, only torrents with peers are shown
+ 8   ``seeding``     20 sec   *          sorted by ``upload speed`` desc, group by ``throttle``, only torrents with peers are shown
  9   ``leeching``    20 sec              sorted by ``download and upload speed`` desc, group by ``throttle``, only torrents with peers are shown
  0   ``active``      20 sec   *          sorted by ``download and upload speed`` desc, group by ``open`` desc, ``throttle``, ``complete`` desc, only active or incomplete torrents are shown
 ===  ==============  =======  =========  =============================
