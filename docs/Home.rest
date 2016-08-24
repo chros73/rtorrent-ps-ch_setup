@@ -1,7 +1,7 @@
 Automated rTorrent-PS configuration
 ===================================
 
-An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4.2-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
@@ -109,7 +109,7 @@ Installation
 
 *"Okie, I kind'a like it. What should I do now?"* Well, go through the detailed `Installation instructions <Installation-instructions>`_, although it won't be a 5 minutes task :) , so let's summarize it first:
 
--  install ``rTorrent-PS-CH`` (v1.4-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
+-  install ``rTorrent-PS-CH`` (v1.4.2-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
 -  go through all the files in this project and modify them according to your setup/needs
 -  if you find a missing command on your system then install it (although every command should be covered by the Installation instructions)
 -  if you don't use a Debian based OS then you have to check every command switch whether it's compatible with your system
