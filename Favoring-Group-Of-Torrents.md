@@ -29,7 +29,7 @@ Applying this to downloading is easy (all we have to set is `d.priority` accordi
 Let's take a look what we need for this:
 - define 1 `throttle.up` group named `slowup` and set an inital value for it that will contain all the unimportant torrents (torrents that are assigned to this group)
 - torrents that don't belong to the `slowup` throttle belong to the special group
-- set `d.priority` to high for the special group that will take care of the downloading part
+- set `d.priority` to low for the `slowup` throttle group that will take care of the downloading part
 - raise the default `min_peers`, `max_peers` and `max_uploads` values for the special group (note: these settings aren't saved along the session hence we have to modify them on the fly, if necessary)
 - setup 2 watch directories to automate this assignment between torrents and groups
 - adjust the upload rate of `slowup` throttle on the fly (with the help of an external script) depending on the current upload rate of the special group and the current global upload rate  
@@ -82,7 +82,7 @@ method.insert = cfg.slowup.d.uploads_max, value|private,  15
 
 
 # Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
-#   - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
+#   - normal priority for the special group ; - low priority and slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
 #   'd.attribs.set' command receives 3 arguments: dirname,specialgroup,unsafe_data
 schedule2 = watch_dir_1,  5,  10, "load.start=(cat,(cfg.dir.meta_downl),rotating/*.torrent), \"d.attribs.set=rotating,1,1\""
 schedule2 = watch_dir_3,  7,  10, "load.start=(cat,(cfg.dir.meta_downl),unsafe/*.torrent),   \"d.attribs.set=unsafe,,1\""
