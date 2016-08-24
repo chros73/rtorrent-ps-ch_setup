@@ -84,7 +84,7 @@ directory.default.set = (cat,(cfg.dir.incomplete))
 session.path.set = (cat,(cfg.dir.session))
 
 # Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
-#   - high priority for the special group ; - slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
+#   - normal priority for the special group ; - low priority and slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
 #   'd.attribs.set' command receives 3 arguments: dirname,specialgroup,unsafe_data
 schedule2 = watch_dir_1,  5,  10, "load.start=(cat,(cfg.dir.meta_downl),rotating/*.torrent), \"d.attribs.set=rotating,1,1\""
 schedule2 = watch_dir_2,  6,  10, "load.start=(cat,(cfg.dir.meta_downl),fullseed/*.torrent), \"d.attribs.set=fullseed,1,\""

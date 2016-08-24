@@ -43,8 +43,8 @@ method.insert = d.get_data_full_path, simple, "branch=((d.is_multi_file)),((cat,
 method.insert = d.unsafe_data.set, simple|private, "d.custom.set=unsafe_data,(argument.0); d.save_full_session="
 # helper method: sets priority and throttle (or removes it) for torrents based upon its arguments
 method.insert = d.modify_rest, simple|private, "d.priority.set=(argument.0); d.throttle_name.set=(argument.1)"
-# helper method: calls 'd.modify_rest' method with the proper arguments based upon the 2nd argument; special group: sets priority to high, removes throttle group; other torrents: sets priority to normal, sets slowup throttle group
-method.insert = d.is_special_group, simple|private, "branch=((argument.0)),((d.modify_rest,3,)),((d.modify_rest,2,slowup))"
+# helper method: calls 'd.modify_rest' method with the proper arguments based upon the 2nd argument; special group: sets priority to normal, removes throttle group; other torrents: sets priority to low, sets slowup throttle group
+method.insert = d.is_special_group, simple|private, "branch=((argument.0)),((d.modify_rest,2,)),((d.modify_rest,1,slowup))"
 # helper method: sets custom 'data_dir', 'meta_dir' variables, priority, throttle of a torrent. Requires 2 parameters, usage e.g.: 'd.attribs.set.helper=rotating,1'
 method.insert = d.attribs.set.helper, simple|private, "d.custom.set=data_dir,(cat,(cfg.dir.main),(argument.0)); d.custom.set=meta_dir,(cat,(cfg.dir.meta_compl),(argument.0)); d.is_special_group=(argument.1)"
 # helper method: calls 'd.attribs.set.helper' method (sets custom 'data_dir', 'meta_dir' variables, priority, throttle) and sets 'unsafe_data' variable of a torrent. Requires 3 parameters, usage e.g.: 'd.attribs.set=unsafe,,1'
