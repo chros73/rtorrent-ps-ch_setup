@@ -51,6 +51,14 @@ Hash-checking existing data for seeding purposes
 * hash-checking will start immediately
 
 
+Adding fast resume data to torrent files
+-------------------------------------
+
+If you're sure that you have got all the data for a given torrent, then you can skip hash-checking it by adding fast resume data into the meta file. Read more about it `here <https://github.com/rakshasa/rtorrent/wiki/Common-Tasks-in-rTorrent#adding-fast-resume-data-to-torrent-files>`_.
+
+When you modified the meta file, just follow the steps in the `Hash-checking existing data <#hash-checking-existing-data-for-seeding-purposes>`_ section.
+
+
 Changing announce URL of a tracker
 -------------------------------------
 
