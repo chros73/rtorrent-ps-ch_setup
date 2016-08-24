@@ -63,6 +63,8 @@ Just in case to be on the safe side. ``ssmtp`` is used for email reporting.
 Location of HDD
 """""""""
 
+Make sure that you use a file system that supports ``fallocate`` like btrfs, ext4, ocfs2, xfs. (Read more: `Disk allocation <https://github.com/rakshasa/rtorrent/wiki/Performance-Tuning#disk-allocation>`_)
+
 This setup assumes that a symlink called ``Torrents`` are created in ``/mnt`` directory that actually points to the main ``Torrents`` directory of the mounted HDD in ``/media/chros/wdred``. You can create such a symlink like this:
 
 .. code-block::
