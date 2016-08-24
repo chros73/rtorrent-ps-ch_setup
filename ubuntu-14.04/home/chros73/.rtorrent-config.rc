@@ -162,6 +162,9 @@ network.xmlrpc.size_limit.set = 2M
 # Set the umask for this process, which is applied to all files created by the program.
 system.umask.set = 022
 
+# Whether to allocate disk space for a new torrent. Default: `0`
+system.file.allocate.set = 1
+
 # Change key-bindings. Values: [qwerty|azerty|qwertz|dvorak] Default is 'qwerty'. (key_layout)
 #keys.layout.set = qwerty
 
