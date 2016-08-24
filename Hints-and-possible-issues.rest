@@ -41,12 +41,13 @@ Rotating part of queue script isn't working:
 Stop downloading of a torrent but still uploading it
 -------------------------------------
 
-Set the priority of all the files of a torrent to off, either manually or by running these commands in rtorrent after selecting a torrent:
+Set the priority of all the files of a torrent to off, either manually or by running these commands in rtorrent with ``^x``  after selecting a torrent:
 
-```
-f.multicall=*,f.priority.set=0
-d.update_priorities=
-```
+.. code-block::
+
+   f.multicall=*,f.priority.set=0
+   d.update_priorities=
+
 
 
 Hash-checking existing data for seeding purposes
@@ -54,6 +55,14 @@ Hash-checking existing data for seeding purposes
 
 * place ``hash-checkable data`` into ``incomplete`` directory and its ``meta`` file into one the sub-directories of ``.downloading`` directory
 * hash-checking will start immediately
+
+
+Adding fast resume data to torrent files
+-------------------------------------
+
+If you're sure that you have got all the data for a given torrent, then you can skip hash-checking it by adding fast resume data into the meta file. Read more about it `here <https://github.com/rakshasa/rtorrent/wiki/Common-Tasks-in-rTorrent#adding-fast-resume-data-to-torrent-files>`_.
+
+When you modified the meta file, just follow the steps in the `Hash-checking existing data <#hash-checking-existing-data-for-seeding-purposes>`_ section.
 
 
 Changing announce URL of a tracker
