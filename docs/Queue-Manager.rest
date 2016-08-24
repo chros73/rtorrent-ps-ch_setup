@@ -22,6 +22,10 @@ The core concept of the setup is completely based on moving ``data`` AND ``meta`
   * ``rotating`` (means ``special`` group) and ``unsafe`` categories
   * ``.delqueue`` directory: it should contain only ``symlinks`` to deletable meta files
 
+* there is 1 special ``category/directory`` called ``load`` for only loading (in closed state) but not starting torrents:
+
+  * priority of files can be set to ``Off``, so they will only occupy the required spcae, and download can be started later (e.g. with ``^s``)
+
 * there's also an `unsafe_data <Additions#unsafe-data>`_ custom variable defined in ``rtorrent`` that makes torrents deletable (value ``2`` means that the torrent is in delete-queue, meaning ``.delqueue`` directory)
 
 
