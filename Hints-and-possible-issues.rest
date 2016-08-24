@@ -41,7 +41,12 @@ Rotating part of queue script isn't working:
 Stop downloading of a torrent but still uploading it
 -------------------------------------
 
-* set the priority of all the files to off
+Set the priority of all the files of a torrent to off, either manually or by running these commands in rtorrent after selecting a torrent:
+
+```
+f.multicall=*,f.priority.set=0
+d.update_priorities=
+```
 
 
 Hash-checking existing data for seeding purposes
