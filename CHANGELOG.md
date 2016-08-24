@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.9.3-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.3-0.9.6) (2016-08-24)
+**Implemented enhancements:**
+
+- Create a new watch directory for only loading but not starting downloads [\#94](https://github.com/chros73/rtorrent-ps_setup/issues/94)
+- Modify what priority is assigned to downloads [\#93](https://github.com/chros73/rtorrent-ps_setup/issues/93)
+- Extend stop downloading of a torrent but still uploading it on Hints wiki page [\#92](https://github.com/chros73/rtorrent-ps_setup/issues/92)
+- Add fast resume section onto Hints wiki page [\#91](https://github.com/chros73/rtorrent-ps_setup/issues/91)
+- Add system.file.allocate.set=1 into rtorrent config [\#90](https://github.com/chros73/rtorrent-ps_setup/issues/90)
+- Change ui.status.throttle\_up\_name entry in rtorrent config [\#89](https://github.com/chros73/rtorrent-ps_setup/issues/89)
+
 ## [0.9.2-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.2-0.9.6) (2016-07-30)
 **Implemented enhancements:**
 
