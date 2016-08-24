@@ -97,6 +97,7 @@ schedule2 = watch_dir_8,  12, 10, "load.start=(cat,(cfg.dir.meta_downl),hdtv/*.t
 schedule2 = watch_dir_9,  13, 10, "load.start=(cat,(cfg.dir.meta_downl),movies/*.torrent),   \"d.attribs.set=movies,,\""
 schedule2 = watch_dir_10, 14, 10, "load.start=(cat,(cfg.dir.meta_downl),pictures/*.torrent), \"d.attribs.set=pictures,,\""
 schedule2 = watch_dir_11, 15, 10, "load.start=(cat,(cfg.dir.meta_downl),songs/*.torrent),    \"d.attribs.set=songs,,\""
+schedule2 = watch_dir_12, 16, 10, "load.normal=(cat,(cfg.dir.meta_downl),load/*.torrent),    \"d.attribs.set=load,,1\""
 
 ##### end: Directory settings #####
 
