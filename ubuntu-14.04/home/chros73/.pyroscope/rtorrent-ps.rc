@@ -87,7 +87,7 @@ branch=pyro.extended=,"view.sort_current = name,\"compare=+,d.name=\"","view.sor
 # overrides the default scheduling in main.cc to run the command in every 20 seconds instead of 10, the effect will be the same. Note: we have to use the same schedule-name!
 schedule2 = view.name,10,20,((view.sort,name))
 
-# UI/VIEW: SORT the collapsed STARTED view (view #3) by LAST ACTIVE desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc (Note: do NOT SCHEDULE sorting/filtering on STARTED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
+# UI/VIEW: SORT the collapsed STARTED view (view #3) by LAST ACTIVE desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc, update it in every 20 seconds (Note: do NOT SCHEDULE sorting/filtering on STARTED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
 # Items are grouped into incomplete, complete in that order. Each group is sorted by last_active field desc.
 branch=pyro.extended=,"view.collapsed.toggle=started"
 branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.last_active="
