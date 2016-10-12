@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.9.4-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.4-0.9.6) (2016-10-12)
+**Implemented enhancements:**
+
+- Modify rtorrent config files [\#98](https://github.com/chros73/rtorrent-ps_setup/issues/98)
+- Modify queue script to handle broken \(already deleted\) symlinks in .delqueue dir [\#97](https://github.com/chros73/rtorrent-ps_setup/issues/97)
+- Modify queue script to handle oversized torrents [\#96](https://github.com/chros73/rtorrent-ps_setup/issues/96)
+- Add an email report about low rotating space [\#95](https://github.com/chros73/rtorrent-ps_setup/issues/95)
+
 ## [0.9.3-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.3-0.9.6) (2016-08-24)
 **Implemented enhancements:**
 
