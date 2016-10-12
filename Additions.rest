@@ -221,9 +221,16 @@ Usage: ``rtlistMessages``
 
 rtlistStopped
 ^^^^^^^^^^^^^
-list stopped torrents.
+List stopped torrents.
 
 Usage: ``rtlistStopped``
+
+rtgetTotalRotatingSize
+^^^^^^^^^^^^^^^^^^^^^^
+Get total size of rotating and unsafe torrents.
+
+Usage: ``rtgetTotalRotatingSize``
+
 
 
 Extra Bash scripts
@@ -282,6 +289,12 @@ reportStuck.sh
 Send email report about any stuck torrent in incomplete directory.
 
 Usage: ``reportStuck.sh``
+
+reportLowRotatingSpace.sh
+^^^^^^^^^^^^^^
+Send email report about low rotating space (in rotating and unsafe directory, including free space).
+
+Usage: ``reportLowRotatingSpace.sh``
 
 rtUtils.sh
 ^^^^^^^^^^

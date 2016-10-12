@@ -176,6 +176,19 @@ Normally, all the data of torrents get moved from ``incomplete`` directory into 
    Stuck data size:    1.1 GiB
 
 
+Low rotating space
+^^^^^^^^^^^^^^
+
+`reportLowRotatingSpace.sh <Additions#reportlowrotatingspace-sh>`_ reports low amount (configurable in script) of rotating space (in rotating and unsafe directory, including free space as well), runs every day as a reminder, a possible email report with subject ``U - Low Rotating space`` looks like this:
+
+.. code-block::
+
+   Free space before action: 102GiB
+   
+   There is low rotating space (in rotating and unsafe directory), manual interaction is required:
+      668GiB
+
+
 Creating your own
 ^^^^^^^^^^^^^^
 

@@ -65,8 +65,8 @@ Useful additions in rtorrent
 -  `commands <Additions#extra-commands-in-rtorrent-config-files>`_ in rtorrent: ``d.move_to``, ``d.move_meta_to``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.last_active``, ``uptime``, ``hrf_time``, ``i``, ``pyro.import``
 -  `views <Additions#extra-views-in-rtorrent>`_ in rtorrent: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged (``.`` toggle tag, ``T`` clear view), ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable
 -  `keyboard shortcuts <Additions#extra-keyboard-shortcuts-in-rtorrent>`_ in rtorrent: ``*`` toggle collapsed/expanded display, ``#`` send manual scrape request, ``}`` toggle unsafe_data, ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``
--  `Bash functions <Additions#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``
--  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``getLimits.sh``, ``getUptime.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
+-  `Bash functions <Additions#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``, ``rtgetTotalRotatingSize``
+-  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``getLimits.sh``, ``getUptime.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``reportLowRotatingSpace.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
 
 See `Additions <Additions>`_ page for more details.
 

@@ -66,6 +66,8 @@ Moves ``meta`` files from one of the sub-directories of ``.queue`` directory int
 
   * there's not ``enough disk space`` for the queueable torrents, even after trying to make more
 
+    * it moves ``meta`` file into ``.oversized`` directory and appends current time to the moved ``meta`` filename in this case
+
   * target ``data`` directory/file (in one of the sub-directories of ``incomplete`` directory) OR ``meta`` file (in one of the sub-directories of ``.downloading`` directory) exists
 
     * it moves ``meta`` file into ``.duplicated`` directory and appends current time to the moved ``meta`` filename in this case
