@@ -70,7 +70,7 @@ method.insert = d.compare_incomplete_path, simple|private, "equal={d.get_incompl
 # helper method: prints out an error message if the current data path of the torrent doesn't exist or its data is bogus
 method.insert = d.remove_data.error.print, simple|private, "print=\"$cat=ERROR\\\\\ during\\\\\ deleting:\\\\\ ,$argument.0=,\\\\\ !\\\\\ Data\\\\\ path\\\\\ doesn't\\\\\ exist\\\\\ or\\\\\ torrent\\\\\ has\\\\\ bogus\\\\\ data.\""
 # helper method: deletes data of a torrent and removes symlink for its metafile if it exists
-method.insert = d.remove_data.helper, simple|private, "d.remove_symlink=;execute={rm,-rf,--,$d.get_data_full_path=}"
+method.insert = d.remove_data.helper, simple|private, "d.remove_symlink=;execute2={rm,-rf,--,$d.get_data_full_path=}"
 # Deletes data of a torrent and removes symlink for its metafile  (calls 'd.remove_data.helper' if data dir/file of a torrent exist and its data is not bogus or prints out an error message)
 method.insert = d.remove_data, simple, "branch=\"and={d.name=,d.data_full_path_exist=,\\\"or=d.compare_incomplete_path=,d.compare_data_path=\\\"}\",d.remove_data.helper=,d.remove_data.error.print=$d.get_data_full_path="
 # Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir and their data dir/file exist and which are not partially done magnet-meta downloads.
@@ -92,7 +92,7 @@ method.insert = d.data_full_path_exist, simple|private, "branch=d.is_multi_file=
 # insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
 #   Creating and using a custom variable with the 'd.get_data_full_path' method is necessary since we overwrite the 'd.directory' attribute before moving data.
 #   The 'd.stop=;d.start=' methods are supposed to be together at the end of this method (used by 'download.finished' and 'download.hash_done' events)!!! Don't change it until it's working fine, it will cause a bug in tracker controller resulting stucked http/https requests!!!
-method.insert = d.move_data, simple|private, "d.custom.set=data_full_path,$cat=$d.get_data_full_path= ;d.directory.set=$d.custom=data_dir;execute=mv,-f,$d.custom=data_full_path,$d.custom=data_dir;d.stop=;d.start="
+method.insert = d.move_data, simple|private, "d.custom.set=data_full_path,$cat=$d.get_data_full_path= ;d.directory.set=$d.custom=data_dir;execute2=mv,-f,$d.custom=data_full_path,$d.custom=data_dir;d.stop=;d.start="
 
 # helper method: determines just the basename of a given meta (.torrent) file
 method.insert = d.get_meta_basename, simple|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="
@@ -105,7 +105,7 @@ method.insert = d.target_meta_path_exist, simple|private, "check_object.value=\"
 # helper method: returns true if the current meta path of the torrent exists, otherwise returns false
 method.insert = d.meta_full_path_exist, simple|private, "check_object.value=$d.tied_to_file=,,f"
 # insert a method which: moves meta (.torrent) file to its final place; updates the tied meta file path of the torrent (to keep seeding it)
-method.insert = d.move_meta, simple|private, "execute=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_target_meta_path="
+method.insert = d.move_meta, simple|private, "execute2=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_target_meta_path="
 
 # helper method: moves both data and meta (.torrent) file if neither of them is in the final place and saves its session
 method.insert = d.move_both, simple|private, "d.move_meta=; d.move_data=; d.save_full_session="
@@ -125,9 +125,9 @@ method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.mo
 # helper method: get delqueue symlink name
 method.insert = d.get_delqueue_symlink_name, simple|private, "cat=$cfg.dir.delqueue=,$d.get_meta_basename="
 # adds torrent to delqueue by creating a symlink in delqueue dir to its metafile and setting unsafe_data custom variable to "2"
-method.insert = d.add_to_delqueue, simple, "d.unsafe_data.set=2; execute=ln,-sf,$d.tied_to_file=,$d.get_delqueue_symlink_name="
+method.insert = d.add_to_delqueue, simple, "d.unsafe_data.set=2; execute2=ln,-sf,$d.tied_to_file=,$d.get_delqueue_symlink_name="
 # helper method: removes symlink (if it exists) for metafile from delqueue dir
-method.insert = d.remove_symlink, simple|private, "branch=\"check_object.value=$cfg.dir.delqueue=,$d.get_meta_basename=,L\",\"execute=rm,-f,--,$d.get_delqueue_symlink_name=\""
+method.insert = d.remove_symlink, simple|private, "branch=\"check_object.value=$cfg.dir.delqueue=,$d.get_meta_basename=,L\",\"execute2=rm,-f,--,$d.get_delqueue_symlink_name=\""
 # removes torrent from delqueue by deleting its symlink (if it exists) from delqueue dir, if optional parameter "1" is given then assign it to unsafe_data
 method.insert = d.remove_from_delqueue, simple, "branch=argument.0=,d.unsafe_data.set=1,d.unsafe_data.set=; d.remove_symlink="
 # helper method: sets unsafe_data to "1" if the value exist, unsets it otherwise

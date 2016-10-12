@@ -97,7 +97,7 @@ schedule2 = watch_dir_8,  12, 10, "load.start=(cat,(cfg.dir.meta_downl),hdtv/*.t
 schedule2 = watch_dir_9,  13, 10, "load.start=(cat,(cfg.dir.meta_downl),movies/*.torrent),   \"d.attribs.set=movies,,\""
 schedule2 = watch_dir_10, 14, 10, "load.start=(cat,(cfg.dir.meta_downl),pictures/*.torrent), \"d.attribs.set=pictures,,\""
 schedule2 = watch_dir_11, 15, 10, "load.start=(cat,(cfg.dir.meta_downl),songs/*.torrent),    \"d.attribs.set=songs,,\""
-schedule2 = watch_dir_12, 16, 10, "load.normal=(cat,(cfg.dir.meta_downl),load/*.torrent),    \"d.attribs.set=load,,1\""
+schedule2 = watch_dir_12, 16, 10, "load.normal=(cat,(cfg.dir.meta_downl),load/*.torrent),    \"d.attribs.set=load,,\""
 
 ##### end: Directory settings #####
 
@@ -152,7 +152,7 @@ protocol.encryption.set = allow_incoming,prefer_plaintext,enable_retry
 
 # SCGI socket and make it group writeable when rtorrent starts (otherwise apps can't connect to it since it was started by a normal user) (scgi_local)
 network.scgi.open_local = /tmp/.rtorrent.sock
-schedule2 = chmod_scgi_socket, 0, 0, "execute=chmod,g+w,/tmp/.rtorrent.sock"
+schedule2 = chmod_scgi_socket, 0, 0, "execute2=chmod,g+w,/tmp/.rtorrent.sock"
 
 # Add a preferred filename encoding to the list. Encoding for non english chars (encoding_list)
 encoding.add = UTF-8
