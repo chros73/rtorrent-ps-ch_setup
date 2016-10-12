@@ -38,6 +38,8 @@ QUEUESIZE=9
 QUEUEORDER=""
 # enable/disable email reporting about duplicated torrents, value: [true|false]
 SKIPDUPLSTATS=false
+# enable/disable email reporting about too big torrents, value: [true|false]
+SKIPBIGSTATS=false
 # enable/disable email reporting about queued torrents, value: [true|false]
 SKIPQUEUESTATS=false
 
@@ -61,6 +63,8 @@ COMPLETEDIR="$MAINDIR/.completed"
 DELQUEUEDIR="$MAINDIR/.delqueue"
 # duplicated directory
 DUPLICATEDDIR="$MAINDIR/.duplicated"
+# oversized directory
+OVERSIZEDDIR="$MAINDIR/.oversized"
 # rotating directory
 DOWNSUBDIR="rotating"
 # unsafe directory
@@ -168,11 +172,14 @@ manageQueue () {
 	# size of free slots left in downloading queue: if it's full (=0) then do nothing (just call makeFreeSpace function, just in case)
 	let local SLOTSLEFTINQUEUE=$QUEUESIZE-$CURRENTQUEUESIZE
 	if [ $SLOTSLEFTINQUEUE -gt 0 ]; then
-	    # initialize temp duplicated and queue message, moved torrents counter, temparray to hold full path of moveable meta files
+	    # initialize temp duplicated, oversized and queue message, moved torrents counter, temparray to hold full path of moveable meta files
 	    local TEMPMSGDUPL=""
+	    local TEMPMSGBIG=""
 	    local TEMPMSGQUEUE=""
 	    let local MOVEDTORRENTS=0
 	    declare -a local TEMPARR
+	    # getting total freeable space (accounting reserved disk space as well)
+	    let local TOTALROTATINGSPACE=($(getRotatingSpace))-$DISKSPACELIMITINBYTE
 	    # gather up total size information only about the number of slots of torrents to be able to process by makeFreeSpace function, sort by QUEUEORDER variable
 	    for FILEPATH in $(ls -1t$QUEUEORDER $(find "$QUEUEDIR" -type f -iname \*.torrent) | head -n$SLOTSLEFTINQUEUE) ; do
 		# name of torrent (with the help of lstor)
@@ -189,9 +196,19 @@ manageQueue () {
 		    if [ ! "$SKIPDUPLSTATS" = true ]; then
 		        addMsg TEMPMSGDUPL "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
 		    fi
+		# checking whether current torrent size is oversized
+		elif [ $TOTALROTATINGSPACE -lt $DATASIZE ]; then
+		    # it's oversized, move meta file into oversized dir, append current date and time to the filename, prepare a report about this problem
+		    mv -f "$FILEPATH" "$OVERSIZEDDIR/${METAFILESUBPATH##*/}-$(date +%Y%m%d_%H%M)"
+		    # checking whether it should include duplicated stats in email report
+		    if [ ! "$SKIPBIGSTATS" = true ]; then
+			addMsg TEMPMSGBIG "\t$(${NUMFMT[@]} $TOTALROTATINGSPACE) / $(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
+		    fi
 		else
 		    # neither of them exist, we are good to go: total downloadable data size so far
 		    let TDOWNSIZE=$TDOWNSIZE+$DATASIZE
+		    # decrease total freeable space
+		    let TOTALROTATINGSPACE=$TOTALROTATINGSPACE-$DATASIZE
 		    # increase the moved torrents counter for reporting purposes
 		    let MOVEDTORRENTS=$((MOVEDTORRENTS + 1))
 		    # store the full path of meta file in the array
@@ -213,6 +230,14 @@ manageQueue () {
 		addMsg MSG "Duplicated torrents has been moved to into duplicated directory, manual interaction is required."
 		# add the composed temp string to the email body
 		addMsg MSG "$TEMPMSGDUPL\n\n"
+		EMAILSEND=true
+	    fi
+	    # add oversized temp message into main email body if there's any
+	    if [ "$TEMPMSGBIG" != "" ]; then
+		addMsg SUBJECT "Oversized torrents!"
+		addMsg MSG "Oversized torrents has been moved to into oversized directory, manual interaction is required."
+		# add the composed temp string to the email body
+		addMsg MSG "$TEMPMSGBIG\n\n"
 		EMAILSEND=true
 	    fi
 
