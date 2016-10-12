@@ -18,4 +18,5 @@ HOME="/home/chros73"
 53 5 * * *	chros73	"$HOME/bin/reportStuck.sh"
 # run report of listing stopped torrents every day at 05:54
 54 5 * * *	chros73	"$HOME/bin/reportStopped.sh"
-
+# run report of low rotating space every day at 06:54
+54 6 * * *	chros73	"$HOME/bin/reportLowRotatingSpace.sh"

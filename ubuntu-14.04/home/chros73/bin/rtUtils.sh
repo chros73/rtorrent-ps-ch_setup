@@ -146,6 +146,13 @@ checkMountPoint () {
 }
 
 
+# Function: get freeable rotating space on device in Byte
+getRotatingSpace () {
+    let local ROTATINGSPACE=$(rtgetTotalRotatingSize)
+    echo -e $FREESPACE+$ROTATINGSPACE
+}
+
+
 # Function: Prepares an email for reports based upon a function multiline output
 # Usage: prepareReport FUNCTION ["String of subject of email"] ["String of body of email"] (e.g.: addMsg rtlistOrphans "List of Orphaned torrents" "There are orphaned torrents, manual interaction is required.")
 prepareReport () {
