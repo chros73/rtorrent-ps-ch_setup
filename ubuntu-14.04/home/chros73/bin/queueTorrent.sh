@@ -110,31 +110,40 @@ makeFreeSpace () {
 		    # to break out the outer for loop as well if we don't
 		    break 2
 		fi
-		# name of torrent (with the help of lstor)
-		local DATANAME=$(${LSTORGETNAME[@]} "$METAFILEPATH")
-		# data size of torrent (with the help of lstor)
-		local DATASIZE=$(${LSTORGETSIZE[@]} "$METAFILEPATH")
-		# total deletable data size so far
-		let DELSIZE=$DELSIZE+$DATASIZE
 		# getting the name of meta file from full path for logging purposes (!!! dealing with multiple dirs hence the 2 substitution)
 		for DIRMOD in ${DELDIRMOD[@]}; do
 		    local METAFILE="${METAFILEPATH#$DIRMOD/}"	# unsafe
 		    METAFILE="${METAFILE#$DELDIRMOD/}"		# delqueue & rotating
 		done
-		# delete the meta file itself (rtorrent will delete the data): in the case of '.delqueue' dir handle symlinks
-		if [ "$DELDIR" == "$DELQUEUEDIR" ]; then
-		    rm "`readlink -f "$METAFILEPATH"`" "$METAFILEPATH"
-		else
+		# simply delete broken (already deleted) symlink in .delqueue dir
+		if [ "$DELDIR" == "$DELQUEUEDIR" ] && [ ! -e "$METAFILEPATH" ]; then
 		    rm -f "$METAFILEPATH"
-		fi
-		# checking whether it should include deleted data stats in email report
-		if [ ! "$SKIPDELETESTATS" = true ]; then
-		    # add the name of meta file to the report if it's not the same as the name of data dir/file
-		    local METAFILENAMEMSG=""
-		    if [ "$DATANAME.torrent" != "$METAFILE" ]; then
-			METAFILENAMEMSG="\n\t\t($METAFILE)"
+		    # checking whether it should include deleted data stats in email report
+		    if [ ! "$SKIPDELETESTATS" = true ]; then
+			addMsg TEMPMSGDEL "\t0 - $METAFILE\n\t\tTarget of this symlink has been already deleted."
 		    fi
-		    addMsg TEMPMSGDEL "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME$METAFILENAMEMSG"
+		else
+		    # name of torrent (with the help of lstor)
+		    local DATANAME=$(${LSTORGETNAME[@]} "$METAFILEPATH")
+		    # data size of torrent (with the help of lstor)
+		    local DATASIZE=$(${LSTORGETSIZE[@]} "$METAFILEPATH")
+		    # total deletable data size so far
+		    let DELSIZE=$DELSIZE+$DATASIZE
+		    # delete the meta file itself (rtorrent will delete the data): in the case of '.delqueue' dir handle symlinks
+		    if [ "$DELDIR" == "$DELQUEUEDIR" ]; then
+			rm "`readlink -f "$METAFILEPATH"`" "$METAFILEPATH"
+		    else
+			rm -f "$METAFILEPATH"
+		    fi
+		    # checking whether it should include deleted data stats in email report
+		    if [ ! "$SKIPDELETESTATS" = true ]; then
+			# add the name of meta file to the report if it's not the same as the name of data dir/file
+			local METAFILENAMEMSG=""
+			if [ "$DATANAME.torrent" != "$METAFILE" ]; then
+			    METAFILENAMEMSG="\n\t\t($METAFILE)"
+			fi
+			addMsg TEMPMSGDEL "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME$METAFILENAMEMSG"
+		    fi
 		fi
 	    done
 	done
