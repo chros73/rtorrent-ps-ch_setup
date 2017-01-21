@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.9.5-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.5-0.9.6) (2017-01-21)
+**Fixed bugs:**
+
+- Fix value returned by rtgetTotalRotatingSize\(\) if both directories are empty [\#99](https://github.com/chros73/rtorrent-ps_setup/issues/99)
+
 ## [0.9.4-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.4-0.9.6) (2016-10-12)
 **Implemented enhancements:**
 
