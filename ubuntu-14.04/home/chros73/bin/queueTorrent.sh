@@ -36,6 +36,8 @@
 QUEUESIZE=9
 # order of processing queue: '' for normal (newest first) or 'r' is reverse (oldest first)
 QUEUEORDER=""
+# enable/disable email reporting about bogus torrents, value: [true|false]
+SKIPBOGUSSTATS=false
 # enable/disable email reporting about duplicated torrents, value: [true|false]
 SKIPDUPLSTATS=false
 # enable/disable email reporting about too big torrents, value: [true|false]
@@ -61,6 +63,8 @@ DOWNLOADINGDIR="$MAINDIR/.downloading"
 COMPLETEDIR="$MAINDIR/.completed"
 # delete-queue directory
 DELQUEUEDIR="$MAINDIR/.delqueue"
+# bogus directory
+BOGUSDIR="$MAINDIR/.bogus"
 # duplicated directory
 DUPLICATEDDIR="$MAINDIR/.duplicated"
 # oversized directory
@@ -143,7 +147,12 @@ makeFreeSpace () {
 			if [ "$DATANAME.torrent" != "$METAFILE" ]; then
 			    METAFILENAMEMSG="\n\t\t($METAFILE)"
 			fi
-			addMsg TEMPMSGDEL "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME$METAFILENAMEMSG"
+			# add more info if the meta file was invalid for whatever reason
+			local METAFILESIZEMSG=""
+			if [ $DATASIZE -le 0 ] || [ -z $DATANAME ]; then
+			    METAFILESIZEMSG="\n\t\t(Torrent (meta) file was bogus!)"
+			fi
+			addMsg TEMPMSGDEL "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME$METAFILENAMEMSG$METAFILESIZEMSG"
 		    fi
 		fi
 	    done
@@ -182,9 +191,11 @@ manageQueue () {
 	# size of free slots left in downloading queue: if it's full (=0) then do nothing (just call makeFreeSpace function, just in case)
 	let local SLOTSLEFTINQUEUE=$QUEUESIZE-$CURRENTQUEUESIZE
 	if [ $SLOTSLEFTINQUEUE -gt 0 ]; then
-	    # initialize temp duplicated, oversized and queue message, moved torrents counter, temparray to hold full path of moveable meta files
-	    local TEMPMSGDUPL=""
-	    local TEMPMSGBIG=""
+	    # initialize temp bogus, duplicated, oversized and queue message, moved torrents counter, temparray to hold full path of moveable meta files
+	    declare -a local MSGVARARR=("Bogus" "Duplicated" "Oversized")
+	    for MSGVAR in "${MSGVARARR[@]}"; do
+		local TEMPMSG$MSGVAR=""
+	    done
 	    local TEMPMSGQUEUE=""
 	    let local MOVEDTORRENTS=0
 	    declare -a local TEMPARR
@@ -199,13 +210,21 @@ manageQueue () {
 		# data size of torrent (with the help of lstor), set it to 0 if an error occurred
 		local DATASIZE=$(${LSTORGETSIZE[@]} "$FILEPATH" 2>/dev/null)
 		DATASIZE=${DATASIZE:-0}
+		# checking whether torrent (meta) file is bogus
+		if [ $DATASIZE -le 0 ] || [ -z $DATANAME ]; then
+		    # it is bogus, move meta file into bogus dir, append current date and time to the filename, prepare a report about this problem
+		    mv -f "$FILEPATH" "$BOGUSDIR/${METAFILESUBPATH##*/}-$(date +%Y%m%d_%H%M)"
+		    # checking whether it should include bogus stats in email report
+		    if [ ! "$SKIPBOGUSSTATS" = true ]; then
+			addMsg TEMPMSGBogus "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
+		    fi
 		# checking whether target data/meta dir/file exists in 'incomplete', 'downloading/*' dirs
-		if [ -e "$RTINCOMPLETEDIR/$DATANAME" ] || [ -f "$DOWNLOADINGDIR/$METAFILESUBPATH"  ]; then
+		elif [ -e "$RTINCOMPLETEDIR/$DATANAME" ] || [ -f "$DOWNLOADINGDIR/$METAFILESUBPATH"  ]; then
 		    # one of them is there (or both), move meta file into duplicated dir, append current date and time to the filename, prepare a report about this problem
 		    mv -f "$FILEPATH" "$DUPLICATEDDIR/${METAFILESUBPATH##*/}-$(date +%Y%m%d_%H%M)"
 		    # checking whether it should include duplicated stats in email report
 		    if [ ! "$SKIPDUPLSTATS" = true ]; then
-		        addMsg TEMPMSGDUPL "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
+		        addMsg TEMPMSGDuplicated "\t$(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
 		    fi
 		# checking whether current torrent size is oversized
 		elif [ $TOTALROTATINGSPACE -lt $DATASIZE ]; then
@@ -213,7 +232,7 @@ manageQueue () {
 		    mv -f "$FILEPATH" "$OVERSIZEDDIR/${METAFILESUBPATH##*/}-$(date +%Y%m%d_%H%M)"
 		    # checking whether it should include duplicated stats in email report
 		    if [ ! "$SKIPBIGSTATS" = true ]; then
-			addMsg TEMPMSGBIG "\t$(${NUMFMT[@]} $TOTALROTATINGSPACE) / $(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
+			addMsg TEMPMSGOversized "\t$(${NUMFMT[@]} $TOTALROTATINGSPACE) / $(${NUMFMT[@]} $DATASIZE) - $DATANAME\n\t\t${METAFILESUBPATH##*/}"
 		    fi
 		else
 		    # neither of them exist, we are good to go: total downloadable data size so far
@@ -235,22 +254,18 @@ manageQueue () {
 		    fi
 		fi
 	    done
-	    # add duplicated temp message into main email body if there's any
-	    if [ "$TEMPMSGDUPL" != "" ]; then
-		addMsg SUBJECT "Duplicated torrents!"
-		addMsg MSG "Duplicated torrents has been moved to into duplicated directory, manual interaction is required."
-		# add the composed temp string to the email body
-		addMsg MSG "$TEMPMSGDUPL\n\n"
-		EMAILSEND=true
-	    fi
-	    # add oversized temp message into main email body if there's any
-	    if [ "$TEMPMSGBIG" != "" ]; then
-		addMsg SUBJECT "Oversized torrents!"
-		addMsg MSG "Oversized torrents has been moved to into oversized directory, manual interaction is required."
-		# add the composed temp string to the email body
-		addMsg MSG "$TEMPMSGBIG\n\n"
-		EMAILSEND=true
-	    fi
+	    # add bogus, duplicated, oversized temp messages into main email body if there's any
+	    for MSGVAR in "${MSGVARARR[@]}"; do
+		# create a temp variable for the composed variable name to be able to use it with variable indirection in condition
+		local MSGVARNAME="TEMPMSG$MSGVAR"
+		if [ "${!MSGVARNAME}" != "" ]; then
+		    addMsg SUBJECT "$MSGVAR torrents!"
+		    addMsg MSG "$MSGVAR torrents has been moved to into ${MSGVAR,} directory, manual interaction is required."
+		    # add the composed temp string to the email body
+		    addMsg MSG "${!MSGVARNAME}\n\n"
+		    EMAILSEND=true
+		fi
+	    done
 
 	    # size of required disk space
 	    let REQSPACE=$REQSPACE+$TDOWNSIZE
