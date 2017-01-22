@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.9.6-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.6-0.9.6) (2017-01-22)
+**Implemented enhancements:**
+
+- Modify queue script to handle bogus torrents [\#101](https://github.com/chros73/rtorrent-ps_setup/issues/101)
+
+**Fixed bugs:**
+
+- Fix error handling of external commands in shell scripts [\#100](https://github.com/chros73/rtorrent-ps_setup/issues/100)
+
 ## [0.9.5-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.5-0.9.6) (2017-01-21)
 **Fixed bugs:**
 
