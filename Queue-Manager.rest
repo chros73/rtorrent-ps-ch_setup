@@ -64,6 +64,10 @@ Moves ``meta`` files from one of the sub-directories of ``.queue`` directory int
 
   * ``rtorrent`` stopped running
 
+  * ``meta`` file is bogus (not valid torrent file), e.g. it has missing ``name`` or ``size`` property
+
+    * it moves ``meta`` file into ``.bogus`` directory and appends current time to the moved ``meta`` filename in this case
+
   * there's not ``enough disk space`` for the queueable torrents, even after trying to make more
 
     * it moves ``meta`` file into ``.oversized`` directory and appends current time to the moved ``meta`` filename in this case
