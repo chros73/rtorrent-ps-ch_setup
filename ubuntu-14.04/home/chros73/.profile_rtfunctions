@@ -19,32 +19,32 @@ RTLISTSUMMSGSTOPPED="Stopped data size"
 
 # list orphaned torrents
 rtlistOrphans () {
-    $HOME/bin/rtcontrol -qO $RTORPHANSTEMPLATE \*
+    $HOME/bin/rtcontrol --cron -qO $RTORPHANSTEMPLATE \*
 }
 
 
 # list stuck torrents in incomplete directory
 rtlistStuck () {
-    $HOME/bin/rtcontrol --stats -qo size.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | sed "s#SIZE.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats -qo size.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | sed "s#SIZE.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # list torrents with unusual trackers messages
 rtlistMessages () {
-    $HOME/bin/rtcontrol --stats --sort-fields=message,path -qo size.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --sort-fields=message,path -qo size.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # list stopped torrents
 rtlistStopped () {
-    $HOME/bin/rtcontrol --stats --from-view stopped --sort-fields=path -qo size.sz,path,alias \* | sed "s#$RTHOME/##; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTOPPED: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view stopped --sort-fields=path -qo size.sz,path,alias \* | sed "s#$RTHOME/##; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTOPPED: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # get total size of rotating and unsafe torrents
 rtgetTotalRotatingSize () {
-    local rotatingSize=$($HOME/bin/rtcontrol --stats -qo size,name,alias "path=$RTHOME/rotating/*,$RTHOME/unsafe/*" OR custom_unsafe_data=2 | grep "SUM of" | sed "s# \[SUM of.*##")
-    [[ -n "$rotatingSize" ]] && echo -e "$rotatingSize" || echo -e 0
+    local rotatingSize=$($HOME/bin/rtcontrol --cron --stats --summary -qo size,name,alias "path=$RTHOME/rotating/*,$RTHOME/unsafe/*" OR custom_unsafe_data=2 | grep "SUM of" | sed "s# \[SUM of.*##")
+    echo -e "${rotatingSize:-0}"
 }
 
 

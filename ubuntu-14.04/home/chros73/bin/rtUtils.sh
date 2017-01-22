@@ -115,7 +115,8 @@ checkRtStatus () {
 
 # Function: get free space on device in Byte
 getFreeSpace () {
-    df -P --block-size=1 "$MOUNTDIR" | grep "$MOUNTDIR" | awk '{print $4}'
+    local freeSpace=$(df -P --block-size=1 "$MOUNTDIR" 2> /dev/null | grep "$MOUNTDIR" | awk '{print $4}')
+    echo -e "${freeSpace:--1}"
 }
 
 
@@ -126,7 +127,7 @@ checkMountPoint () {
     local MAILHELPERMOUNTVALORIG=`cat $MAILHELPERMOUNT`
     MAILHELPERMOUNTVAL=false
     # check for dropped device
-    if [ "$FREESPACE" == "" ] || [ ! -L "$RTHOME" ] || [ ! -e "$RTHOME" ] ; then
+    if [ $FREESPACE -lt 0 ] || [ ! -L "$RTHOME" ] || [ ! -e "$RTHOME" ] ; then
 	MAILHELPERMOUNTVAL=true
 	# prepare email about this error only if it wasn't sent already
 	if [ ! "$MAILHELPERMOUNTVALORIG" = true ]; then

@@ -79,8 +79,8 @@ DELQUEUEARR+=("$COMPLETEDIR/$DOWNSUBDIR $COMPLETEDIR/$DOWNRESTSUBDIR")
 MAILHELPERSPACE="$RTCOOKIESDIR/flag-space"
 
 # lstor command with switches (for getting size in Byte or name of a torrent from its meta file)
-LSTORGETSIZE=($HOME/bin/lstor -qVo __size__)
-LSTORGETNAME=($HOME/bin/lstor -qVo info.name)
+LSTORGETSIZE=($HOME/bin/lstor --cron -qVo __size__)
+LSTORGETNAME=($HOME/bin/lstor --cron -qVo info.name)
 
 # initialize total size of data
 let TDOWNSIZE=0
@@ -124,9 +124,10 @@ makeFreeSpace () {
 		    fi
 		else
 		    # name of torrent (with the help of lstor)
-		    local DATANAME=$(${LSTORGETNAME[@]} "$METAFILEPATH")
-		    # data size of torrent (with the help of lstor)
-		    local DATASIZE=$(${LSTORGETSIZE[@]} "$METAFILEPATH")
+		    local DATANAME=$(${LSTORGETNAME[@]} "$METAFILEPATH" 2>/dev/null)
+		    # data size of torrent (with the help of lstor), set it to 0 if an error occurred
+		    local DATASIZE=$(${LSTORGETSIZE[@]} "$METAFILEPATH" 2>/dev/null)
+		    DATASIZE=${DATASIZE:-0}
 		    # total deletable data size so far
 		    let DELSIZE=$DELSIZE+$DATASIZE
 		    # delete the meta file itself (rtorrent will delete the data): in the case of '.delqueue' dir handle symlinks
@@ -192,11 +193,12 @@ manageQueue () {
 	    # gather up total size information only about the number of slots of torrents to be able to process by makeFreeSpace function, sort by QUEUEORDER variable
 	    for FILEPATH in $(ls -1t$QUEUEORDER $(find "$QUEUEDIR" -type f -iname \*.torrent) | head -n$SLOTSLEFTINQUEUE) ; do
 		# name of torrent (with the help of lstor)
-		local DATANAME=$(${LSTORGETNAME[@]} "$FILEPATH")
+		local DATANAME=$(${LSTORGETNAME[@]} "$FILEPATH" 2>/dev/null)
 		# sub-path of meta file (including name of category dir)
 		local METAFILESUBPATH="${FILEPATH#$QUEUEDIR/}"
-		# data size of torrent (with the help of lstor)
-		local DATASIZE=$(${LSTORGETSIZE[@]} "$FILEPATH")
+		# data size of torrent (with the help of lstor), set it to 0 if an error occurred
+		local DATASIZE=$(${LSTORGETSIZE[@]} "$FILEPATH" 2>/dev/null)
+		DATASIZE=${DATASIZE:-0}
 		# checking whether target data/meta dir/file exists in 'incomplete', 'downloading/*' dirs
 		if [ -e "$RTINCOMPLETEDIR/$DATANAME" ] || [ -f "$DOWNLOADINGDIR/$METAFILESUBPATH"  ]; then
 		    # one of them is there (or both), move meta file into duplicated dir, append current date and time to the filename, prepare a report about this problem
