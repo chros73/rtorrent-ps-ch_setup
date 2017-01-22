@@ -14,15 +14,17 @@ Reports by Queue Manager
 Regular report
 ^^^^^^^^^^^^^^
 
-It can include 3 different activities in its regular reports (all of them are configurable and enabled by default):
+It can include 5 different activities in its regular reports (all of them are configurable and enabled by default):
 
 * deleted torrents by `Disk free space manager <Queue-Manager#disk-free-space-manager>`_
+* bogus torrents in ``.queue`` directory by `Downloading queue manager <Queue-Manager#downloading-queue-manager>`_
 * duplicated torrents in ``incomplete`` directory by `Downloading queue manager <Queue-Manager#downloading-queue-manager>`_
+* oversized torrents in ``.queue`` directory by `Downloading queue manager <Queue-Manager#downloading-queue-manager>`_
 * queued torrents by `Downloading queue manager <Queue-Manager#downloading-queue-manager>`_
 
 A possible email report that includes all 3 components looks like this:
 
-* subject: ``U - Making Free space, Duplicated torrents!, Queued 3 torrents``
+* subject: ``U - Making Free space, Bogus torrents!, Duplicated torrents!, Oversized torrents!, Queued 3 torrents``
 
 .. code-block::
 
@@ -34,9 +36,17 @@ A possible email report that includes all 3 components looks like this:
    Deleted data size: 3.6GiB
    
    
+   Bogus torrents has been moved into bogus directory, manual interaction is required.
+             0 - Notvalidtorrentfile
+   
+   
    Duplicated torrents has been moved into duplicated directory, manual interaction is required.
          18MiB - HealthFoodChoicesInThailand
         8.3MiB - 050815LOSHIJOSDELBOLERO
+   
+   
+   Oversized torrents has been moved into oversized directory, manual interaction is required.
+      235.4GiB / 978.2GiB - OverSizeMe
    
    
    Queued 3 torrents:
