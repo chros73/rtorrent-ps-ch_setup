@@ -189,6 +189,9 @@ method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.g
 
 ##### begin: Other enhancements #####
 
+# Start any magnet torrent from the load watch directory (that only loads downloads into rtorrent)
+method.set_key = event.download.inserted_new, auto_start_meta_in_load_dir, "branch=\"and={d.is_meta=,not=$d.state=}\",d.start="
+
 # Display any valid timestamp value in human readable format or print the value itself (e.g.: 30/06/2013 23:47:33).
 #   Usage: hrf_time=<<timefield>>  (e.g.: hrf_time=$d.creation_date=  ,  hrf_time=$d.custom=tm_last_scrape)
 # helper method: to display any timestamp field (e.g. d.creation_date= , d.custom=tm_last_scrape) in human readable format

@@ -18,8 +18,9 @@ categories=(
 7 "movies"
 8 "pictures"
 9 "songs"
-10 "fullseed"
-11 "rotating"
+10 "load"
+11 "fullseed"
+12 "rotating"
 )
 ###### end: Edit ######
 
@@ -44,7 +45,7 @@ fi
 
 
 # ncursed dialog command
-dialog_cmd=(dialog --keep-tite --menu "Select category in rTorrent" 18 32 11)
+dialog_cmd=(dialog --keep-tite --menu "Select category in rTorrent" 19 32 12)
 
 # display the category selection dialog
 choice=$("${dialog_cmd[@]}" "${categories[@]}" 2>&1 >/dev/tty)
