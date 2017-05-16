@@ -226,7 +226,7 @@ method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.h
 branch=pyro.extended=,"schedule2 = bind_auto_scale,0,0,\"ui.bind_key=download_list,=,network.history.auto_scale.ui_toggle=\""
 
 # UI/STATUS: Display additional throttle up info in status bar (it needs rT-PS-CH)
-branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle.up.set = slowup\""
+branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle.up.set = slowup,tardyup\""
 
 ### end: Other UI enhancements ###
 

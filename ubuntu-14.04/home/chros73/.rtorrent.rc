@@ -43,8 +43,10 @@ method.insert = d.get_data_full_path, simple, "branch=((d.is_multi_file)),((cat,
 method.insert = d.unsafe_data.set, simple|private, "d.custom.set=unsafe_data,(argument.0); d.save_full_session="
 # helper method: sets priority and throttle (or removes it) for torrents based upon its arguments
 method.insert = d.modify_rest, simple|private, "d.priority.set=(argument.0); d.throttle_name.set=(argument.1)"
-# helper method: calls 'd.modify_rest' method with the proper arguments based upon the 2nd argument; special group: sets priority to normal, removes throttle group; other torrents: sets priority to low, sets slowup throttle group
-method.insert = d.is_special_group, simple|private, "branch=((argument.0)),((d.modify_rest,2,)),((d.modify_rest,1,slowup))"
+# helper method: calls 'd.modify_rest' method with the proper arguments based upon whether a throttled download is private; other torrents: sets priority to low, sets slowup or tardyup throttle group
+method.insert = d.is_private_throttled, simple|private, "branch=((d.is_private)),((d.modify_rest,1,slowup)),((d.modify_rest,1,tardyup))"
+# helper method: calls 'd.modify_rest' or 'd.is_private_throttled' method with the proper arguments based upon the 2nd argument; special group: sets priority to normal, removes throttle group
+method.insert = d.is_special_group, simple|private, "branch=((argument.0)),((d.modify_rest,2,)),((d.is_private_throttled))"
 # helper method: sets custom 'data_dir', 'meta_dir' variables, priority, throttle of a torrent. Requires 2 parameters, usage e.g.: 'd.attribs.set.helper=rotating,1'
 method.insert = d.attribs.set.helper, simple|private, "d.custom.set=data_dir,(cat,(cfg.dir.main),(argument.0)); d.custom.set=meta_dir,(cat,(cfg.dir.meta_compl),(argument.0)); d.is_special_group=(argument.1)"
 # helper method: calls 'd.attribs.set.helper' method (sets custom 'data_dir', 'meta_dir' variables, priority, throttle) and sets 'unsafe_data' variable of a torrent. Requires 3 parameters, usage e.g.: 'd.attribs.set=unsafe,,1'
@@ -167,21 +169,37 @@ method.insert = d.move_to, simple, "d.move_to.check_data_dir=$argument.0=,$argum
 
 ##### begin: Favouring special group of torrents over the rest #####
 
+# Set choke group to one of the default ones if there's no throttle or throttle is special one (NULL) otherwise sets it to one of the throttle name ones
+method.insert = d.modify_choke_group, simple, "branch=((and,((d.throttle_name)),((not,((equal,((d.throttle_name)),((cat,NULL)))))))),((d.group.set,(cat,(d.throttle_name),_,(d.connection_current)))),((d.group.set,(cat,default_,(d.connection_current))))"
 # helper method: Modifies the peers_min, peers_max, max_uploads values of a torrent for both downloading and uploading
 method.insert = d.modify_slots, simple|private, "d.peers_min.set=(argument.0); d.peers_max.set=(argument.1); d.uploads_max.set=(argument.2)"
 # Modifies the above properties for a torrent based on which group it belongs to
 method.insert = d.modify_slots_both, simple, "branch=((not,(d.throttle_name))),((d.modify_slots,(throttle.min_peers.normal),(throttle.max_peers.normal),(throttle.max_uploads))),((d.modify_slots,(cfg.slowup.d.peers_min),(cfg.slowup.d.peers_max),(cfg.slowup.d.uploads_max)))"
 # Modify both group values when a torrent is resumed (even after hashchecking or after rtorrent is restarted)
-method.set_key = event.download.resumed, modify_slots_resumed_both, "d.modify_slots_both="
+method.set_key = event.download.resumed, modify_slots_resumed_both, "d.modify_slots_both=; d.modify_choke_group="
+method.set_key = event.download.finished, modify_finished_choke_group, "d.modify_choke_group="
+method.set_key = event.download.partially_restarted, modify_partially_restarted_choke_group, "d.modify_choke_group="
 
-# helper method: gets one of the below info with the help of getLimits.sh script (Variables are inside the script, you have to edit those values there!)
-method.insert = get_limit, simple|private, "execute.capture=\"$cat=$pyro.bin_dir=,getLimits,$cfg.postfix=,.sh\",$argument.0=,$argument.1=,$argument.2=,$argument.3="
-# Dynamically adjusts the 2nd group (slowup throttle) uprate (upload speed) to always leave enough bandwidth to the 1st main group. (More info in getLimits.sh script.)
-schedule2     = adjust_throttle_slowup, 14, 20, "throttle.up=slowup,\"$get_limit=$cat=up,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
-# Dynamically adjusts the global download rate to always leave enough bandwidth to the 1st main group upload rate. It's good for async connection (e.g. ADSL) where upload speed can be slowed down if download speed is close to max. Comment it out if you don't need it.
-schedule2     = adjust_throttle_global_down_max_rate, 54, 60, "throttle.global_down.max_rate.set_kb=\"$get_limit=$cat=down,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
-# Helper method to display the current rate information: after CTRL+x , you can use: i= . It displays: MainUpRate: 1440 , ThrottleUpRate: 92 , ThrottleLimit: 100
-method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup\""
+# helper method: get current uprate in KB for special group
+method.insert = get_uprate_main, simple, "math.max=0,(math.div,(math.sub,(throttle.global_up.rate),(throttle.up.rate,slowup),(throttle.up.rate,tardyup)),1024)"
+# helper methods: get new uprate limit in KB (based on special group uprate) for slowup and tardyup throttle groups
+method.insert = get_uprate_slowup,  simple|private, "math.min=(cfg.slowup.uprate.max),(math.max,(cfg.slowup.uprate.min),(math.sub,(cfg.slowup.uprate.max),(get_uprate_main),(math.div,(throttle.up.rate,tardyup),1024)))"
+method.insert = get_uprate_tardyup, simple|private, "math.min=(cfg.tardyup.uprate.max),(math.max,(cfg.tardyup.uprate.min),(math.sub,(cfg.tardyup.uprate.max),(get_uprate_main),(math.div,(throttle.up.rate,slowup),1024)))"
+# Set new uprate limit for slowup and tardyup throttle groups in every 20 seconds
+schedule2     = adjust_throttle_slowup,  14, 20, "throttle.up=slowup,(cat,(get_uprate_slowup))"
+schedule2     = adjust_throttle_tardyup, 15, 20, "throttle.up=tardyup,(cat,(get_uprate_tardyup))"
+
+# helper method: get new global downrate limit in KB (based on special group uprate and given threshold values)
+method.insert = get_downrate_global, simple|private, "branch=(and,((greater,((math.div,(throttle.global_up.rate),1024)),((cfg.global.upall.threshold)))),((greater,((get_uprate_main)),((cfg.global.upmain.threshold))))),(cfg.global.downrate.min),(cfg.global.downrate.max)"
+# Set new global downrate limit in every 60 seconds
+schedule2     = adjust_throttle_global_down_max_rate, 54, 60, "throttle.global_down.max_rate.set_kb=(get_downrate_global)"
+
+# helper methods: get new upload slots limit for slowup_seed and tardyup_seed choke groups (based on their current uprate and the given cfg values)
+method.insert = get_slots_slowup,  simple|private, "math.min=(cfg.slowup.upslots.max),(math.max,(math.div,(cfg.slowup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,slowup),1024,(cfg.global.slot.uprate.min)))"
+method.insert = get_slots_tardyup, simple|private, "math.min=(cfg.tardyup.upslots.max),(math.max,(math.div,(cfg.tardyup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,tardyup),1024,(cfg.global.slot.uprate.min)))"
+# Set new upload slots (unchoked peers) limit for slowup_seed and tardyup_seed choke groups in every 100 seconds
+schedule2     = adjust_slots_slowup,  47, 100,"choke_group.up.max.set=slowup_seed,(cat,(get_slots_slowup))"
+schedule2     = adjust_slots_tardyup, 48, 100,"choke_group.up.max.set=tardyup_seed,(cat,(get_slots_tardyup))"
 
 ##### end: Favouring special group of torrents over the rest #####
 

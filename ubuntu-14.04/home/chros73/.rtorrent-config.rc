@@ -27,12 +27,38 @@ throttle.max_uploads.set = 50
 #   You can assign throttles to a stopped download with Ctrl-T. The NULL throttle is a special unlimited throttle that bypasses the global throttle.
 #   Limits the upload rate to 600 kb/s for the "slowup" throttle group. We also use this property to distinguish between "special" and "others" group. (This value will be auto-adjusted by a helper script in Favouring section of main config file.)
 throttle.up = slowup,600
+throttle.up = tardyup,300
 
 # Slowup group values for the previous similar 3 settings that will be overriden by per torrent settings in Favouring section of main config file.
 #   cfg.slowup.d.peers_min ~ throttle.min_peers.normal , cfg.slowup.d.peers_max ~ throttle.max_peers.normal , cfg.slowup.d.uploads_max ~ throttle.max_uploads
-method.insert = cfg.slowup.d.peers_min,   value|private,  29
-method.insert = cfg.slowup.d.peers_max,   value|private,  50
-method.insert = cfg.slowup.d.uploads_max, value|private,  15
+method.insert = cfg.slowup.d.peers_min,     value,    29
+method.insert = cfg.slowup.d.peers_max,     value,    50
+method.insert = cfg.slowup.d.uploads_max,   value,    15
+
+
+## Variables for getting upload rate limit and upload slots for throttle groups
+# Max, Min value of uprate limit throttle in KB and Max number of upload slots for slowup throttle group
+method.insert = cfg.slowup.uprate.max,      value,  1600
+method.insert = cfg.slowup.uprate.min,      value,    75
+method.insert = cfg.slowup.upslots.max,     value,   125
+# Max, Min value of uprate limit throttle in KB and Max number of upload slots for tardyup throttle group
+method.insert = cfg.tardyup.uprate.max,     value,  1200
+method.insert = cfg.tardyup.uprate.min,     value,    25
+method.insert = cfg.tardyup.upslots.max,    value,    75
+
+## Variables for getting global downrate limit
+# Max, Min value of global downrate in KB
+method.insert = cfg.global.downrate.max,    value,  9999
+method.insert = cfg.global.downrate.min,    value,  8000
+# Threshold values for global and special group uprate in KB
+method.insert = cfg.global.upall.threshold, value,  1600
+method.insert = cfg.global.upmain.threshold,value,  1100
+
+# Min value of uprate per upload slot (unchoked peers) in KB
+method.insert = cfg.global.slot.uprate.min, value,     5
+
+
+
 
 # Set the numwant field sent to the tracker, which indicates how many peers we want. A negative value disables this feature. Default: -1 (tracker_numwant)
 trackers.numwant.set = 100
