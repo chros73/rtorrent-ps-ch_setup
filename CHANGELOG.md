@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.9.7-0.9.7](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.7-0.9.7) (2017-05-16)
+**Implemented enhancements:**
+
+- Enable peer exchange, UDP tracker, DHT support [\#111](https://github.com/chros73/rtorrent-ps_setup/issues/111)
+- Remove unneeded external getLimits.sh script [\#110](https://github.com/chros73/rtorrent-ps_setup/issues/110)
+- Add an email report about public torrents [\#109](https://github.com/chros73/rtorrent-ps_setup/issues/109)
+- Support public torrents [\#108](https://github.com/chros73/rtorrent-ps_setup/issues/108)
+- Rename ui.status.throttle.up.name config entry to ui.status.throttle.up [\#107](https://github.com/chros73/rtorrent-ps_setup/issues/107)
+- Use d.selected\_size\_bytes instead of d.size in reports [\#106](https://github.com/chros73/rtorrent-ps_setup/issues/106)
+- Use default view of rtorrent to query data by default [\#105](https://github.com/chros73/rtorrent-ps_setup/issues/105)
+- Small color config changes [\#103](https://github.com/chros73/rtorrent-ps_setup/issues/103)
+- Add support for using magnet downloads in load watch directory [\#102](https://github.com/chros73/rtorrent-ps_setup/issues/102)
+
 ## [0.9.6-0.9.6](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.6-0.9.6) (2017-01-22)
 **Implemented enhancements:**
 
