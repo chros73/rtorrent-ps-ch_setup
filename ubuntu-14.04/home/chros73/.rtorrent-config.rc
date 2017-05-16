@@ -58,6 +58,29 @@ method.insert = cfg.global.upmain.threshold,value,  1100
 method.insert = cfg.global.slot.uprate.min, value,     5
 
 
+# Setting up choke groups that restricts the number of unchoked peers in a group
+# Modify default choke groups for specail group
+choke_group.up.heuristics.set = default_leech,upload_leech_experimental
+choke_group.tracker.mode.set  = default_leech,aggressive
+choke_group.tracker.mode.set  = default_seed,aggressive
+# Set up choke groups for slowup group
+choke_group.insert = slowup_leech
+choke_group.insert = slowup_seed
+choke_group.up.heuristics.set = slowup_leech,upload_leech
+choke_group.up.heuristics.set = slowup_seed,upload_seed
+choke_group.down.max.set = slowup_leech,200
+choke_group.up.max.set   = slowup_leech,200
+choke_group.up.max.set   = slowup_seed,125
+# Set up choke groups for tardyup group
+choke_group.insert = tardyup_leech
+choke_group.insert = tardyup_seed
+choke_group.up.heuristics.set = tardyup_leech,upload_leech
+choke_group.up.heuristics.set = tardyup_seed,upload_seed
+choke_group.down.max.set = tardyup_leech,150
+choke_group.up.max.set   = tardyup_leech,150
+choke_group.up.max.set   = tardyup_seed,75
+
+
 # Set the numwant field sent to the tracker, which indicates how many peers we want. A negative value disables this feature. Default: -1 (tracker_numwant)
 trackers.numwant.set = 100
 
