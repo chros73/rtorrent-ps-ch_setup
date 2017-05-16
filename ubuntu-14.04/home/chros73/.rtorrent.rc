@@ -169,8 +169,8 @@ method.insert = d.move_to, simple, "d.move_to.check_data_dir=$argument.0=,$argum
 
 ##### begin: Favouring special group of torrents over the rest #####
 
-# Set choke group to one of the default ones if there's no throttle or throttle is special one (NULL) otherwise sets it to one of the throttle name ones
-method.insert = d.modify_choke_group, simple, "branch=((and,((d.throttle_name)),((not,((equal,((d.throttle_name)),((cat,NULL)))))))),((d.group.set,(cat,(d.throttle_name),_,(d.connection_current)))),((d.group.set,(cat,default_,(d.connection_current))))"
+# helper method: Sets choke group to one of the default ones if there's no throttle or throttle is special one (NULL) otherwise sets it to one of the throttle name ones
+method.insert = d.modify_choke_group, simple|private, "branch=((and,((d.throttle_name)),((not,((equal,((d.throttle_name)),((cat,NULL)))))))),((d.group.set,(cat,(d.throttle_name),_,(d.connection_current)))),((d.group.set,(cat,default_,(d.connection_current))))"
 # helper method: Modifies the peers_min, peers_max, max_uploads values of a torrent for both downloading and uploading
 method.insert = d.modify_slots, simple|private, "d.peers_min.set=(argument.0); d.peers_max.set=(argument.1); d.uploads_max.set=(argument.2)"
 # Modifies the above properties for a torrent based on which group it belongs to
@@ -180,7 +180,7 @@ method.set_key = event.download.resumed, modify_slots_resumed_both, "d.modify_sl
 method.set_key = event.download.finished, modify_finished_choke_group, "d.modify_choke_group="
 method.set_key = event.download.partially_restarted, modify_partially_restarted_choke_group, "d.modify_choke_group="
 
-# helper method: get current uprate in KB for special group
+# Gets current uprate in KB for special group
 method.insert = get_uprate_main, simple, "math.max=0,(math.div,(math.sub,(throttle.global_up.rate),(throttle.up.rate,slowup),(throttle.up.rate,tardyup)),1024)"
 # helper methods: get new uprate limit in KB (based on special group uprate) for slowup and tardyup throttle groups
 method.insert = get_uprate_slowup,  simple|private, "math.min=(cfg.slowup.uprate.max),(math.max,(cfg.slowup.uprate.min),(math.sub,(cfg.slowup.uprate.max),(get_uprate_main),(math.div,(throttle.up.rate,tardyup),1024)))"
