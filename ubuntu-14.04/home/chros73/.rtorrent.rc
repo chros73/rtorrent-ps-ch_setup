@@ -135,7 +135,7 @@ method.insert = d.fix_delqueue_flag.helper, simple|private, "branch=\"d.custom=u
 # fixes unsafe_data values depending a symlink in delqueue dir exists or not
 method.insert = d.fix_delqueue_flag, simple, "branch=\"and={d.custom=unsafe_data,\\\"check_object.value=$cfg.dir.delqueue=,$d.get_meta_basename=,L\\\"}\",d.unsafe_data.set=2,d.fix_delqueue_flag.helper="
 # run the above d.fix_delqueue_flag every day at 1:19 AM, useful if symlinks are sometimes created manually or by a script in delqueue dir
-schedule2 = fix_delqueue_flag, 1:19:00, 24:00:00, "d.multicall2=main,d.fix_delqueue_flag="
+schedule2 = fix_delqueue_flag, 1:19:00, 24:00:00, "d.multicall2=default,d.fix_delqueue_flag="
 
 # Move a finished, stucked meta file from the downloading dir into its final place (thanks to the simetimes missing meta_dir custom field value, rtorrent bug on OpenWRT?)
 #   Usage: 'd.move_meta_to=various'
@@ -215,7 +215,7 @@ method.insert = d.last_scrape.check, simple|private, "branch={d.custom=tm_last_s
 # sets custom field (tm_last_scrape) to current time only for torrents just has been added (skips setting time on purpose when rtorrent started)
 method.set_key = event.download.inserted_new, last_scrape_i, "d.last_scrape.set="
 # check for update every 5 minutes (300 sec) and update scrape info for transferring torrents in every 10 minutes (600-20=580 sec) and for non-transferring ones in every 12 hours (43200-20=43180 sec)
-schedule2 = last_scrape_t, 300, 300, "d.multicall2=main,\"branch=\\\"or={d.up.rate=,d.down.rate=}\\\",d.last_scrape.check=580,d.last_scrape.check=43180\""
+schedule2 = last_scrape_t, 300, 300, "d.multicall2=default,\"branch=\\\"or={d.up.rate=,d.down.rate=}\\\",d.last_scrape.check=580,d.last_scrape.check=43180\""
 
 ##### end: Other enhancements #####
 

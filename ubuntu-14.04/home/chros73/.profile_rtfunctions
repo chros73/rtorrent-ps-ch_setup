@@ -19,19 +19,19 @@ RTLISTSUMMSGSTOPPED="Stopped data size"
 
 # list orphaned torrents
 rtlistOrphans () {
-    $HOME/bin/rtcontrol --cron -qO $RTORPHANSTEMPLATE \*
+    $HOME/bin/rtcontrol --cron --from-view default -qO $RTORPHANSTEMPLATE \*
 }
 
 
 # list stuck torrents in incomplete directory
 rtlistStuck () {
-    $HOME/bin/rtcontrol --cron --stats -qo size.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | sed "s#SIZE.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view default -qo size.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | sed "s#SIZE.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # list torrents with unusual trackers messages
 rtlistMessages () {
-    $HOME/bin/rtcontrol --cron --stats --sort-fields=message,path -qo size.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view default --sort-fields=message,path -qo size.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SIZE.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
@@ -43,7 +43,7 @@ rtlistStopped () {
 
 # get total size of rotating and unsafe torrents
 rtgetTotalRotatingSize () {
-    local rotatingSize=$($HOME/bin/rtcontrol --cron --stats --summary -qo size,name,alias "path=$RTHOME/rotating/*,$RTHOME/unsafe/*" OR custom_unsafe_data=2 | grep "SUM of" | sed "s# \[SUM of.*##")
+    local rotatingSize=$($HOME/bin/rtcontrol --cron --stats --from-view default --summary -qo size,name,alias "path=$RTHOME/rotating/*,$RTHOME/unsafe/*" OR custom_unsafe_data=2 | grep "SUM of" | sed "s# \[SUM of.*##")
     echo -e "${rotatingSize:-0}"
 }
 
