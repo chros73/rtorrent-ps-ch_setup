@@ -128,6 +128,26 @@ It can happen that data of a torrent gets abandoned, consuming only disk space b
 
 
 
+Public torrents
+^^^^^^^^^^^^^^
+
+Since public torrents are officially supported it's good to know which they are and how much disk space they occupy.
+
+`reportPublic.sh <Additions#reportpublic-sh>`_ lists public torrents, runs in every 10 day as a reminder, a possible email report with subject ``U - List of Public torrents`` looks like this:
+
+.. code-block::
+
+   Free space before action: 6.6GiB
+   
+   There are public torrents, manual interaction is required.
+        1.8 GiB - incomplete/Atlantic Anime Blend Ezine   mininova.org
+      256.5 MiB - apps/Baen_CD-08-Into_the_Looking_Glass.iso   bt1.archive.org
+      912.1 MiB - songs/JPFO 2A Today for the USA MP4   mininova.org
+
+   Public data size: 2.9 GiB
+
+
+
 Torrents with unusual tracker message
 ^^^^^^^^^^^^^^
 

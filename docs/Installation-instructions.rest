@@ -65,11 +65,11 @@ Location of HDD
 
 Make sure that you use a file system that supports ``fallocate`` like btrfs, ext4, ocfs2, xfs. (Read more: `Disk allocation <https://github.com/rakshasa/rtorrent/wiki/Performance-Tuning#disk-allocation>`_)
 
-This setup assumes that a symlink called ``Torrents`` are created in ``/mnt`` directory that actually points to the main ``Torrents`` directory of the mounted HDD in ``/media/chros/wdred``. You can create such a symlink like this:
+This setup assumes that a symlink called ``Torrents`` are created in ``/mnt`` directory that actually points to the main ``Torrents`` directory of the mounted HDD in ``/media/chros73/wdred``. You can create such a symlink like this:
 
 .. code-block::
 
-   ln -s /media/chros/wdred/Torrents /mnt/Torrents
+   ln -s /media/chros73/wdred/Torrents /mnt/Torrents
 
 SSH server
 """""""""
@@ -168,7 +168,7 @@ Copy all the directories/files from the given `home <https://github.com/chros73/
 You have to check the variables at the beginning of the following:
 
 * `.profile_rtfunctions <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_, `.pyroscope/templates/orphans-ch.txt <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.pyroscope/templates/orphans-ch.txt>`_
-* script files in ``~/bin/`` directory: `addMagnetLink.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLink.sh>`_, `doBackup.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, `getLimits.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/getLimits.sh>`_, `queueTorrent.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_, `rtUtils.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/rtUtils.sh>`_
+* script files in ``~/bin/`` directory: `addMagnetLink.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLink.sh>`_, `doBackup.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, `queueTorrent.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_, `rtUtils.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/rtUtils.sh>`_
 
 Finally, you only have to modify 1 rtorrent config file: 
 

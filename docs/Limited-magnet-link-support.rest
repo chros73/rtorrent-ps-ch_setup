@@ -9,19 +9,17 @@ The problem
 
 Magnet links are really problematic with ``rtorrent``, just to name a few:
 
-* enabling ``udp tracker`` / ``dht`` support can cause various issues (e.g. it can mess up normal ``http/https`` requests)
+* actual meta file can't be downloaded from other clients of only encrypted connection is allowed
 
 * created meta file by ``rtorrent`` is invalid (that means it can't be used to determine the size of the torrent with ``lstor``)
 
-Strong recommendation is that do not use magnet links with ``rtorrent``, use a different client for them.
-
-Although sometimes it still can be useful to grab something via magnet links (using only ``http/https`` trackers).
+Although sometimes it still can be useful to grab something via magnet links.
 
 
 Solution
 --------
 
-* requires ``rTorrent-PS-CH v1.4-0.9.6`` or newer (includs a new command ``d.is_meta`` in ``rtorrent``)
+* requires ``rTorrent-PS-CH v1.4-0.9.6`` or newer (includes a new command ``d.is_meta`` in ``rtorrent``)
 
 * they can't be used with ``queue`` script (created meta file by ``rtorrent`` is invalid), so there's only manual support for them
 
