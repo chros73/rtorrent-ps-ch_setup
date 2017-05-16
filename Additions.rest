@@ -185,9 +185,9 @@ Displays any valid timestamp value in human readable format or print the value i
 
 Usage: ``hrf_time=$d.creation_date=``, ``hrf_time=$d.custom=tm_last_scrape``
 
-i=
-^^
-Displays the current rate information in the form of ``MainUpRate: 1440 , ThrottleUpRate: 92 , ThrottleLimit: 100``. Depricated, since a more compact and always updated form is represented by ``rtorrent-ps-ch`` in the left part of status bar.
+get_uprate_main=
+^^^^^^^
+Gets current uprate in KB for special group.
 
 pyro.import=rtconfig_filename
 ^^^^^^^^^^^^
@@ -206,6 +206,12 @@ rtlistOrphans
 List orphaned torrents.
 
 Usage: ``rtlistOrphans``
+
+rtlistPublic
+^^^^^^^^^^^^^
+List public torrents.
+
+Usage: ``rtlistPublic``
 
 rtlistStuck
 ^^^^^^^^^^^
@@ -248,12 +254,6 @@ Backup session directory of rtorrent.
 
 Usage: ``doBackup.sh``
 
-getLimits.sh
-^^^^^^^^^^^^
-Calculates uprate limit for slowup throttle or global downrate limit based on the parameters or gives info about them. It's used by ``adjust_throttle_slowup=``, ``adjust_throttle_global_down_max_rate`` scheduled tasks and ``i=`` method in rtorrent.
-
-Usage: ``getLimits.sh <<action>> <<global_upload_rate>> <<throttle_upload_rate>> [throttle_upload_limit]``
-
 getUptime.sh
 ^^^^^^^^^^^^
 Calculates and prints uptime in the form of ``Up: 6 years, 5 months, 18 days, 02:40:00``. Year/month info isn't shown if their value is 0. It's used by ``uptime=`` method in rtorrent.
@@ -277,6 +277,12 @@ reportOrphans.sh
 Send email report about any orphaned torrent.
 
 Usage: ``reportOrphans.sh``
+
+reportPublic.sh
+^^^^^^^^^^^^^^^^
+Send email report about any public torrent.
+
+Usage: ``reportPublic.sh``
 
 reportStopped.sh
 ^^^^^^^^^^^^^^^^

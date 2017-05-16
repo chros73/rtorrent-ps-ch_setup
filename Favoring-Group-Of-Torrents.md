@@ -1,6 +1,6 @@
-# Favoring one group of torrents over the rest of them
+# Favoring one group of torrents over 2 other groups of them
 
-This is one of the most frequently asked questions regarding to the usage of `rTorrent`. It turned out that its realization is pretty simple: let's adjust upload rate dynamically for the rest and other attributes of them.
+This is one of the most frequently asked questions regarding to the usage of `rTorrent`. It turned out that its realization is pretty simple: let's adjust upload rate dynamically for each group and other attributes of them.
 
 This feature is so powerful that it will change the way you used to work with `rTorrent`.
 
@@ -10,7 +10,7 @@ This feature is so powerful that it will change the way you used to work with `r
  * [Theory](#theory)
  * [Realization](#realization)
   * [Sample config](#sample-config)
-  * [Helper script](#helper-script)
+  * [Extra methods](#extra-methods)
   * [How it works](#how-it-works)
     * [Getting new uprate limit for slowup throttle](#getting-new-uprate-limit-for-slowup-throttle)
     * [Getting new global downrate limit](#getting-new-global-downrate-limit)
@@ -72,13 +72,59 @@ throttle.max_uploads.set = 50
 # Limits the upload rate to 600 kb/s for the `slowup` throttle group. We also use this property to distinguish
 #  `special` and `rest` group. This value will be auto-adjusted by a helper script in Favoring section.
 throttle.up = slowup,600
+throttle.up = tardyup,300
 
 # initial `slowup` group values for the previous similar 3 settings that will be overridden by per torrent settings
 #  Favouring section. `cfg.slowup.d.peers_min` ~ `throttle.min_peers.normal` ,
 #  `cfg.slowup.d.peers_max` ~ `throttle.max_peers.normal` , `cfg.slowup.d.uploads_max` ~ `throttle.max_uploads`
-method.insert = cfg.slowup.d.peers_min,   value|private,  29
-method.insert = cfg.slowup.d.peers_max,   value|private,  50
-method.insert = cfg.slowup.d.uploads_max, value|private,  15
+method.insert = cfg.slowup.d.peers_min,     value,    29
+method.insert = cfg.slowup.d.peers_max,     value,    50
+method.insert = cfg.slowup.d.uploads_max,   value,    15
+
+
+## Variables for getting upload rate limit and upload slots for throttle groups
+# Max, Min value of uprate limit throttle in KB and Max number of upload slots for slowup throttle group
+method.insert = cfg.slowup.uprate.max,      value,  1600
+method.insert = cfg.slowup.uprate.min,      value,    75
+method.insert = cfg.slowup.upslots.max,     value,   125
+# Max, Min value of uprate limit throttle in KB and Max number of upload slots for tardyup throttle group
+method.insert = cfg.tardyup.uprate.max,     value,  1200
+method.insert = cfg.tardyup.uprate.min,     value,    25
+method.insert = cfg.tardyup.upslots.max,    value,    75
+
+## Variables for getting global downrate limit
+# Max, Min value of global downrate in KB
+method.insert = cfg.global.downrate.max,    value,  9999
+method.insert = cfg.global.downrate.min,    value,  8000
+# Threshold values for global and special group uprate in KB
+method.insert = cfg.global.upall.threshold, value,  1600
+method.insert = cfg.global.upmain.threshold,value,  1100
+
+# Min value of uprate per upload slot (unchoked peers) in KB
+method.insert = cfg.global.slot.uprate.min, value,     5
+
+
+# Setting up choke groups that restricts the number of unchoked peers in a group
+# Modify default choke groups for specail group
+choke_group.up.heuristics.set = default_leech,upload_leech_experimental
+choke_group.tracker.mode.set  = default_leech,aggressive
+choke_group.tracker.mode.set  = default_seed,aggressive
+# Set up choke groups for slowup group
+choke_group.insert = slowup_leech
+choke_group.insert = slowup_seed
+choke_group.up.heuristics.set = slowup_leech,upload_leech
+choke_group.up.heuristics.set = slowup_seed,upload_seed
+choke_group.down.max.set = slowup_leech,200
+choke_group.up.max.set   = slowup_leech,200
+choke_group.up.max.set   = slowup_seed,125
+# Set up choke groups for tardyup group
+choke_group.insert = tardyup_leech
+choke_group.insert = tardyup_seed
+choke_group.up.heuristics.set = tardyup_leech,upload_leech
+choke_group.up.heuristics.set = tardyup_seed,upload_seed
+choke_group.down.max.set = tardyup_leech,150
+choke_group.up.max.set   = tardyup_leech,150
+choke_group.up.max.set   = tardyup_seed,75
 
 
 # Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
@@ -90,62 +136,77 @@ schedule2 = watch_dir_3,  7,  10, "load.start=(cat,(cfg.dir.meta_downl),unsafe/*
 
 ##### begin: Favoring special group of torrents over the rest #####
 
-# helper method: Modifies the `peers_min`, `peers_max`, `max_uploads` values of a torrent for
-#  both downloading and uploading
+# helper method: Sets choke group to one of the default ones if there's no throttle or throttle is special one (NULL) otherwise sets it to one of the throttle name ones
+method.insert = d.modify_choke_group, simple|private, "branch=((and,((d.throttle_name)),((not,((equal,((d.throttle_name)),((cat,NULL)))))))),((d.group.set,(cat,(d.throttle_name),_,(d.connection_current)))),((d.group.set,(cat,default_,(d.connection_current))))"
+# helper method: Modifies the peers_min, peers_max, max_uploads values of a torrent for both downloading and uploading
 method.insert = d.modify_slots, simple|private, "d.peers_min.set=(argument.0); d.peers_max.set=(argument.1); d.uploads_max.set=(argument.2)"
 # Modifies the above properties for a torrent based on which group it belongs to
 method.insert = d.modify_slots_both, simple, "branch=((not,(d.throttle_name))),((d.modify_slots,(throttle.min_peers.normal),(throttle.max_peers.normal),(throttle.max_uploads))),((d.modify_slots,(cfg.slowup.d.peers_min),(cfg.slowup.d.peers_max),(cfg.slowup.d.uploads_max)))"
-# Modify both group values when a torrent is resumed (even after hash-checking or after `rTorrent` is restarted)
-method.set_key = event.download.resumed, modify_slots_resumed_both, "d.modify_slots_both="
+# Modify both group values when a torrent is resumed (even after hashchecking or after rtorrent is restarted)
+method.set_key = event.download.resumed, modify_slots_resumed_both, "d.modify_slots_both=; d.modify_choke_group="
+method.set_key = event.download.finished, modify_finished_choke_group, "d.modify_choke_group="
+method.set_key = event.download.partially_restarted, modify_partially_restarted_choke_group, "d.modify_choke_group="
 
-# helper method: gets one of the below info with the help of `getLimits.sh` script 
-#  note: variables are inside the script, you have to edit those values there!
-method.insert = get_limit, simple|private, "execute.capture=\"$cat=$pyro.bin_dir=,getLimits,$cfg.postfix=,.sh\",$argument.0=,$argument.1=,$argument.2=,$argument.3="
-# Dynamically adjusts the 2nd group (`slowup` throttle) uprate (upload speed) to always leave enough bandwidth
-#  to the 1st main group. (More info in `getLimits.sh` script)
-schedule2     = adjust_throttle_slowup, 14, 20, "throttle.up=slowup,\"$get_limit=$cat=up,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
-# Dynamically adjusts the global download rate to always leave enough bandwidth to the 1st main group upload rate.
-#  It's good for async connection (e.g. ADSL) where upload speed can be slowed down if download speed is
-#  close to max. Comment it out if you don't need it.
-schedule2     = adjust_throttle_global_down_max_rate, 54, 60, "throttle.global_down.max_rate.set_kb=\"$get_limit=$cat=down,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup\""
-# Helper method to display the current rate information: `^x` + `i=`.
-#  It displays: MainUpRate: 1440 , ThrottleUpRate: 92 , ThrottleLimit: 100
-method.insert = i, simple, "print=\"$get_limit=$cat=info,$convert.kb=$throttle.global_up.rate=,$convert.kb=$throttle.up.rate=slowup,$convert.kb=$throttle.up.max=slowup\""
+# Gets current uprate in KB for special group
+method.insert = get_uprate_main, simple, "math.max=0,(math.div,(math.sub,(throttle.global_up.rate),(throttle.up.rate,slowup),(throttle.up.rate,tardyup)),1024)"
+# helper methods: get new uprate limit in KB (based on special group uprate) for slowup and tardyup throttle groups
+method.insert = get_uprate_slowup,  simple|private, "math.min=(cfg.slowup.uprate.max),(math.max,(cfg.slowup.uprate.min),(math.sub,(cfg.slowup.uprate.max),(get_uprate_main),(math.div,(throttle.up.rate,tardyup),1024)))"
+method.insert = get_uprate_tardyup, simple|private, "math.min=(cfg.tardyup.uprate.max),(math.max,(cfg.tardyup.uprate.min),(math.sub,(cfg.tardyup.uprate.max),(get_uprate_main),(math.div,(throttle.up.rate,slowup),1024)))"
+# Set new uprate limit for slowup and tardyup throttle groups in every 20 seconds
+schedule2     = adjust_throttle_slowup,  14, 20, "throttle.up=slowup,(cat,(get_uprate_slowup))"
+schedule2     = adjust_throttle_tardyup, 15, 20, "throttle.up=tardyup,(cat,(get_uprate_tardyup))"
+
+# helper method: get new global downrate limit in KB (based on special group uprate and given threshold values)
+method.insert = get_downrate_global, simple|private, "branch=(and,((greater,((math.div,(throttle.global_up.rate),1024)),((cfg.global.upall.threshold)))),((greater,((get_uprate_main)),((cfg.global.upmain.threshold))))),(cfg.global.downrate.min),(cfg.global.downrate.max)"
+# Set new global downrate limit in every 60 seconds
+schedule2     = adjust_throttle_global_down_max_rate, 54, 60, "throttle.global_down.max_rate.set_kb=(get_downrate_global)"
+
+# helper methods: get new upload slots limit for slowup_seed and tardyup_seed choke groups (based on their current uprate and the given cfg values)
+method.insert = get_slots_slowup,  simple|private, "math.min=(cfg.slowup.upslots.max),(math.max,(math.div,(cfg.slowup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,slowup),1024,(cfg.global.slot.uprate.min)))"
+method.insert = get_slots_tardyup, simple|private, "math.min=(cfg.tardyup.upslots.max),(math.max,(math.div,(cfg.tardyup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,tardyup),1024,(cfg.global.slot.uprate.min)))"
+# Set new upload slots (unchoked peers) limit for slowup_seed and tardyup_seed choke groups in every 100 seconds
+schedule2     = adjust_slots_slowup,  47, 100,"choke_group.up.max.set=slowup_seed,(cat,(get_slots_slowup))"
+schedule2     = adjust_slots_tardyup, 48, 100,"choke_group.up.max.set=tardyup_seed,(cat,(get_slots_tardyup))"
 
 ##### end: Favoring special group of torrents over the rest #####
+
+### begin: Other UI enhancements ###
+# UI/STATUS: Display additional throttle up info in status bar (it needs rT-PS-CH)
+branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle.up.set = slowup,tardyup\""
+### end: Other UI enhancements ###
 ```
 
 
-### Helper script
+### Extra methods
 
-Since we can't do basic arithmetic operations in `rTorrent` config files, we need the [`getLimits.sh`](https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/getLimits.sh) external script that will do this for us.
+Since we can do basic arithmetic operations in `rTorrent-PS-CH 1.5.0-0.9.7` or newer, we don't need the previously used external script file.
 
-It can do 3 things:
-- gets new uprate limit for `slowup` throttle (based upon the configured variables and the given parameters)
- - specify the top of the cap (`sluplimit`: highest allowable value in KiB, e.g. `1700`) for `slowup` throttle
+They can do 3 things:
+- gets new uprate limit for `slowup` or `tardyup` throttle (based upon the configured variables)
+ - specify the top of the cap (`sluplimit`: highest allowable value in KiB, e.g. `1600`) for `slowup` throttle
  - specify the bottom of the cap (`sldownlimit`: lowest allowable value in KiB, e.g. `100`) for `slowup` throttle
-- gets new global downrate limit (based upon the configured variables and the given parameters)
- - specify the top of the cap (`gldownlimitmax` in KiB, e.g. `9999`) for global downrate
- - specify the bottom of the cap (`gldownlimitmin` in KiB, e.g. `7500`) for global downrate
- - specify the global uprate limit (`alluplimit` in KiB, e.g. `1600`) that above this value it should lower global downrate
+- gets new global downrate limit (based on special group uprate and the configured variables)
+ * specify the top of the cap (`gldownlimitmax` in KiB, e.g. `9999`) for global downrate
+ * specify the bottom of the cap (`gldownlimitmin` in KiB, e.g. `7500`) for global downrate
+ * specify the global uprate limit (`alluplimit` in KiB, e.g. `1600`) that above this value it should lower global downrate
  - specify the main (special) uprate limit (`mainuplimit` in KiB, e.g. `1200`) that above this value it should lower global downrate
-- gets info about current speed and limits in the form of: `MainUpRate: 1440 , ThrottleUpRate: 92 , ThrottleLimit: 100`
- - note: this functionality is deprecated, [rtorrent-ps-ch](https://github.com/chros73/rtorrent-ps/#fork-notes) will display  realtime info about these
+- gets new upload slots limit for `slowup_seed` and `tardyup_seed` choke groups (based on their current uprate and the configured variables)
 
-You have to edit the variables at the beginning of the script according to your needs, it probably also needs some experimenting which values works best for your needs. There's one more advantage of including variables in the script itself that you can modify them while `rTorrent` is running and the new values will be used next time when the script is called.
+You have to edit the variables in `.rtorrent-config.rc` according to your needs, it probably also needs some experimenting which values works best for your needs. These variables can be adjusted on-the-fly while `rTorrent` is running.
 
 
 ### How it works
 
 - once you put a torrent into a watch directory all the necessary attributes are assigned to it
-- `adjust_throttle_slowup` runs in every 20 seconds
+- `adjust_throttle_slowup` and `adjust_throttle_tardyup` runs in every 20 seconds
 - `adjust_throttle_global_down_max_rate` runs in every 60 seconds
+- `adjust_slots_slowup` and `adjust_slots_tardyup` runs in every 100 seconds
 
-#### Getting new uprate limit for slowup throttle
+#### Getting new uprate limit for slowup or tardyup throttle
 
-It doesn't use a complicated algorithm to always give back a reliable result, `sluplimit - mainup`, but it works pretty efficiently:
-- checks the current uprate of throttle and uprate of main (special) group (with the help of the global uprate) then it raises or lowers the throttle limit according to the uprate of the main group
-- you should leave a considerable amount of gap ~`20%` (~`500 KiB`, in this case) between the top of the cap (`sluplimit` , e.g. `1700`) and the max global upload rate (upload_rate : the global upload limit , e.g. `2200`) to be able to work efficiently: to leave bandwidth to the main (special) group between checks (within that 20 seconds interval)
+It doesn't use a complicated algorithm to always give back a reliable result, `cfg.slowup.uprate.max - mainup`, but it works pretty efficiently:
+- checks the current uprate of throttles and uprate of main (special) group (with the help of the global uprate) then it raises or lowers the throttle limit according to the uprate of the main (special) and the other throttle group
+- you should leave a considerable amount of gap ~`20%` (~`500 KiB`, in this case) between the top of the cap (`cfg.slowup.uprate.max` , e.g. `1600`) and the max global upload rate (upload_rate : the global upload limit , e.g. `2200`) to be able to work efficiently: to leave bandwidth to the main (special) group between checks (within that 20 seconds interval)
 
 #### Getting new global downrate limit
 

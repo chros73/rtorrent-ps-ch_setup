@@ -1,7 +1,7 @@
 Automated rTorrent-PS configuration
 ===================================
 
-An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.4.2-0.9.6 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.5.0-0.9.7 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
@@ -17,7 +17,7 @@ It's all about seeding data all the time until we can (unfortunately we have to 
 
 The whole setup is based on an advanced version of `Stefano's idea of download manager <http://www.stabellini.net/rtorrent-howto.txt>`_: it relies on moving data AND meta files all around the place. Please take the time and read more about `Queue Manager <Queue-Manager>`_.
 
-It also includes some really unique ideas, so there's **no need** for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs **every** torrent all the time, `favours one group of torrents over the rest of them <Favoring-Group-Of-Torrents>`_ and if it run out of space it'll try to create more by `deleting old ones <Queue-Manager#disk-free-space-manager>`_. These features alone make this setup so powerful! :)
+It also includes some really unique ideas, so there's **no need** for ratio groups, stopping/starting torrents (either manually or by a script), deleting anything manually: it runs **every** torrent all the time, `favours one group of torrents over 2 other groups of them <Favoring-Group-Of-Torrents>`_ and if it run out of space it'll try to create more by `deleting old ones <Queue-Manager#disk-free-space-manager>`_. These features alone make this setup so powerful! :)
 
 This setup runs on a laptop from 2008 with dualcore CPU and 4GB of RAM with Ubuntu 14.04 (probably all other Debian flavor works fine, I don't know about the rest) and a 4TB HDD hooked up via ESATA with a net connection of 74/20 Mbps. It never stops until it gets power. :)
 
@@ -44,7 +44,7 @@ Features
 
   - it's disabled by default (you have to enable it with ``AUTOROTATETORRENTS=true`` in queue script)
 
--  favouring one group of torrents over the rest of them (`read more <Favoring-Group-Of-Torrents>`_)
+-  favouring one group of torrents over 2 other groups of them (`read more <Favoring-Group-Of-Torrents>`_)
 -  hash-checking dropped data (`read more <Hints-and-possible-issues#hash-checking-existing-data-for-seeding-purposes>`_)
 -  limited magnet link support (`read more <Limited-magnet-link-support>`_)
 -  regularly updates scrape information for all torrents (`read more <Auto-Scraping>`_)
@@ -62,11 +62,11 @@ Useful additions in rtorrent
 *"Sounds awesome! What else?"* There are extra stuff defined in all over the setup:
 
 -  `attributes <Additions#extra-attributes-in-rtorrent-config-files>`_ in rtorrent: ``unsafe_data``, ``data_dir``, ``meta_dir``, ``tm_downloaded``, ``tm_loaded``, ``tm_started``, ``tm_completed``, ``last_active``, ``activations``, ``tm_last_scrape`` 
--  `commands <Additions#extra-commands-in-rtorrent-config-files>`_ in rtorrent: ``d.move_to``, ``d.move_meta_to``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.last_active``, ``uptime``, ``hrf_time``, ``i``, ``pyro.import``
+-  `commands <Additions#extra-commands-in-rtorrent-config-files>`_ in rtorrent: ``d.move_to``, ``d.move_meta_to``, ``d.get_data_full_path``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.last_active``, ``uptime``, ``hrf_time``, ``get_uprate_main``, ``pyro.import``
 -  `views <Additions#extra-views-in-rtorrent>`_ in rtorrent: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged (``.`` toggle tag, ``T`` clear view), ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable
 -  `keyboard shortcuts <Additions#extra-keyboard-shortcuts-in-rtorrent>`_ in rtorrent: ``*`` toggle collapsed/expanded display, ``#`` send manual scrape request, ``}`` toggle unsafe_data, ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``
--  `Bash functions <Additions#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``, ``rtgetTotalRotatingSize``
--  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``getLimits.sh``, ``getUptime.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``reportLowRotatingSpace.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
+-  `Bash functions <Additions#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistPublic``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``, ``rtgetTotalRotatingSize``
+-  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``getUptime.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportPublic.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``reportLowRotatingSpace.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
 
 See `Additions <Additions>`_ page for more details.
 
@@ -109,7 +109,7 @@ Installation
 
 *"Okie, I kind'a like it. What should I do now?"* Well, go through the detailed `Installation instructions <Installation-instructions>`_, although it won't be a 5 minutes task :) , so let's summarize it first:
 
--  install ``rTorrent-PS-CH`` (v1.4.2-0.9.6 or newer) and ``pyrocore`` utilities with ``tmux``
+-  install ``rTorrent-PS-CH`` (v1.5.0-0.9.7 or newer) and ``pyrocore`` utilities with ``tmux``
 -  go through all the files in this project and modify them according to your setup/needs
 -  if you find a missing command on your system then install it (although every command should be covered by the Installation instructions)
 -  if you don't use a Debian based OS then you have to check every command switch whether it's compatible with your system
