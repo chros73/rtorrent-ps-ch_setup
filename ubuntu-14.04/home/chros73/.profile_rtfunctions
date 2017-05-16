@@ -12,6 +12,7 @@ RTORPHANSTEMPLATE="orphans-ch.txt"
 RTINCOMPLETEDIR="$RTHOME/.rtorrent/incomplete"
 
 # summary info string for reports
+RTLISTSUMMSGPUBLIC="Public data size"
 RTLISTSUMMSGSTUCK="Stuck data size"
 RTLISTSUMMSGMESSAGES="Data size of torrents with tracker message"
 RTLISTSUMMSGSTOPPED="Stopped data size"
@@ -20,6 +21,12 @@ RTLISTSUMMSGSTOPPED="Stopped data size"
 # list orphaned torrents
 rtlistOrphans () {
     $HOME/bin/rtcontrol --cron --from-view default -qO $RTORPHANSTEMPLATE \*
+}
+
+
+# list public torrents
+rtlistPublic () {
+    $HOME/bin/rtcontrol --cron --stats --from-view default -qo selected_size_bytes.sz,name,alias is_private=no | sed "s#SELECTED.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGPUBLIC: \1#" |  grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 

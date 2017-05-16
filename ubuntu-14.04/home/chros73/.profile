@@ -22,7 +22,7 @@ if [ -d "$HOME/bin" ] ; then
 fi
 
 # include common alises like functions and export them
-. ~/.profile_rtfunctions && export RTHOME && export -f rtlistOrphans rtlistStuck rtlistMessages rtlistStopped rtgetTotalRotatingSize
+. ~/.profile_rtfunctions && export RTHOME && export -f rtlistOrphans rtlistPublic rtlistStuck rtlistMessages rtlistStopped rtgetTotalRotatingSize
 
 # Automatically reattach the rtorrent session or create a new one only if STDIN is a terminal (we are using interactive mode)
 if [ -t 0 ] && [ -z "$TMUX" ]; then 

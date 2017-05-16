@@ -12,6 +12,8 @@ HOME="/home/chros73"
 
 # run report of listing all orphaned data in every 10 days at 05:48
 48 5 */10 * *	chros73	"$HOME/bin/reportOrphans.sh"
+# run report of listing all public data in every 10 days at 05:46
+46 5 */10 * *	chros73	"$HOME/bin/reportPublic.sh"
 # run report of listing torrents with unusual trackers messages every day at 05:49
 49 5 * * *	chros73	"$HOME/bin/reportMessages.sh"
 # run report of listing stuck torrents in incomplete directory every day at 05:53
