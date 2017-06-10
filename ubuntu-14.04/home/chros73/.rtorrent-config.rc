@@ -130,21 +130,57 @@ directory.default.set = (cat,(cfg.dir.incomplete))
 # Default session directory. Make sure you don't run multiple instance of rtorrent using the same session directory. (session)
 session.path.set = (cat,(cfg.dir.session))
 
+# Whether to use inotify for loading/removing torrent (meta) files from watch directories
+method.insert = cfg.inotify.use, value|const|private, 1
+
 # Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
 #   - normal priority for the special group ; - low priority and slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
 #   'd.attribs.set' command receives 3 arguments: dirname,specialgroup,unsafe_data
-schedule2 = watch_dir_1,  5,  10, "load.start=(cat,(cfg.dir.meta_downl),rotating/*.torrent), \"d.attribs.set=rotating,1,1\""
-schedule2 = watch_dir_2,  6,  10, "load.start=(cat,(cfg.dir.meta_downl),fullseed/*.torrent), \"d.attribs.set=fullseed,1,\""
-schedule2 = watch_dir_3,  7,  10, "load.start=(cat,(cfg.dir.meta_downl),unsafe/*.torrent),   \"d.attribs.set=unsafe,,1\""
-schedule2 = watch_dir_4,  8,  10, "load.start=(cat,(cfg.dir.meta_downl),various/*.torrent),  \"d.attribs.set=various,,\""
-schedule2 = watch_dir_5,  9,  10, "load.start=(cat,(cfg.dir.meta_downl),apps/*.torrent),     \"d.attribs.set=apps,,\""
-schedule2 = watch_dir_6,  10, 10, "load.start=(cat,(cfg.dir.meta_downl),cartoons/*.torrent), \"d.attribs.set=cartoons,,\""
-schedule2 = watch_dir_7,  11, 10, "load.start=(cat,(cfg.dir.meta_downl),ebooks/*.torrent),   \"d.attribs.set=ebooks,,\""
-schedule2 = watch_dir_8,  12, 10, "load.start=(cat,(cfg.dir.meta_downl),hdtv/*.torrent),     \"d.attribs.set=hdtv,,\""
-schedule2 = watch_dir_9,  13, 10, "load.start=(cat,(cfg.dir.meta_downl),movies/*.torrent),   \"d.attribs.set=movies,,\""
-schedule2 = watch_dir_10, 14, 10, "load.start=(cat,(cfg.dir.meta_downl),pictures/*.torrent), \"d.attribs.set=pictures,,\""
-schedule2 = watch_dir_11, 15, 10, "load.start=(cat,(cfg.dir.meta_downl),songs/*.torrent),    \"d.attribs.set=songs,,\""
-schedule2 = watch_dir_12, 16, 10, "load.normal=(cat,(cfg.dir.meta_downl),load/*.torrent),    \"d.attribs.set=load,,\""
+
+# Whatch dir definitions for loading metafiles using inotify
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),rotating/), load.start,  "d.attribs.set=rotating,1,1"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),fullseed/), load.start,  "d.attribs.set=fullseed,1,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),unsafe/),   load.start,  "d.attribs.set=unsafe,,1"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),various/),  load.start,  "d.attribs.set=various,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),apps/),     load.start,  "d.attribs.set=apps,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),cartoons/), load.start,  "d.attribs.set=cartoons,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),ebooks/),   load.start,  "d.attribs.set=ebooks,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),hdtv/),     load.start,  "d.attribs.set=hdtv,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),movies/),   load.start,  "d.attribs.set=movies,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),pictures/), load.start,  "d.attribs.set=pictures,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),songs/),    load.start,  "d.attribs.set=songs,,"))
+branch = ((cfg.inotify.use)), ((directory.watch.added, (cat,(cfg.dir.meta_downl),load/),     load.normal, "d.attribs.set=load,,"))
+
+# Fire up only once (after rtorrent is started) the normal scheluded load watch dirs as well even if inotify is used: load added metafiles when rtorrent has't been run
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_1,  85, 0, ((load.start, (cat,(cfg.dir.meta_downl),rotating/*.torrent), "d.attribs.set=rotating,1,1"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_2,  86, 0, ((load.start, (cat,(cfg.dir.meta_downl),fullseed/*.torrent), "d.attribs.set=fullseed,1,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_3,  87, 0, ((load.start, (cat,(cfg.dir.meta_downl),unsafe/*.torrent),   "d.attribs.set=unsafe,,1"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_4,  88, 0, ((load.start, (cat,(cfg.dir.meta_downl),various/*.torrent),  "d.attribs.set=various,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_5,  89, 0, ((load.start, (cat,(cfg.dir.meta_downl),apps/*.torrent),     "d.attribs.set=apps,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_6,  90, 0, ((load.start, (cat,(cfg.dir.meta_downl),cartoons/*.torrent), "d.attribs.set=cartoons,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_7,  91, 0, ((load.start, (cat,(cfg.dir.meta_downl),ebooks/*.torrent),   "d.attribs.set=ebooks,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_8,  91, 0, ((load.start, (cat,(cfg.dir.meta_downl),hdtv/*.torrent),     "d.attribs.set=hdtv,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_9,  93, 0, ((load.start, (cat,(cfg.dir.meta_downl),movies/*.torrent),   "d.attribs.set=movies,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_10, 93, 0, ((load.start, (cat,(cfg.dir.meta_downl),pictures/*.torrent), "d.attribs.set=pictures,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_11, 95, 0, ((load.start, (cat,(cfg.dir.meta_downl),songs/*.torrent),    "d.attribs.set=songs,,"))))
+branch = ((cfg.inotify.use)), ((schedule2, watch_dir_12, 96, 0, ((load.normal,(cat,(cfg.dir.meta_downl),load/*.torrent),     "d.attribs.set=load,,"))))
+
+# Whatch dir definitions for removing metafiles using inotify
+branch = ((cfg.inotify.use)), ((directory.watch.removed, d.erase, (cat,(cfg.dir.meta_compl),rotating/), (cat,(cfg.dir.meta_compl),fullseed/), (cat,(cfg.dir.meta_compl),unsafe/), (cat,(cfg.dir.meta_compl),various/), (cat,(cfg.dir.meta_compl),apps/), (cat,(cfg.dir.meta_compl),cartoons/), (cat,(cfg.dir.meta_compl),ebooks/), (cat,(cfg.dir.meta_compl),hdtv/), (cat,(cfg.dir.meta_compl),movies/), (cat,(cfg.dir.meta_compl),pictures/), (cat,(cfg.dir.meta_compl),songs/), (cat,(cfg.dir.meta_compl),load/)))
+
+# Whatch dir definitions for loading metafiles NOT using inotify
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_1,   5, 10, ((load.start, (cat,(cfg.dir.meta_downl),rotating/*.torrent), "d.attribs.set=rotating,1,1"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_2,   6, 10, ((load.start, (cat,(cfg.dir.meta_downl),fullseed/*.torrent), "d.attribs.set=fullseed,1,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_3,   7, 10, ((load.start, (cat,(cfg.dir.meta_downl),unsafe/*.torrent),   "d.attribs.set=unsafe,,1"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_4,   8, 10, ((load.start, (cat,(cfg.dir.meta_downl),various/*.torrent),  "d.attribs.set=various,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_5,   9, 10, ((load.start, (cat,(cfg.dir.meta_downl),apps/*.torrent),     "d.attribs.set=apps,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_6,  10, 10, ((load.start, (cat,(cfg.dir.meta_downl),cartoons/*.torrent), "d.attribs.set=cartoons,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_7,  11, 10, ((load.start, (cat,(cfg.dir.meta_downl),ebooks/*.torrent),   "d.attribs.set=ebooks,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_8,  12, 10, ((load.start, (cat,(cfg.dir.meta_downl),hdtv/*.torrent),     "d.attribs.set=hdtv,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_9,  13, 10, ((load.start, (cat,(cfg.dir.meta_downl),movies/*.torrent),   "d.attribs.set=movies,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_10, 14, 10, ((load.start, (cat,(cfg.dir.meta_downl),pictures/*.torrent), "d.attribs.set=pictures,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_11, 15, 10, ((load.start, (cat,(cfg.dir.meta_downl),songs/*.torrent),    "d.attribs.set=songs,,"))))
+branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_12, 16, 10, ((load.normal,(cat,(cfg.dir.meta_downl),load/*.torrent),     "d.attribs.set=load,,"))))
 
 ##### end: Directory settings #####
 

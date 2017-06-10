@@ -62,9 +62,9 @@ method.insert = check_object.error.print, simple|private, "print=\"$cat=Error\\\
 ### begin: Delete data (dir/files) for torrents that have been removed either from the UI (CTRL+dd) or the tied metafile has been removed manually or by a script, ###
 #     only for torrents that have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents) and their data dir/file exist and which are not partially done magnet-meta downloads.
 #     This allows rotating capability.
-# Removes torrents from client when its metafile (torrent file) has been deleted manually or by a script. Run it every 5 seconds.
-#temp#schedule2 = untied_torrents, 8, 5, "remove_untied="
-schedule2 = untied_torrents, 8, 5, "remove_untied="
+# Removes torrents from client when its metafile (torrent file) has been deleted manually or by a script. If inotify isn't used: Run it every 5 seconds, otherwise run only once when rtorrent is started.
+#temp#branch = ((cfg.inotify.use)), ((schedule2, untied_torrents, 99, 0, ((untied.remove)))), ((schedule2, untied_torrents, 8, 10, ((untied.remove))))
+branch = ((cfg.inotify.use)), ((schedule2, untied_torrents, 99, 0, ((untied.remove)))), ((schedule2, untied_torrents, 8, 10, ((untied.remove))))
 # helper method: gets the incomplete dir data path of a torrent
 method.insert = d.get_incomplete_path, simple|private, "cat=$directory.default=,$d.name="
 # helper method: checks whether the data of a torrent is in incomplete dir
