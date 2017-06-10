@@ -188,8 +188,8 @@ branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_12, 16, 10, ((load.n
 
 ##### begin: Other settings #####
 
-# Close torrents when diskspace is low.
-schedule2 = low_diskspace, 120, 120, close_low_diskspace=1000M
+# Close torrents when diskspace is low. It's commented out since "system.file.allocate.set = 1" is used (with a non-blocking file system that supports fallocate, hence file allocation is instant) so it doesn't make any sense to use it.
+#schedule2 = low_diskspace, 120, 120, close_low_diskspace=1000M
 
 # Save all the session in every 12 hours instead of the default 20 minutes. This setup saves the session of a torrent a lot of time. (More info: https://github.com/rakshasa/rtorrent/issues/180#issuecomment-55140832)
 schedule2 = session_save, 1200, 43200, ((session.save))
