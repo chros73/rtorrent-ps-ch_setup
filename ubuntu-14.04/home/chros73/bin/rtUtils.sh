@@ -94,18 +94,28 @@ checkRtStatus () {
     local MAILHELPERRTSTATUSVALORIG=`cat $MAILHELPERRTSTATUS`
     MAILHELPERRTSTATUSVAL=false
     if [ "$(sudo $RTINITSCRIPT status)" == "" ]; then
-	# rtorrent has stopped for some reason, rty to start it then check it again
+	# rtorrent isn't running: prepare a report about this error
+	MAILHELPERRTSTATUSVAL=true
+	if [ ! "$MAILHELPERRTSTATUSVALORIG" = true ]; then
+	    addMsg SUBJECT "Error: rtorrent stopped running"
+	    addMsg MSG "Error in rtorrent: not running for some reason ... :( Trying to start it ...\n"
+	    EMAILSEND=true
+	fi
+
+	# rtorrent has stopped for some reason, rty to restart it then check it again
 	sudo "$RTINITSCRIPT" start > /dev/null
 	sleep 5
+
 	if [ "$(sudo $RTINITSCRIPT status)" == "" ]; then
 	    # rtorrent still isn't running: prepare a report about this error
-	    MAILHELPERRTSTATUSVAL=true
-	    if [ ! "$MAILHELPERRTSTATUSVALORIG" = true ]; then
-		addMsg SUBJECT "Error: rtorrent is not running!!!!"
-		addMsg MSG "Error in rtorrent: not running for some reason ... :(\n"
-		addMsg MSG "Uptime: $(uptime)"
-		EMAILSEND=true
-	    fi
+	    addMsg SUBJECT "and couldn't be restarted!!!!"
+	    addMsg MSG "Error in restarting rtorrent: couldn't do it!!!\n"
+	    addMsg MSG "Uptime: $(uptime)"
+	else
+	    # rtorrent has been restarted successfully
+	    addMsg SUBJECT "but has been restarted successfully."
+	    addMsg MSG "rtorrent has been restarted successfully.\n"
+	    addMsg MSG "Uptime: $(uptime)"
 	fi
     fi
     # set rtorrent status cookie
