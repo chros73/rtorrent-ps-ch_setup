@@ -47,9 +47,9 @@ method.insert = d.modify_rest, simple|private, "d.priority.set=(argument.0); d.t
 method.insert = d.is_private_throttled, simple|private, "branch=((d.is_private)),((d.modify_rest,1,slowup)),((d.modify_rest,1,tardyup))"
 # helper method: calls 'd.modify_rest' or 'd.is_private_throttled' method with the proper arguments based upon the 2nd argument; special group: sets priority to normal, removes throttle group
 method.insert = d.is_special_group, simple|private, "branch=((argument.0)),((d.modify_rest,2,)),((d.is_private_throttled))"
-# helper method: sets custom 'data_dir', 'meta_dir' variables, priority, throttle of a torrent. Requires 2 parameters, usage e.g.: 'd.attribs.set.helper=rotating,1'
-method.insert = d.attribs.set.helper, simple|private, "d.custom.set=data_dir,(cat,(cfg.dir.main),(argument.0)); d.custom.set=meta_dir,(cat,(cfg.dir.meta_compl),(argument.0)); d.is_special_group=(argument.1)"
-# helper method: calls 'd.attribs.set.helper' method (sets custom 'data_dir', 'meta_dir' variables, priority, throttle) and sets 'unsafe_data' variable of a torrent. Requires 3 parameters, usage e.g.: 'd.attribs.set=unsafe,,1'
+# helper method: sets custom 'data_dir', 'meta_dir', 'orig_category' variables, priority, throttle of a torrent. Requires 2 parameters, usage e.g.: 'd.attribs.set.helper=rotating,1'
+method.insert = d.attribs.set.helper, simple|private, "d.custom.set=data_dir,(cat,(cfg.dir.main),(argument.0)); d.custom.set=meta_dir,(cat,(cfg.dir.meta_compl),(argument.0)); d.custom.set=orig_category,(cat,(argument.0)); d.is_special_group=(argument.1)"
+# helper method: calls 'd.attribs.set.helper' method (sets custom 'data_dir', 'meta_dir', 'orig_category' variables, priority, throttle) and sets 'unsafe_data' variable of a torrent. Requires 3 parameters, usage e.g.: 'd.attribs.set=unsafe,,1'
 method.insert = d.attribs.set, simple|private, "d.attribs.set.helper=(argument.0),(argument.1); branch=((argument.2)),((d.unsafe_data.set,1))"
 
 # helper method: checks existence of a directory, file, symlink
@@ -207,8 +207,27 @@ schedule2     = adjust_slots_tardyup, 48, 100,"choke_group.up.max.set=tardyup_se
 
 ##### begin: Other enhancements #####
 
-# Start any magnet torrent from the load watch directory (that only loads downloads into rtorrent)
+### begin: Handle magnet links specail way ###
+# Start any magnet torrent from the "load" watch directory (that only loads downloads into rtorrent)
 method.set_key = event.download.inserted_new, auto_start_meta_in_load_dir, "branch=\"and={d.is_meta=,not=$d.state=}\",d.start="
+
+# helper method: compose the full path of the wrong meta file in "incomplete" dir
+method.insert = d.get_wrong_magnet_meta_file_path,   simple|private, "cat=$cfg.dir.incomplete=,$d.hash=,.meta"
+# helper method: compose the full path of the right torrent file in ".session" dir
+method.insert = d.get_session_magnet_meta_file_path, simple|private, "cat=$cfg.dir.session=,$d.hash=,.torrent"
+# helper method: compose the new full path of the right torrent file in one of the category of ".downloading" dir
+method.insert = d.get_new_magnet_meta_file_path,     simple|private, "cat=$cfg.dir.meta_downl=,$d.custom=orig_category,/,$d.name=,-,$d.hash=,.torrent"
+# helper method: delete wrong meta file from "incomplete dir"
+method.insert = d.delete_wrong_magnet_meta_file,     simple|private, "execute.nothrow={rm,-rf,--,$d.get_wrong_magnet_meta_file_path=}"
+# helper method: copy the right torrent file from ".session" dir into one of the category of ".downloading" dir
+method.insert = d.copy_session_magnet_meta_file,     simple|private, "execute.nothrow={cp,--,$d.get_session_magnet_meta_file_path=,$d.get_new_magnet_meta_file_path=}"
+# helper method: copies right one into its proper place, sets d.tied_to_file property to it, deletes the wrong one, saves session
+method.insert = d.fix_magnet_tied_file, simple|private, "d.copy_session_magnet_meta_file=; d.tied_to_file.set=$d.get_new_magnet_meta_file_path=; d.delete_wrong_magnet_meta_file=; d.save_full_session="
+
+# Fix tied torrent file of an initially magnet link when its download has been just started: delete the wrong one from "incomplete" dir and copy the right one from ".session" dir if they exist
+method.set_key = event.download.inserted_new, fix_magnet_tied_file, "branch=\"and={\\\"check_object.value=$cat=$d.get_session_magnet_meta_file_path=,,f\\\",\\\"check_object.value=$cat=$d.get_wrong_magnet_meta_file_path=,,f\\\"}\",d.fix_magnet_tied_file="
+### end: Handle magnet links specail way ###
+
 
 # Display any valid timestamp value in human readable format or print the value itself (e.g.: 30/06/2013 23:47:33).
 #   Usage: hrf_time=<<timefield>>  (e.g.: hrf_time=$d.creation_date=  ,  hrf_time=$d.custom=tm_last_scrape)
