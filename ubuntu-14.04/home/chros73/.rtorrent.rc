@@ -91,10 +91,9 @@ method.insert = d.compare_data_path, simple|private, "equal={d.get_target_data_p
 method.insert = d.target_data_path_exist, simple|private, "or=\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,d\",\"check_object.value=\\\"$cat=$d.custom=data_dir,/\\\",$d.name=,f\""
 # helper method: returns true if the current data path of the torrent exists, otherwise returns false
 method.insert = d.data_full_path_exist, simple|private, "branch=d.is_multi_file=,\"check_object.value=$cat=$d.directory=,,d\",\"check_object.value=\\\"$cat=$d.directory=,/\\\",$d.name=,f\""
-# insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; stops and  starts the torrent (to get the torrent updating its 'base path')
+# insert a method which: sets path of torrent to equal the value of data_dir custom field; moves data to its final place; starts the download (to get updating its 'base path') when it's hashckecked or manually moved
 #   Creating and using a custom variable with the 'd.get_data_full_path' method is necessary since we overwrite the 'd.directory' attribute before moving data.
-#   The 'd.stop=;d.start=' methods are supposed to be together at the end of this method (used by 'download.finished' and 'download.hash_done' events)!!! Don't change it until it's working fine, it will cause a bug in tracker controller resulting stucked http/https requests!!!
-method.insert = d.move_data, simple|private, "d.custom.set=data_full_path,$cat=$d.get_data_full_path= ;d.directory.set=$d.custom=data_dir;execute2=mv,-f,$d.custom=data_full_path,$d.custom=data_dir;d.stop=;d.start="
+method.insert = d.move_data, simple|private, "d.custom.set=data_full_path,$cat=$d.get_data_full_path= ;d.directory.set=$d.custom=data_dir;execute2=mv,-f,$d.custom=data_full_path,$d.custom=data_dir; branch=argument.0=,d.stop=; d.start="
 
 # helper method: determines just the basename of a given meta (.torrent) file
 method.insert = d.get_meta_basename, simple|private, "execute.capture=sh,-c,\"echo -n \$(basename \\\"$1\\\")\",getMetaBasename,$d.tied_to_file="
@@ -110,14 +109,14 @@ method.insert = d.meta_full_path_exist, simple|private, "check_object.value=$d.t
 method.insert = d.move_meta, simple|private, "execute2=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_target_meta_path="
 
 # helper method: moves both data and meta (.torrent) file if neither of them is in the final place and saves its session
-method.insert = d.move_both, simple|private, "d.move_meta=; d.move_data=; d.save_full_session="
+method.insert = d.move_both, simple|private, "d.move_meta=; d.move_data=$argument.0=; d.save_full_session="
 # helper method: tries to move both data and meta file only if none of the targets exist nor they have already been moved (latter is necessary for hashckecking)
-method.insert = d.move_both_check, simple|private, "branch=\"and={d.name=,not=$d.compare_meta_path=,not=$d.target_meta_path_exist=,d.meta_full_path_exist=,not=$d.compare_data_path=,not=$d.target_data_path_exist=,d.data_full_path_exist=}\",d.move_both="
+method.insert = d.move_both_check, simple|private, "branch=\"and={d.name=,not=$d.compare_meta_path=,not=$d.target_meta_path_exist=,d.meta_full_path_exist=,not=$d.compare_data_path=,not=$d.target_data_path_exist=,d.data_full_path_exist=}\",d.move_both=$argument.0="
 # finally, set a key with the name 'move_both_f' that is triggered by the finished event: tries to move both data and meta (.torrent) file when it's finished
 method.set_key = event.download.finished, move_both_f, "d.move_both_check="
 # finally, set a key with the name 'move_both_h' that is triggered by the hash_done event: tries to move both data and meta (.torrent) file of a completed torrent when it's 100% hashchecked
-#temp#method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.move_both_check="
-method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.move_both_check="
+#temp#method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.move_both_check=1"
+method.set_key = event.download.hash_done, move_both_h, "branch=d.complete=,d.move_both_check=1"
 ### end: Move data and meta (.torrent) file automatically ###
 
 
@@ -153,8 +152,8 @@ method.insert = d.move_meta_to, simple, "branch=d.complete=,\"d.move_meta_to.che
 # Move data (can be partially downloaded) and meta (.torrent) file of a torrent into another directories at the same time and update all necessary attributes of it. It receives 3 arguments: dirname,specialgroup,unsafe_data
 #   Usage: 'd.move_to=rotating,1,1' / 'd.move_to=rotating,1,2' or 'd.move_to=fullseed,1,' or 'd.move_to=unsafe,,1' / 'd.move_to=unsafe,,2' or 'd.move_to=various,,'
 # helper method: sets everything it can and calls the other helper methods for the rest (stops it; sets the remaining attributes (throttle group, priority: based open the 2nd argument; sets the new data and meta dirs based open the 1st argument);
-#   tries to move both data and meta; handles delete-queue and sets unsafe_data custom field value based open the 3rd argument; starts the torrent just in case)
-method.insert = d.move_to.helper, simple|private, "d.stop=; d.attribs.set.helper=$argument.0=,$argument.1=; d.move_both_check=; branch=\"equal={argument.2=,cat=2}\",d.add_to_delqueue=,d.remove_from_delqueue=$argument.2=; d.start="
+#   tries to move both data and meta; handles delete-queue and sets unsafe_data custom field value based open the 3rd argument)
+method.insert = d.move_to.helper, simple|private, "d.stop=; d.attribs.set.helper=$argument.0=,$argument.1=; d.move_both_check=; branch=\"equal={argument.2=,cat=2}\",d.add_to_delqueue=,d.remove_from_delqueue=$argument.2="
 # helper method: calls the 'd.move_to.helper' method which will does the job if the required meta directory also exists, otherwise prints out an error
 method.insert = d.move_to.check_meta_dir, simple|private, "branch=\"check_object.value=$cfg.dir.meta_compl=,$argument.0=,d\",\"d.move_to.helper=$argument.0=,$argument.1=,$argument.2=\",\"check_object.error.print=$cfg.dir.meta_compl=,$argument.0=,metafile,directory\""
 # helper method: calls the 'd.move_to.check_meta_dir' method which will check the meta dir if the required data directory exists, otherwise prints out an error
