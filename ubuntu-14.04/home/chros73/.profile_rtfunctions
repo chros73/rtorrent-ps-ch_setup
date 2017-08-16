@@ -20,31 +20,31 @@ RTLISTSUMMSGSTOPPED="Stopped data size"
 
 # list orphaned torrents
 rtlistOrphans () {
-    $HOME/bin/rtcontrol --cron --from-view default -qO $RTORPHANSTEMPLATE \*
+    $HOME/bin/rtcontrol --cron --from-view default -qO $RTORPHANSTEMPLATE \* -Q0
 }
 
 
 # list public torrents
 rtlistPublic () {
-    $HOME/bin/rtcontrol --cron --stats --from-view default -qo selected_size_bytes.sz,name,alias is_private=no | sed "s#SELECTED.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGPUBLIC: \1#" |  grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view default -qo selected_size_bytes.sz,name,alias is_private=no -Q0 | sed "s#SELECTED.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGPUBLIC: \1#" |  grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # list stuck torrents in incomplete directory
 rtlistStuck () {
-    $HOME/bin/rtcontrol --cron --stats --from-view default -qo selected_size_bytes.sz,name,alias is_complete=yes "path=$RTINCOMPLETEDIR/*" | sed "s#SELECTED.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view default -qo selected_size_bytes.sz,name,alias "path=$RTINCOMPLETEDIR/*" is_complete=yes -Q1 | sed "s#SELECTED.*NAME.*ALIAS# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTUCK: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # list torrents with unusual trackers messages
 rtlistMessages () {
-    $HOME/bin/rtcontrol --cron --stats --from-view default --sort-fields=message,path -qo selected_size_bytes.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SELECTED.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view default --sort-fields=message,path -qo selected_size_bytes.sz,path,alias,message 'message=?*' message=\!*Tried?all?trackers* -Q0 | sed "s#$RTHOME/##; s#Tracker: #\n\tTracker: #; s#SELECTED.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGMESSAGES: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 
 # list stopped torrents
 rtlistStopped () {
-    $HOME/bin/rtcontrol --cron --stats --from-view stopped --sort-fields=path -qo selected_size_bytes.sz,path,alias \* | sed "s#$RTHOME/##; s#SELECTED.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTOPPED: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
+    $HOME/bin/rtcontrol --cron --stats --from-view stopped --sort-fields=path -qo selected_size_bytes.sz,path,alias \* -Q0 | sed "s#$RTHOME/##; s#SELECTED.*PATH.*ALIAS.*# #; s#\(.*\) \[SUM of.*#$RTLISTSUMMSGSTOPPED: \1#" | grep -v -e 'MIN of' -e 'MAX of' -e 'AVG of'
 }
 
 

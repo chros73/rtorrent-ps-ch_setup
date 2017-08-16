@@ -18,6 +18,7 @@ def _custom_fields():
 	"Get an aggregated tracker field."
 	return aggregator(obj._engine._rpc.t.multicall(obj._fields["hash"], 0, "t.%s=" % name)[0])
 
+    yield engine.OnDemandField(int, "is_partially_done", "is partially done", matcher=matching.FloatFilter)
     yield engine.OnDemandField(int, "selected_size_bytes", "size of selected data", matcher=matching.FloatFilter)
     yield engine.OnDemandField(int, "peers_connected", "number of connected peers", matcher=matching.FloatFilter)
     yield engine.DynamicField(int, "downloaders", "number of completed downloads", matcher=matching.FloatFilter,
