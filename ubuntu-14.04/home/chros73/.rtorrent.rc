@@ -228,6 +228,11 @@ method.set_key = event.download.inserted_new, fix_magnet_tied_file, "branch=\"an
 ### end: Handle magnet links specail way ###
 
 
+# helper method: get the selected_size_bytes of a download if it's rotatable, otherwise 0
+method.insert = d.get_rotating_size, simple|private, "branch=\"or=\\\"equal={d.custom=unsafe_data,cat=2}\\\",\\\"match=d.get_data_full_path=,\\\\\\\"$cat=.*,$cfg.dir.main=,.*(rotating|unsafe)\/.*\\\\\\\"\\\"\",d.selected_size_bytes=,cat=0"
+# Get total size of rotating and unsafe downloads
+method.insert = get_total_rotating_size, simple, "math.add=(d.multicall2,default,d.get_rotating_size=)"
+
 # Display any valid timestamp value in human readable format or print the value itself (e.g.: 30/06/2013 23:47:33).
 #   Usage: hrf_time=<<timefield>>  (e.g.: hrf_time=$d.creation_date=  ,  hrf_time=$d.custom=tm_last_scrape)
 # helper method: to display any timestamp field (e.g. d.creation_date= , d.custom=tm_last_scrape) in human readable format

@@ -50,6 +50,6 @@ rtlistStopped () {
 
 # get total size of rotating and unsafe torrents
 rtgetTotalRotatingSize () {
-    local rotatingSize=$($HOME/bin/rtcontrol --cron --stats --from-view default --summary -qo selected_size_bytes,name,alias "path=$RTHOME/rotating/*,$RTHOME/unsafe/*" OR custom_unsafe_data=2 | grep "SUM of" | sed "s# \[SUM of.*##")
+    local rotatingSize=$($HOME/bin/rtxmlrpc --cron get_total_rotating_size)
     echo -e "${rotatingSize:-0}"
 }
