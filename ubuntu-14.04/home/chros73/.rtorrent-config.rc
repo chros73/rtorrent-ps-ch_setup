@@ -248,6 +248,7 @@ network.http.ssl_verify_peer.set = 0
 branch = ((cfg.external_dnscache.use)), ((network.http.dns_cache_timeout.set,0))
 
 # Encryption options (encryption), set to none (default) or any combination of the following: allow_incoming, try_outgoing, require, require_RC4, enable_retry, prefer_plaintext
+# This will only allow encrypted connections: protocol.encryption.set = require,require_RC4
 # The example value allows incoming encrypted connections, starts unencrypted outgoing connections but retries with encryption if they fail, preferring plaintext to RC4 encryption after the encrypted handshake
 protocol.encryption.set = allow_incoming,prefer_plaintext,enable_retry
 
