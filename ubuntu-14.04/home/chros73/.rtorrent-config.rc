@@ -3,6 +3,9 @@
 
 ##### begin: rtorrent-ps_setup variables #####
 
+# Whether to use external DNS cache instead of the built-in one of CURL: [0|1]
+method.insert = cfg.external_dnscache.use, value|private, 0
+
 # Set an interface with IPv4 address to bind to: [eth0|tun0]
 method.insert = cfg.interface.bind, string|const|private, (cat,"")
 
@@ -241,8 +244,8 @@ network.http.capath.set = /etc/ssl/certs
 network.http.ssl_verify_host.set = 0
 network.http.ssl_verify_peer.set = 0
 
-# CURL option to lower DNS timeout (default: 60)
-network.http.dns_cache_timeout.set = 25
+# CURL option to disable built-in DNS cache if external DNS cache is used (default: 60)
+branch = ((cfg.external_dnscache.use)), ((network.http.dns_cache_timeout.set,0))
 
 # Encryption options (encryption), set to none (default) or any combination of the following: allow_incoming, try_outgoing, require, require_RC4, enable_retry, prefer_plaintext
 # The example value allows incoming encrypted connections, starts unencrypted outgoing connections but retries with encryption if they fail, preferring plaintext to RC4 encryption after the encrypted handshake
