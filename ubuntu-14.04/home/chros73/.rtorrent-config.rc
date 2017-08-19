@@ -197,8 +197,8 @@ schedule2 = session_save, 1200, 43200, ((session.save))
 # The ip address the listening socket and outgoing connections is bound to. (bind)
 network.bind_address.set = 192.168.1.8
 
-# The ip address reported to the tracker. (ip) This should handle dynamic ip's as well.
-schedule2 = ip_tick, 0, 1800, network.local_address.set=chros73.no-ip.org
+# The IP address reported to the tracker. (ip) This handles dynamic IP's as well.
+schedule2 = ip_tick, 0, 1800, "network.local_address.set=(get_public_ip_address)"
 
 # Port range to use for listening. (port_range)
 network.port_range.set = 62820-62820
