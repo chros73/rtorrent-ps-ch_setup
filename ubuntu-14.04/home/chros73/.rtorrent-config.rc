@@ -3,6 +3,9 @@
 
 ##### begin: rtorrent-ps_setup variables #####
 
+# Whether to use inotify for loading/removing torrent (meta) files from watch directories: [0|1]
+method.insert = cfg.inotify.use, value|const|private, 1
+
 # Whether to use external DNS cache instead of the built-in one of CURL: [0|1]
 method.insert = cfg.external_dnscache.use, value|private, 0
 
@@ -141,9 +144,6 @@ directory.default.set = (cat,(cfg.dir.incomplete))
 
 # Default session directory. Make sure you don't run multiple instance of rtorrent using the same session directory. (session)
 session.path.set = (cat,(cfg.dir.session))
-
-# Whether to use inotify for loading/removing torrent (meta) files from watch directories
-method.insert = cfg.inotify.use, value|const|private, 1
 
 # Watch directories for new torrents (meta files). Also specifying the final directories (data_dir and meta_dir) for them, whether it belongs to special group, whether its data is deletable (in this order) by setting:
 #   - normal priority for the special group ; - low priority and slowup throttle for the 2nd group (rest of the torrents) ; - unsafe_data custom field for those we want to delete their data upon removal
