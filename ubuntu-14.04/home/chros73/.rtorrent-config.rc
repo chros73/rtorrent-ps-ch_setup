@@ -1,6 +1,15 @@
 # ~/.rtorrent-config.rc and enable/modify the options as needed. Remember to uncomment the options you wish to enable. This config is included in the main config.
 
 
+##### begin: rtorrent-ps_setup variables #####
+
+# Set an interface with IPv4 address to bind to: [eth0|tun0]
+method.insert = cfg.interface.bind, string|const|private, (cat,"")
+
+##### end: rtorrent-ps_setup variables #####
+
+
+
 ##### begin: Default connection, performance settings #####
 
 # Global upload and download rate in KiB, `0` for unlimited (`download_rate`, `upload_rate`)
@@ -194,8 +203,8 @@ branch = ((not, (cfg.inotify.use))), ((schedule2, watch_dir_12, 16, 10, ((load.n
 # Save all the session in every 12 hours instead of the default 20 minutes. This setup saves the session of a torrent a lot of time. (More info: https://github.com/rakshasa/rtorrent/issues/180#issuecomment-55140832)
 schedule2 = session_save, 1200, 43200, ((session.save))
 
-# The ip address the listening socket and outgoing connections is bound to. (bind)
-network.bind_address.set = 192.168.1.8
+# The IP address the listening socket and outgoing connections is bound to. (bind)
+schedule2 = set_bind_address, 0, 0, "branch=((cfg.interface.bind)),((network.bind_address.set,(get_interface_ipv4_address,(cfg.interface.bind))))"
 
 # The IP address reported to the tracker. (ip) This handles dynamic IP's as well.
 schedule2 = ip_tick, 0, 1800, "network.local_address.set=(get_public_ip_address)"

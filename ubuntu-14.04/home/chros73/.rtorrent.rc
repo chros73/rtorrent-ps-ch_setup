@@ -233,6 +233,9 @@ method.insert = d.get_rotating_size, simple|private, "branch=\"or=\\\"equal={d.c
 # Get total size of rotating and unsafe downloads
 method.insert = get_total_rotating_size, simple, "math.add=(d.multicall2,default,d.get_rotating_size=)"
 
+# Get IPv4 address of a given interface
+method.insert = get_interface_ipv4_address, simple|private, "execute.capture=bash,-c,\"$cat=\\\"echo -n \$(ip -o -4 addr show \\\",$argument.0=,\\\" | grep -Po 'inet \\\\\\\\\\K[\\\\\\\\\\d.]+')\\\"\""
+
 # Get public IP address without the need of having dynamic DNS service, also works from behind NAT, through tunnel
 method.insert = get_public_ip_address, simple|private, "execute.capture=bash,-c,\"eval echo -n \$(dig TXT +short o-o.myaddr.l.google.com @ns1.google.com)\""
 
