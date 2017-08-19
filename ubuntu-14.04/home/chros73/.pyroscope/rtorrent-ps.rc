@@ -73,6 +73,9 @@ method.insert = f,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontro
 
 ### begin: Modifications for default views ###
 
+# Set default view to STARTED on startup
+schedule2 = set_default_view,0,0,((ui.current_view.set,started))
+
 # UI/VIEW: SORT the collapsed MAIN view (view #1) by DOWNLOADED TIME desc and update it in every 20 seconds
 branch=pyro.extended=,"view.collapsed.toggle=main"
 branch=pyro.extended=,"view.sort_new     = main,\"compare=-,d.custom=tm_downloaded\"","view.sort_new     = main,greater=d.custom=tm_downloaded"
