@@ -3,4 +3,4 @@ compare-link=false
 #pr-wo-labels=false
 exclude-labels=no-changelog
 unreleased=true
-future-release=0.9.7-0.9.7
+future-release=0.9.8-0.9.7

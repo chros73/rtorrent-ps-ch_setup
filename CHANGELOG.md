@@ -1,5 +1,31 @@
 # Change Log
 
+## [0.9.8-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/0.9.8-0.9.7) (2017-08-20)
+**Implemented enhancements:**
+
+- Fix sudo not respecting $HOME on newer systems [\#129](https://github.com/chros73/rtorrent-ps-ch_setup/issues/129)
+- Add comment about full encryption [\#128](https://github.com/chros73/rtorrent-ps-ch_setup/issues/128)
+- Disable CURL's built-in DNS cache if external one is available [\#127](https://github.com/chros73/rtorrent-ps-ch_setup/issues/127)
+- Add ability to set an interface to bind to [\#126](https://github.com/chros73/rtorrent-ps-ch_setup/issues/126)
+- Set public IP address reported to the tracker without dynamic DNS service [\#125](https://github.com/chros73/rtorrent-ps-ch_setup/issues/125)
+- Rename repo and modify absolute path of rtorrent-ps-ch in init script [\#124](https://github.com/chros73/rtorrent-ps-ch_setup/issues/124)
+- Upgrade pyrocore to current version  [\#122](https://github.com/chros73/rtorrent-ps-ch_setup/issues/122)
+- Improve performance of rtgetTotalRotatingSize bash function [\#121](https://github.com/chros73/rtorrent-ps-ch_setup/issues/121)
+- Upgrade KiTTY to current stable version on Windows [\#120](https://github.com/chros73/rtorrent-ps-ch_setup/issues/120)
+- Support multiple tmux versions in tmux.conf [\#119](https://github.com/chros73/rtorrent-ps-ch_setup/issues/119)
+- Don't restart download upon moving unless it's necessary [\#118](https://github.com/chros73/rtorrent-ps-ch_setup/issues/118)
+- Fix tied torrent file for magnet links [\#117](https://github.com/chros73/rtorrent-ps-ch_setup/issues/117)
+- Comment out low\_diskspace scheduled task in rtorrent config [\#114](https://github.com/chros73/rtorrent-ps-ch_setup/issues/114)
+- Add inotify support in rtorrent config [\#113](https://github.com/chros73/rtorrent-ps-ch_setup/issues/113)
+
+**Fixed bugs:**
+
+- Fix reporting stopped rtorrent instance even when it has been restarted successfully in external script [\#115](https://github.com/chros73/rtorrent-ps-ch_setup/issues/115)
+
+**Merged pull requests:**
+
+- Add a modified scheme256-solarized\_yellow color theme [\#116](https://github.com/chros73/rtorrent-ps-ch_setup/pull/116) ([colinhd8](https://github.com/colinhd8))
+
 ## [0.9.7-0.9.7](https://github.com/chros73/rtorrent-ps_setup/tree/0.9.7-0.9.7) (2017-05-16)
 **Implemented enhancements:**
 
