@@ -11,7 +11,7 @@ Don't be scared about the length of this page! :) The idea and its realization i
 
 The core concept of the setup is completely based on moving ``data`` AND ``meta`` files all around the place:
 
-* there's a ``.downloading`` directory with ``categories`` (sub-directories) with which ``rtorrent`` will start downloading new torrents (these are the watch directories in `.rtorrent-config.rc <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent-config.rc#L69>`_) 
+* there's a ``.downloading`` directory with ``categories`` (sub-directories) with which ``rtorrent`` will start downloading new torrents (these are the watch directories in `.rtorrent-config.rc <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent-config.rc#L69>`_) 
 
 * when a download is finished ``rtorrent`` moves their ``data`` from ``incomplete`` directory AND ``meta`` files (from one of the sub-directories of ``.downloading`` directory) into their final place (meaning one of the sub-directories of ``.completed`` directory for ``meta`` files and one of the sub-directories of the main directory for ``data``). The ``.downloading`` directories get empty all the time in this way.
 
@@ -32,7 +32,7 @@ The core concept of the setup is completely based on moving ``data`` AND ``meta`
 Queue Manager
 -------------
 
-There's only 1 small `queueTorrent.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_ ``queue manager`` script with ``rotating`` (deleting data) capability and ``category`` support, that realize all the above mentioned tasks.
+There's only 1 small `queueTorrent.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_ ``queue manager`` script with ``rotating`` (deleting data) capability and ``category`` support, that realize all the above mentioned tasks.
 
 It contains 2 functionality:
 
@@ -40,7 +40,7 @@ It contains 2 functionality:
 
 * ``disk free space manager`` that will delete data to make free space for the newcomers
 
-It runs from `cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ in every 5 minutes.
+It runs from `cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ in every 5 minutes.
 
 
 Downloading queue manager

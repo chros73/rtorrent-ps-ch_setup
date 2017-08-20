@@ -9,7 +9,7 @@
 ### Connect via SSH
 
 [JuiceSSH](https://juicessh.com) is a really easily configurable and usable SSH client with `tmux`. Although it has some rendering bugs regarding to Unicode characters, as we can see below, it's still amazing.
-![Extended Canvas Screenshot in JuiceSSH](https://github.com/chros73/rtorrent-ps/blob/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-juicessh-s.png)
+![Extended Canvas Screenshot in JuiceSSH](https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-juicessh-s.png)
 
 The following settings under `Settings` are suggested for the session:
 * set "Theme / Colours" to `Solarized Dark`

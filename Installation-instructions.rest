@@ -31,7 +31,7 @@ Let's see the hard part :) These instructions will work on a freshly installed m
 Core of the setup
 ^^^^^^^^
 
-Please refer `Debian Install From Source - The Easy Way <https://github.com/chros73/rtorrent-ps/blob/master/docs/DebianInstallFromSourceTheEasyWay.rst>`_ to get ``rTorrent-PS-CH`` and ``pyrocore`` utilities up and running in ``tmux`` in 30 minutes.
+Please refer `Debian Install From Source - The Easy Way <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/DebianInstallFromSourceTheEasyWay.rst>`_ to get ``rTorrent-PS-CH`` and ``pyrocore`` utilities up and running in ``tmux`` in 30 minutes.
 
 This will also take care of the major dependencies.
 
@@ -43,7 +43,7 @@ This should be used under your normal user account.
 .. code-block::
 
    mkdir -p ~/src/; cd ~/src/
-   git clone https://github.com/chros73/rtorrent-ps_setup.git
+   git clone https://github.com/chros73/rtorrent-ps-ch_setup.git
 
 
 Additional stuff
@@ -54,11 +54,17 @@ These steps must be performed by the ``root`` user (i.e. in a root shell, or by 
 If we missed something
 """""""""
 
-Just in case to be on the safe side. ``ssmtp`` is used for email reporting.
+Install more packages we need:
 
 .. code-block::
 
-   apt-get install coreutils dialog sudo ssmtp
+   apt-get install sudo coreutils ssmtp dnsutils iproute2 dialog
+
+* ``sudo`` is used during queue management
+* ``ssmtp`` is used for email reporting
+* ``dig`` (requires ``dnsutils``) is used for getting public IP address
+* ``ip`` (requires ``iproute2``) is used for setting IP address of an interface to bind to
+* ``dialog`` is used for handling magnet links easily
 
 Location of HDD
 """""""""
@@ -82,7 +88,7 @@ You can install ``openssh-server`` by:
 
 You also want to enable `SSH key authentication <https://help.ubuntu.com/lts/serverguide/openssh-server.html#openssh-keys>`_ to automate login process via SSH without the need of a password. This has to be done under your regular user account.
 
-Here is an `example config <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/ssh/sshd_config>`_, modify the ``AllowUsers`` directive in it, along with instructions how to connect to it from `Windows <Windows-8.1#connect-via-ssh>`_ and `Android <Android-5.0#connect-via-ssh>`_ devices.
+Here is an `example config <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/ssh/sshd_config>`_, modify the ``AllowUsers`` directive in it, along with instructions how to connect to it from `Windows <Windows-8.1#connect-via-ssh>`_ and `Android <Android-5.0#connect-via-ssh>`_ devices.
 
 Samba server
 """""""""
@@ -93,7 +99,7 @@ If you need Samba file sharing server on your local network then you can install
 
    apt-get install samba
 
-`Here <https://help.ubuntu.com/lts/serverguide/samba-fileserver.html>`_ are some explained options for the `example config <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/samba/smb.conf>`_, along with instructions how to connect to it from `Windows <Windows-8.1#connect-to-samba-share>`_ and `Android <Android-5.0#connect-to-samba-share>`_ devices.
+`Here <https://help.ubuntu.com/lts/serverguide/samba-fileserver.html>`_ are some explained options for the `example config <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/samba/smb.conf>`_, along with instructions how to connect to it from `Windows <Windows-8.1#connect-to-samba-share>`_ and `Android <Android-5.0#connect-to-samba-share>`_ devices.
 
 FTP server
 """""""""
@@ -104,30 +110,30 @@ You can install e.g. ``proftpd`` by:
 
    apt-get install proftpd openssl
 
-Here are `example configs <https://github.com/chros73/rtorrent-ps_setup/tree/master/ubuntu-14.04/etc/proftpd>`_, along with instructions how to connect to it from `Windows <Windows-8.1#connect-via-ftp>`_ and `Android <Android-5.0#connect-via-ftp>`_ devices.
+Here are `example configs <https://github.com/chros73/rtorrent-ps-ch_setup/tree/master/ubuntu-14.04/etc/proftpd>`_, along with instructions how to connect to it from `Windows <Windows-8.1#connect-via-ftp>`_ and `Android <Android-5.0#connect-via-ftp>`_ devices.
 
 Here is how to `generate a server certificate <https://www.server-world.info/en/note?os=Ubuntu_14.04&p=ssl>`_ to be able to use ``TLS`` with it.
 
-You also need the modified `init script <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/init.d/proftpd>`_ for it to prevent being killed by ``logrotate`` on Ubuntu 14.04 (`read more <https://oitibs.com/fix-proftpd-killed-signal-15/>`_).
+You also need the modified `init script <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/init.d/proftpd>`_ for it to prevent being killed by ``logrotate`` on Ubuntu 14.04 (`read more <https://oitibs.com/fix-proftpd-killed-signal-15/>`_).
 
 Raising open file limit for a user
 """""""""
 
 In order to be able to raise the default ``1024`` ``open file limit`` for a user, these lines has to be added into their corresponding files:
 
-* `/etc/pam.d/common-session <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/pam.d/common-session#L32>`_
-* `/etc/pam.d/common-session-noninteractive <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/pam.d/common-session-noninteractive#L31>`_
-* `/etc/security/limits.conf <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/security/limits.conf#L56>`_
+* `/etc/pam.d/common-session <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/pam.d/common-session#L32>`_
+* `/etc/pam.d/common-session-noninteractive <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/pam.d/common-session-noninteractive#L31>`_
+* `/etc/security/limits.conf <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/security/limits.conf#L56>`_
 
 SSMTP
 """""""""
 
-To be able to receive email reports to your ``gmail account`` all you need is this `simple config <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ file, modify the following directives in it: ``root``, ``AuthUser``, ``AuthPass``.
+To be able to receive email reports to your ``gmail account`` all you need is this `simple config <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ file, modify the following directives in it: ``root``, ``AuthUser``, ``AuthPass``.
 
 Other system tweaks
 """""""""
 
-You can also apply some other system tweaks with the help of `sysctl.conf <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/sysctl.conf>`_ file.
+You can also apply some other system tweaks with the help of `sysctl.conf <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/sysctl.conf>`_ file.
 
 
 rTorrent related stuff
@@ -138,21 +144,21 @@ Finally we arrived to the part that actually interests us.
 init script
 """""""""
 
-You need ``root`` for this as well. Assuming ``rTorrent-PS-CH`` was installed in the `system wide <https://github.com/chros73/rtorrent-ps/blob/master/docs/DebianInstallFromSourceTheEasyWay.rst#system-wide>`_ way, place the `init script <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/init.d/rtorrent>`_ into ``/etc/init.d/`` and edit the ``user``, ``sessiondir`` variables at the beginning of it. You can install and enable it on Ubuntu by running:
+You need ``root`` for this as well. Assuming ``rTorrent-PS-CH`` was installed into `system <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/DebianInstallFromSourceTheEasyWay.rst#install-it-into-system>`_ way, place the `init script <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/init.d/rtorrent>`_ into ``/etc/init.d/`` and edit the ``user``, ``sessiondir`` variables at the beginning of it. You can install and enable it on Ubuntu by running:
 
 .. code-block::
 
    update-rc.d rtorrent defaults 92
    update-rc.d rtorrent enable
 
-In order to be able to use ``status`` and ``start`` functionality of it from a script, `/etc/sudoers <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/sudoers>`_ file has to be modified as well. You have to edit the username in 2 places.
+In order to be able to use ``status`` and ``start`` functionality of it from a script, `/etc/sudoers <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/sudoers>`_ file has to be modified as well. You have to edit the username in 2 places.
 
 Directory structure
 """""""""
 
 We can switch to a normal user account now.
 
-Copy the given `directory structure <https://github.com/chros73/rtorrent-ps_setup/tree/master/ubuntu-14.04/mnt/Torrents>`_ into the above created ``/mnt/Torrents`` directory. That will setup all the needed categories as well.
+Copy the given `directory structure <https://github.com/chros73/rtorrent-ps-ch_setup/tree/master/ubuntu-14.04/mnt/Torrents>`_ into the above created ``/mnt/Torrents`` directory. That will setup all the needed categories as well.
 
 We have to delete all the unnecessary ``.gitignore`` files from them with:
 
@@ -163,16 +169,16 @@ We have to delete all the unnecessary ``.gitignore`` files from them with:
 Additional files
 """""""""
 
-Copy all the directories/files from the given `home <https://github.com/chros73/rtorrent-ps_setup/tree/master/ubuntu-14.04/home/chros73>`_ directory into yours ``~/``. Check the content of yours if some files wanted to be overwritten. 
+Copy all the directories/files from the given `home <https://github.com/chros73/rtorrent-ps-ch_setup/tree/master/ubuntu-14.04/home/chros73>`_ directory into yours ``~/``. Check the content of yours if some files wanted to be overwritten. 
 
 You have to check the variables at the beginning of the following:
 
-* `.profile_rtfunctions <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_, `.pyroscope/templates/orphans-ch.txt <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.pyroscope/templates/orphans-ch.txt>`_
-* script files in ``~/bin/`` directory: `addMagnetLink.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLink.sh>`_, `doBackup.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, `queueTorrent.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_, `rtUtils.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/rtUtils.sh>`_
+* `.profile_rtfunctions <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_, `.pyroscope/templates/orphans-ch.txt <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.pyroscope/templates/orphans-ch.txt>`_
+* script files in ``~/bin/`` directory: `addMagnetLink.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLink.sh>`_, `doBackup.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, `queueTorrent.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_, `rtUtils.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/rtUtils.sh>`_
 
 Finally, you only have to modify 1 rtorrent config file: 
 
-* `.rtorrent-config.rc <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent-config.rc>`_
+* `.rtorrent-config.rc <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent-config.rc>`_
 
 Start rTorrent-PS-CH
 """""""""
@@ -183,7 +189,7 @@ Finally, you can try to start ``rTorrent-PS-CH`` with ``sudo`` (it shouldn't ask
 
    sudo /etc/init.d/rtorrent start
 
-It should be started in ``tmux`` in the 3rd window.  You can attach to that ``tmux session``, as it will automatically happen when you log in via SSH (with the help of `~/.profile <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile#L27>`_), with:
+It should be started in ``tmux`` in the 3rd window.  You can attach to that ``tmux session``, as it will automatically happen when you log in via SSH (with the help of `~/.profile <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.profile#L27>`_), with:
 
 .. code-block::
 
@@ -193,7 +199,7 @@ It should be started in ``tmux`` in the 3rd window.  You can attach to that ``tm
 Run scripts from cron
 """""""""
 
-You need ``root`` for this. If all went well, copy the `example cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ file into ``/etc/cron.d`` directory. Modify the filename, ``HOME`` variable, and existing usernames in it to your username.
+You need ``root`` for this. If all went well, copy the `example cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ file into ``/etc/cron.d`` directory. Modify the filename, ``HOME`` variable, and existing usernames in it to your username.
 
 
 Reboot
@@ -207,7 +213,7 @@ Backup your system
 
 Don't forget, more precisely, don't be lazy to **create a full system backup**!
 
-You can create a similar script as `doBackup.sh <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, take a look at e.g. this `article <https://help.ubuntu.com/community/BackupYourSystem/TAR>`_ that may give you good advise what to backup.
+You can create a similar script as `doBackup.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, take a look at e.g. this `article <https://help.ubuntu.com/community/BackupYourSystem/TAR>`_ that may give you good advise what to backup.
 
 One day you will be grateful for the effort you're doing now. :)
 
