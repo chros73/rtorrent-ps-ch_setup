@@ -9,7 +9,7 @@
 
 ### Connect to Samba share
 
-If we don't have a name server in our local network then an entry must be put in `C:\Windows\System32\drivers\etc\hosts` for our Ubuntu machine. See [hosts file](https://github.com/chros73/rtorrent-ps_setup/blob/master/windows-8.1/C/Windows/System32/drivers/etc/hosts) for an example.
+If we don't have a name server in our local network then an entry must be put in `C:\Windows\System32\drivers\etc\hosts` for our Ubuntu machine. See [hosts file](https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/windows-8.1/C/Windows/System32/drivers/etc/hosts) for an example.
 
 After that we can map the drive from Windows Explorer (Windows forgot the password upon reboot using command line version of attaching shares from Ubuntu):
 * set drive: `U:` , share: `\\ubuntu\wd3`
@@ -39,7 +39,7 @@ I suggest to try out 2 fonts at first, `DejaVu Sans Condensed` will be our main 
 * `DejaVu Sans Condensed` from http://dejavu-fonts.org/wiki/Download
 * `Everson Mono` from http://www.evertype.com/emono/
 
-Install those fonts on Windows, then run the supplied registry patch: [fontlinking-dejavusanscondensed-eversonmono.reg](https://github.com/chros73/rtorrent-ps_setup/blob/master/windows-8.1/fontlinking-dejavusanscondensed-eversonmono.reg)
+Install those fonts on Windows, then run the supplied registry patch: [fontlinking-dejavusanscondensed-eversonmono.reg](https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/windows-8.1/fontlinking-dejavusanscondensed-eversonmono.reg)
 
 I have tried out couple of fonts but `DejaVu Sans Condensed` was the only one which was good for me (with all of it's drawback, e.g. it's a variable-pitch font).
 You can experiment with others (see Connect via SSH section).
@@ -47,7 +47,7 @@ You can experiment with others (see Connect via SSH section).
 
 ### Connect via SSH
 
-Use [KiTTY](http://www.9bis.net/kitty/) version 0.67.x or greater (it's a patched [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/) fork).
+Use [KiTTY](http://www.9bis.net/kitty/) version 0.69.0.2 or greater (it's a patched [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/) fork).
 
 Advantages over `PuTTY`:
 * fully portable
@@ -80,7 +80,7 @@ The following settings are suggested for the session:
 * Connection - SSH - Auth:
     * Private key file for authentication: set it to point to your `ppk` file (that you generated previously)
 
-Alternatively you can copy the supplied [KiTTY directory](https://github.com/chros73/rtorrent-ps_setup/tree/master/windows-8.1/KiTTY) that has almost all of these settings and it will create a session profile called `rtorrent-ps`.
+Alternatively you can copy the supplied [KiTTY directory](https://github.com/chros73/rtorrent-ps-ch_setup/tree/master/windows-8.1/KiTTY) that has almost all of these settings and it will create a session profile called `rtorrent-ps`.
 
 This is how the final result look like, using solarized-blue theme:
-![Extended Canvas Screenshot](https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-solarized-blue-kitty-s.png)
+![Extended Canvas Screenshot](https://raw.githubusercontent.com/chros73/rtorrent-ps-ch/master/docs/_static/img/rTorrent-PS-CH-0.9.6-solarized-blue-kitty-s.png)

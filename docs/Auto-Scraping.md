@@ -32,7 +32,7 @@ Let's try to balance the requests to not fire up them at the same time:
 
 ### Config
 
-This part of [.rtorrent.rc](https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent.rc#L199) is responsible for it.
+This part of [.rtorrent.rc](https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.rtorrent.rc#L199) is responsible for it.
 
 ```ini
 # Regularly update scrape information for all torrents (even stopped ones), it won't affect the operation of rtorrent, but nice to have these values updated.

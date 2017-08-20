@@ -1,9 +1,9 @@
-Automated rTorrent-PS configuration
+Automated rTorrent-PS-CH configuration
 ===================================
 
-An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps/#fork-notes>`_ (requires v1.5.0-0.9.7 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps-ch/#fork-notes>`_ (requires v1.6.0-0.9.7 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
-.. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
+.. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps-ch/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-kitty-s.png
    :align: center
    :alt: Extended Canvas Screenshot
 
@@ -21,9 +21,7 @@ It also includes some really unique ideas, so there's **no need** for ratio grou
 
 This setup runs on a laptop from 2008 with dualcore CPU and 4GB of RAM with Ubuntu 14.04 (probably all other Debian flavor works fine, I don't know about the rest) and a 4TB HDD hooked up via ESATA with a net connection of 74/20 Mbps. It never stops until it gets power. :)
 
-*"How come that title mentions rTorrent-PS but intro says requires rTorrent-PS-CH ?"* Useful enchancements / fixes has been created along the way, hopefully all will be merged back into ``rTorrent-PS`` one day.
-
-*"Why is it just almost completely automated?"* Well, because you, dear adventurer, have to figure out by yourself how to automate downloading of torrents, e.g. using `flexget <http://flexget.com>`_ or writing your own script (there's also a `sample download <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/sampleDownload.sh>`_ script).
+*"Why is it just almost completely automated?"* Well, because you, dear adventurer, have to figure out by yourself how to automate downloading of torrents, e.g. using `flexget <http://flexget.com>`_ or writing your own script (there's also a `sample download <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/sampleDownload.sh>`_ script).
 
 
 Limitation
@@ -31,7 +29,7 @@ Limitation
 
 *"What?! Is there any?!"* Well, yes. :) The following is not supported (mainly because of ``auto-rotating torrents`` feature in queue script and lack of interest :) ):
 
--  multiple disk device support (only 1 disk is supported) (read more: `#77 <https://github.com/chros73/rtorrent-ps_setup/issues/77>`_)
+-  multiple disk device support (only 1 disk is supported) (read more: `#77 <https://github.com/chros73/rtorrent-ps-ch_setup/issues/77>`_)
 
 
 Features
@@ -49,8 +47,8 @@ Features
 -  limited magnet link support (`read more <Limited-magnet-link-support>`_)
 -  regularly updates scrape information for all torrents (`read more <Auto-Scraping>`_)
 -  sending email reports automatically (`read more <Email-Reports>`_)
--  regularly backup session dir of ``rtorrent`` (with the help of `backup script <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_)
--  auto-starting ``rtorrent`` in ``tmux`` if it's not running (with the help of `init script <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/init.d/rtorrent>`_)
+-  regularly backup session dir of ``rtorrent`` (with the help of `backup script <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_)
+-  auto-starting ``rtorrent`` in ``tmux`` if it's not running (with the help of `init script <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/init.d/rtorrent>`_)
 -  providing config files / instructions for setting up / using FTP , Samba, SSH (e.g. for `Windows <Windows-8.1>`_)
 -  providing instructions for using it On-the-Road with an Android device (`read more <Android-5.0>`_)
 -  and a lot more :)
@@ -126,7 +124,7 @@ Performance tuning
 Change log
 ----------
 
-*"All's good now."* See `CHANGELOG.md <https://github.com/chros73/rtorrent-ps_setup/blob/master/CHANGELOG.md>`_ for more details.
+*"All's good now."* See `CHANGELOG.md <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/CHANGELOG.md>`_ for more details.
 
 
 Disclaimer

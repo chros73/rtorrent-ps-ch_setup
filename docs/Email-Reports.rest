@@ -1,7 +1,7 @@
 Email Reports
 =============
 
-The system can send automatic email reports about various activities with the help of `ssmtp <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ and `cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ and you can easily create your own.
+The system can send automatic email reports about various activities with the help of `ssmtp <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ and `cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ and you can easily create your own.
 
 .. contents:: **Contents**
 
@@ -9,7 +9,7 @@ The system can send automatic email reports about various activities with the he
 Reports by Queue Manager
 ------------------------
 
-`Queue Manager <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_ sends email reports about its regular activity or about various problems.
+`Queue Manager <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_ sends email reports about its regular activity or about various problems.
 
 Regular report
 ^^^^^^^^^^^^^^
@@ -105,7 +105,7 @@ It can happen that mounted HDD was dropped, it sends a report with subject ``U -
 Other useful reports
 -------------
 
-These reports use ``rtcontrol`` command from ``pyrocore`` utilities and are created as `bash functions <Additions#extra-bash-functions>`_ in `~/.profile_rtfunctions <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_ to be able to be used at the command line as well.
+These reports use ``rtcontrol`` command from ``pyrocore`` utilities and are created as `bash functions <Additions#extra-bash-functions>`_ in `~/.profile_rtfunctions <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_ to be able to be used at the command line as well.
 
 
 Orphaned torrents
@@ -224,9 +224,9 @@ Creating your own
 
 You can easily create your own report with the help of ``rtcontrol``, this is what needs to be done:
 
-* create a new bash function in `~/.profile_rtfunctions <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_
-* export the new function in `.profile <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/home/chros73/.profile#L24>`_ like the rest are to be able to be used at the command line as well
-* copy and modify an existing report script to your needs in `~/bin/ <https://github.com/chros73/rtorrent-ps_setup/tree/master/ubuntu-14.04/home/chros73/bin>`_ 
-* add the new report script to `cron <https://github.com/chros73/rtorrent-ps_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_
+* create a new bash function in `~/.profile_rtfunctions <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_
+* export the new function in `.profile <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.profile#L24>`_ like the rest are to be able to be used at the command line as well
+* copy and modify an existing report script to your needs in `~/bin/ <https://github.com/chros73/rtorrent-ps-ch_setup/tree/master/ubuntu-14.04/home/chros73/bin>`_ 
+* add the new report script to `cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_
 
 That's it. :)
