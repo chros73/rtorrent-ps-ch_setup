@@ -1,7 +1,7 @@
 # ~/.rtorrent-config.rc and enable/modify the options as needed. Remember to uncomment the options you wish to enable. This config is included in the main config.
 
 
-##### begin: rtorrent-ps_setup variables #####
+##### begin: rtorrent-ps-ch_setup variables #####
 
 # Whether to use inotify for loading/removing torrent (meta) files from watch directories: [0|1]
 method.insert = cfg.inotify.use, value|const|private, 1
@@ -12,7 +12,7 @@ method.insert = cfg.external_dnscache.use, value|private, 0
 # Set an interface with IPv4 address to bind to: [eth0|tun0]
 method.insert = cfg.interface.bind, string|const|private, (cat,"")
 
-##### end: rtorrent-ps_setup variables #####
+##### end: rtorrent-ps-ch_setup variables #####
 
 
 
