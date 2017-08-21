@@ -8,6 +8,7 @@ RTHOME="/mnt/Torrents"
 
 # python template file to generate the list
 RTORPHANSTEMPLATE="orphans-ch.txt"
+RTORPHANMETASTEMPLATE="orphan-metas-ch.txt"
 # define incomplete dir
 RTINCOMPLETEDIR="$RTHOME/.rtorrent/incomplete"
 
@@ -21,6 +22,12 @@ RTLISTSUMMSGSTOPPED="Stopped data size"
 # list orphaned torrents
 rtlistOrphans () {
     $HOME/bin/rtcontrol --cron --from-view default -qO $RTORPHANSTEMPLATE \* -Q0
+}
+
+
+# list orphaned torrent files
+rtlistOrphanMetas () {
+    $HOME/bin/rtcontrol --cron --from-view default -qO $RTORPHANMETASTEMPLATE \* -Q0
 }
 
 

@@ -1,0 +1,34 @@
+{{# This template lists all torrent files in the main directory NOT tied to any download in the client.
+
+    Use it like this:
+        rtcontrol --from-view default -qO orphan-metas-ch.txt \* -Q0
+}}{{py:
+global os
+from pyrocore.util import os
+
+main_dir = '/mnt/Torrents/'
+downloading_dir = main_dir + '.rtorrent/.downloading/'
+completed_dir = main_dir + '.rtorrent/.completed/'
+
+entries = []
+
+# List all entries in all the downloading category directories
+for i in os.listdir(downloading_dir):
+    if not i.startswith('.') and os.path.isdir(os.path.join(downloading_dir,i)):
+        for j in os.listdir(os.path.join(downloading_dir, i)):
+            entries.append(os.path.join(downloading_dir, i, j))
+
+# Adding completed category directory entries to the list
+for i in os.listdir(completed_dir):
+    if not i.startswith('.') and os.path.isdir(os.path.join(completed_dir,i)):
+        for j in os.listdir(os.path.join(completed_dir, i)):
+            entries.append(os.path.join(completed_dir, i, j))
+
+# From that list, remove everything tied to any download in the client
+for d in matches:
+    for i in entries:
+        if i.decode('utf-8') in d.metafile:
+            entries.remove(i)
+
+}}{{for i in sorted(entries)}}	{{i.decode('utf-8').replace(main_dir,'')}}
+{{endfor}}
