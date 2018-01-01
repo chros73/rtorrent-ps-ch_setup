@@ -1,8 +1,9 @@
 PortKnocking\\
+SCPAutoPwd\0\
 ACSinUTF\0\
 Comment\\
 CtrlTabSwitch\0\
-Password\54112\
+Password\66n33\
 ForegroundOnBell\0\
 SaveWindowPos\0\
 WindowState\0\
@@ -102,7 +103,7 @@ X11AuthType\1\
 X11Display\\
 X11Forward\0\
 BlinkText\0\
-BCE\0\
+BCE\1\
 LockSize\0\
 EraseToScrollback\1\
 ScrollOnDisp\1\
@@ -221,13 +222,14 @@ ApplicationCursorKeys\0\
 NoRemoteCharset\0\
 NoDBackspace\0\
 RemoteQTitleAction\1\
+NoRemoteClearScroll\0\
 NoRemoteWinTitle\0\
 NoAltScreen\0\
 NoRemoteResize\1\
 NoMouseReporting\0\
 NoApplicationCursors\0\
 NoApplicationKeys\0\
-LinuxFunctionKeys\2\
+LinuxFunctionKeys\0\
 RXVTHomeEnd\0\
 BackspaceIsDelete\1\
 PassiveTelnet\0\
@@ -247,8 +249,9 @@ SshBanner\1\
 SshNoAuth\0\
 RekeyBytes\1G\
 RekeyTime\60\
-KEX\dh-gex-sha1,dh-group14-sha1,dh-group1-sha1,rsa,WARN\
-Cipher\aes,blowfish,3des,WARN,arcfour,des\
+HostKey\ed25519,ecdsa,rsa,dsa,WARN\
+KEX\ecdh,dh-gex-sha1,dh-group14-sha1,rsa,WARN,dh-group1-sha1\
+Cipher\aes,chacha20,blowfish,3des,WARN,arcfour,des\
 ChangeUsername\0\
 GssapiFwd\0\
 AgentFwd\0\
@@ -259,6 +262,7 @@ LocalUserName\\
 UserNameFromEnvironment\0\
 UserName\\
 Environment\\
+ProxyLogToTerm\1\
 ProxyTelnetCommand\connect%20%25host%20%25port%5Cn\
 ProxyPassword\\
 ProxyUsername\\
@@ -269,7 +273,7 @@ ProxyLocalhost\0\
 ProxyDNS\1\
 ProxyExcludeList\\
 AddressFamily\0\
-TerminalModes\CS7=A,CS8=A,DISCARD=A,DSUSP=A,ECHO=A,ECHOCTL=A,ECHOE=A,ECHOK=A,ECHOKE=A,ECHONL=A,EOF=A,EOL=A,EOL2=A,ERASE=A,FLUSH=A,ICANON=A,ICRNL=A,IEXTEN=A,IGNCR=A,IGNPAR=A,IMAXBEL=A,INLCR=A,INPCK=A,INTR=A,ISIG=A,ISTRIP=A,IUCLC=A,IXANY=A,IXOFF=A,IXON=A,KILL=A,LNEXT=A,NOFLSH=A,OCRNL=A,OLCUC=A,ONLCR=A,ONLRET=A,ONOCR=A,OPOST=A,PARENB=A,PARMRK=A,PARODD=A,PENDIN=A,QUIT=A,REPRINT=A,START=A,STATUS=A,STOP=A,SUSP=A,SWTCH=A,TOSTOP=A,WERASE=A,XCASE=A\
+TerminalModes\CS7=A,CS8=A,DISCARD=A,DSUSP=A,ECHO=A,ECHOCTL=A,ECHOE=A,ECHOK=A,ECHOKE=A,ECHONL=A,EOF=A,EOL=A,EOL2=A,ERASE=A,FLUSH=A,ICANON=A,ICRNL=A,IEXTEN=A,IGNCR=A,IGNPAR=A,IMAXBEL=A,INLCR=A,INPCK=A,INTR=A,ISIG=A,ISTRIP=A,IUCLC=A,IUTF8=A,IXANY=A,IXOFF=A,IXON=A,KILL=A,LNEXT=A,NOFLSH=A,OCRNL=A,OLCUC=A,ONLCR=A,ONLRET=A,ONOCR=A,OPOST=A,PARENB=A,PARMRK=A,PARODD=A,PENDIN=A,QUIT=A,REPRINT=A,START=A,STATUS=A,STOP=A,SUSP=A,SWTCH=A,TOSTOP=A,WERASE=A,XCASE=A\
 TerminalSpeed\38400,38400\
 TerminalType\putty-256color\
 TCPKeepalives\1\
