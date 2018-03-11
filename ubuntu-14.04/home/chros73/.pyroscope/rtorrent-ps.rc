@@ -183,8 +183,8 @@ branch=pyro.extended=,"schedule2 = bind_tag_show,0,0,\"ui.bind_key=download_list
 # UI/VIEW: ADD collapsed DATASIZE view  (bound to '<' in rT-PS)     SORT it by DATASIZE desc
 view.add = datasize
 branch=pyro.extended=,"view.collapsed.toggle=datasize"
-branch=pyro.extended=,"view.sort_new     = datasize,\"compare=-,d.size_bytes=\"","view.sort_new     = datasize,greater=d.size_bytes="
-branch=pyro.extended=,"view.sort_current = datasize,\"compare=-,d.size_bytes=\"","view.sort_current = datasize,greater=d.size_bytes="
+branch=pyro.extended=,"view.sort_new     = datasize,\"compare=-,d.selected_size_bytes=\"","view.sort_new     = datasize,greater=d.selected_size_bytes="
+branch=pyro.extended=,"view.sort_current = datasize,\"compare=-,d.selected_size_bytes=\"","view.sort_current = datasize,greater=d.selected_size_bytes="
 branch=pyro.extended=,"schedule2 = bind_datasize,0,0,\"ui.bind_key=download_list,<,ui.current_view.set=datasize\""
 
 # UI/VIEW: ADD collapsed UPLOADED DATA view  (bound to '>' in rT-PS)     SORT it by UPLOADED DATA desc, DOWNLOADED TIME desc
