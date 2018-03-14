@@ -194,8 +194,8 @@ method.insert = get_downrate_global, simple|private, "branch=(and,((greater,((ma
 schedule2     = adjust_throttle_global_down_max_rate, 54, 60, "throttle.global_down.max_rate.set_kb=(get_downrate_global)"
 
 # helper methods: get new upload slots limit for slowup_seed and tardyup_seed choke groups (based on their current uprate and the given cfg values)
-method.insert = get_slots_slowup,  simple|private, "math.min=(cfg.slowup.upslots.max),(math.max,(math.div,(cfg.slowup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,slowup),1024,(cfg.global.slot.uprate.min)))"
-method.insert = get_slots_tardyup, simple|private, "math.min=(cfg.tardyup.upslots.max),(math.max,(math.div,(cfg.tardyup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,tardyup),1024,(cfg.global.slot.uprate.min)))"
+method.insert = get_slots_slowup,  simple|private, "math.min=(cfg.slowup.slots.seed.max),(math.max,(math.div,(cfg.slowup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,slowup),1024,(cfg.global.slot.uprate.min)))"
+method.insert = get_slots_tardyup, simple|private, "math.min=(cfg.tardyup.slots.seed.max),(math.max,(math.div,(cfg.tardyup.uprate.min),(cfg.global.slot.uprate.min)),(math.div,(throttle.up.rate,tardyup),1024,(cfg.global.slot.uprate.min)))"
 # Set new upload slots (unchoked peers) limit for slowup_seed and tardyup_seed choke groups in every 100 seconds
 schedule2     = adjust_slots_slowup,  47, 100,"choke_group.up.max.set=slowup_seed,(cat,(get_slots_slowup))"
 schedule2     = adjust_slots_tardyup, 48, 100,"choke_group.up.max.set=tardyup_seed,(cat,(get_slots_tardyup))"
