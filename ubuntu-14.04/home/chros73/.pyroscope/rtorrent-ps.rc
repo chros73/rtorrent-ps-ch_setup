@@ -231,6 +231,15 @@ branch=pyro.extended=,"schedule2 = bind_auto_scale,0,0,\"ui.bind_key=download_li
 # UI/STATUS: Display additional throttle up info in status bar (it needs rT-PS-CH)
 branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle.up.set = slowup,tardyup\""
 
+# UI/DOMAIN: Display tracker domain aliases
+trackers.alias.set_key = bt1.archive.org,         "Archive"
+trackers.alias.set_key = t.bitlove.org,           "BitLove"
+trackers.alias.set_key = bundles.bittorrent.com,  "BitTorrent"
+trackers.alias.set_key = bttracker.debian.org,    "Debian"
+trackers.alias.set_key = etree.org,               "ETree"
+trackers.alias.set_key = legittorrents.info,      "LegitTorrents"
+trackers.alias.set_key = mininova.org,            "MiniNova"
+
 ### end: Other UI enhancements ###
 
 
