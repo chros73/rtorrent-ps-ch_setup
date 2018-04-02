@@ -287,6 +287,33 @@ method.insert = pyro.theme.toggle1, simple|private, "branch=\"equal={pyro.theme.
 method.insert = pyro.theme.toggle0, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.0=}\",pyro.theme.store_set=$cfg.theme.1=,pyro.theme.toggle1="
 branch=pyro.extended=,"schedule2 = bind_toggle_theme,0,0,\"ui.bind_key=download_list,|,pyro.theme.toggle0=\""
 
+# UI/KEY: Bind '/' to TOGGLE visibility of extra COLUMNS
+method.insert = ui.columns.extra.state, value|private, 1
+method.insert = ui.columns.extra.enable,  simple|private, "\
+       method.set_key = ui.column.render, \"100:1:☢\",  ((string.map, ((cat, ((d.is_open)), ((d.is_active)))), {00, \"▪\"}, {01, \"▪\"}, {10, \"╍\"}, {11, \"▹\"}));\
+       method.set_key = ui.column.render, \"110:1:☍\",  ((if, ((d.tied_to_file)), ((cat, \"⚯\")), ((cat, \" \"))));\
+       method.set_key = ui.column.render, \"120:1:⌘\",  ((if, ((d.ignore_commands)), ((cat, \"◌\")), ((cat, \"⚒\"))));\
+       method.set_key = ui.column.render, \"310:1:⋮\",  ((if, ((d.down.rate)), ((if,((d.up.rate)),((cat, \"⇅\")),((cat, \"↡\")))), ((if,((d.up.rate)),((cat, \"↟\")),((cat, \" \")))) ));\
+       method.set_key = ui.column.render, \"400:2: ↺\", ((convert.magnitude, ((d.tracker_scrape.downloaded)) ));\
+       method.set_key = ui.column.render, \"410:2: ⤴\", ((convert.magnitude, ((d.tracker_scrape.complete)) ));\
+       method.set_key = ui.column.render, \"420:2: ⤵\", ((convert.magnitude, ((d.tracker_scrape.incomplete)) ));\
+       method.set_key = ui.column.render, \"430:2: ↻\", ((convert.magnitude, ((d.peers_connected)) ));\
+       method.set_key = ui.column.render, \"700:6:   ⊼  \", ((if, ((d.up.total)), ((convert.human_size, ((d.up.total)), (value, 0) )), ((cat, \"   ·  \"))));\
+       ui.columns.extra.state.set=1"
+method.insert = ui.columns.extra.disable, simple|private, "\
+       method.set_key = ui.column.render, \"100:1:☢\";\
+       method.set_key = ui.column.render, \"110:1:☍\";\
+       method.set_key = ui.column.render, \"120:1:⌘\";\
+       method.set_key = ui.column.render, \"310:1:⋮\";\
+       method.set_key = ui.column.render, \"400:2: ↺\";\
+       method.set_key = ui.column.render, \"410:2: ⤴\";\
+       method.set_key = ui.column.render, \"420:2: ⤵\";\
+       method.set_key = ui.column.render, \"430:2: ↻\";\
+       method.set_key = ui.column.render, \"700:6:   ⊼  \";\
+       ui.columns.extra.state.set=0"
+method.insert = ui.columns.extra.toggle,  simple, "branch=$ui.columns.extra.state=, ui.columns.extra.disable=, ui.columns.extra.enable="
+branch=pyro.extended=,"schedule2 = toggle_extra_columns,0,0,\"ui.bind_key=download_list,/,ui.columns.extra.toggle=\""
+
 ### end: Generic keybindings and attributes ###
 
 ##### end: UI related commands and enhancements #####
