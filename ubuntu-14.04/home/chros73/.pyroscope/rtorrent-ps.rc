@@ -24,6 +24,9 @@ pyro.import = (pyro.theme.selected)
 # LOG: Log extension switch setting
 branch=pyro.extended=,print=rTorrent-PS\\\ features\\\ active!,print=rTorrent-PS\\\ features\\\ NOT\\\ active!
 
+# COMMAND: Provide dummy multi-methods for plain rTorrent
+branch=(not, (pyro.extended)), ((method.insert, ui.column.render, multi|rlookup|static))
+
 # COMMAND: Return startup time (can be used to calculate uptime)
 method.insert = startup_time,value|const,$system.time=
 
@@ -69,6 +72,20 @@ method.insert = t,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontro
 method.insert = f,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,$argument.0="
 
 ### end: UI commands ###
+
+
+### begin: Extra column definitions ###
+
+# Override Throttle column (⊘)
+method.set_key = ui.column.render, "200:1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
+
+# Add Unsafe data column (◎)
+method.set_key = ui.column.render, "230:1:◎", ((string.map, ((cat, ((d.custom,unsafe_data)))), {0, " "}, {1, "⊘"}, {2, "⊗"}))
+
+# Add Data directory column (⊕) (first character of parent directory)
+method.set_key = ui.column.render, "250:1:⊕", ((d.parent_dir))
+
+### end: Extra column definitions ###
 
 
 ### begin: Modifications for default views ###
