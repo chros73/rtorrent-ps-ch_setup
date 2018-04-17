@@ -40,7 +40,7 @@ pyro.import = (cat,"rtorrent-ps",(cfg.postfix),".rc")
 method.insert = d.get_data_full_path, simple, "branch=((d.is_multi_file)),((cat,(d.directory))),((cat,(d.directory),/,(d.name)))"
 
 # helper method: set/unset unsafe_data attrib (possible values: "","1","2")
-method.insert = d.unsafe_data.set, simple|private, "d.custom.set=unsafe_data,(argument.0); d.save_full_session="
+method.insert = d.unsafe_data.set, simple|private, "d.custom.set=unsafe_data,(argument.0); d.save_resume="
 # helper method: sets priority and throttle (or removes it) for torrents based upon its arguments
 method.insert = d.modify_rest, simple|private, "d.priority.set=(argument.0); d.throttle_name.set=(argument.1)"
 # helper method: calls 'd.modify_rest' method with the proper arguments based upon whether a throttled download is private; other torrents: sets priority to low, sets slowup or tardyup throttle group
@@ -109,7 +109,7 @@ method.insert = d.meta_full_path_exist, simple|private, "check_object.value=$d.t
 method.insert = d.move_meta, simple|private, "execute2=mv,-f,$d.tied_to_file=,$d.custom=meta_dir;d.tied_to_file.set=$d.get_target_meta_path="
 
 # helper method: moves both data and meta (.torrent) file if neither of them is in the final place and saves its session
-method.insert = d.move_both, simple|private, "d.move_meta=; d.move_data=$argument.0=; d.save_full_session="
+method.insert = d.move_both, simple|private, "d.move_meta=; d.move_data=$argument.0=; d.save_resume="
 # helper method: tries to move both data and meta file only if none of the targets exist nor they have already been moved (latter is necessary for hashckecking)
 method.insert = d.move_both_check, simple|private, "branch=\"and={d.name=,not=$d.compare_meta_path=,not=$d.target_meta_path_exist=,d.meta_full_path_exist=,not=$d.compare_data_path=,not=$d.target_data_path_exist=,d.data_full_path_exist=}\",d.move_both=$argument.0="
 # finally, set a key with the name 'move_both_f' that is triggered by the finished event: tries to move both data and meta (.torrent) file when it's finished
@@ -220,8 +220,8 @@ method.insert = d.get_new_magnet_meta_file_path,     simple|private, "cat=$cfg.d
 method.insert = d.delete_wrong_magnet_meta_file,     simple|private, "execute.nothrow={rm,-rf,--,$d.get_wrong_magnet_meta_file_path=}"
 # helper method: copy the right torrent file from ".session" dir into one of the category of ".downloading" dir
 method.insert = d.copy_session_magnet_meta_file,     simple|private, "execute.nothrow={cp,--,$d.get_session_magnet_meta_file_path=,$d.get_new_magnet_meta_file_path=}"
-# helper method: copies right one into its proper place, sets d.tied_to_file property to it, deletes the wrong one, saves session
-method.insert = d.fix_magnet_tied_file, simple|private, "d.copy_session_magnet_meta_file=; d.tied_to_file.set=$d.get_new_magnet_meta_file_path=; d.delete_wrong_magnet_meta_file=; d.save_full_session="
+# helper method: copies right one into its proper place, sets d.tied_to_file property to it, deletes the wrong one
+method.insert = d.fix_magnet_tied_file, simple|private, "d.copy_session_magnet_meta_file=; d.tied_to_file.set=$d.get_new_magnet_meta_file_path=; d.delete_wrong_magnet_meta_file="
 
 # Fix tied torrent file of an initially magnet link when its download has been just started: delete the wrong one from "incomplete" dir and copy the right one from ".session" dir if they exist
 method.set_key = event.download.inserted_new, fix_magnet_tied_file, "branch=\"and={\\\"check_object.value=$cat=$d.get_session_magnet_meta_file_path=,,f\\\",\\\"check_object.value=$cat=$d.get_wrong_magnet_meta_file_path=,,f\\\"}\",d.fix_magnet_tied_file="
@@ -252,7 +252,7 @@ method.insert = hrf_time, simple, "branch=\"greater={argument.0=,cat=0}\",hrf_ti
 #   - transferring (uploading and/or downloading) torrents: update in every 10 minutes
 #   - non-transferring torrents: update in every 12 hours
 # helper method: sets current time in a custom field (tm_last_scrape) and saves session
-method.insert = d.last_scrape.set, simple|private, "d.custom.set=tm_last_scrape,$cat=$system.time=; d.save_full_session="
+method.insert = d.last_scrape.set, simple|private, "d.custom.set=tm_last_scrape,$cat=$system.time=; d.save_resume="
 # helper method: sends the scrape request and sets the tm_last_scrape timestamp and saves session
 method.insert = d.last_scrape.send_set, simple, "d.tracker.send_scrape=0;d.last_scrape.set="
 # helper method: decides whether the required time interval (with the help of an argument) has passed and if so calls the above method
@@ -260,7 +260,7 @@ method.insert = d.last_scrape.check_elapsed, simple|private, "branch={(elapsed.g
 # helper method: checks for non-existing/empty custom field to be able to test its validity later
 method.insert = d.last_scrape.check, simple|private, "branch={d.custom=tm_last_scrape,d.last_scrape.check_elapsed=$argument.0=,d.last_scrape.send_set=}"
 # sets custom field (tm_last_scrape) to current time only for torrents just has been added (skips setting time on purpose when rtorrent started)
-method.set_key = event.download.inserted_new, last_scrape_i, "d.last_scrape.set="
+method.set_key = event.download.inserted_new, ~last_scrape_i, "d.last_scrape.set="
 # check for update every 5 minutes (300 sec) and update scrape info for transferring torrents in every 10 minutes (600-20=580 sec) and for non-transferring ones in every 12 hours (43200-20=43180 sec)
 schedule2 = last_scrape_t, 300, 300, "d.multicall2=default,\"branch=\\\"or={d.up.rate=,d.down.rate=}\\\",d.last_scrape.check=580,d.last_scrape.check=43180\""
 
