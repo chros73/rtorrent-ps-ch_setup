@@ -73,6 +73,15 @@ method.insert = tag.add,  simple|private, "execute.nothrow=\"$cat=$pyro.bin_dir=
 method.insert = tag.rm,   simple|private, "execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,-otag_show,--flush,--yes,--from-view,$d.hash=,//,--tag,\"$cat=-,$argument.0=\""
 method.insert = tag.show, simple|private, "execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,-otag_show,--from-view,$d.hash=,//,--flush"
 
+# UI/CMD: Displays quick help resources
+method.insert = pyro.print_help, multi|rlookup|static
+method.set_key = pyro.print_help, !!intro1,    ((print, ((cat, "rTorrent QUICK HELP RESOURCES" )) ))
+method.set_key = pyro.print_help, !!intro2,    ((print, ((cat, "=============================" )) ))
+method.set_key = pyro.print_help, !10handbook, ((print, ((cat, "rTorrent Handbook            http://rtorrent-docs.readthedocs.io/" )) ))
+method.set_key = pyro.print_help, !10wiki,     ((print, ((cat, "rTorrent Wiki                https://github.com/rakshasa/rtorrent/wiki" )) ))
+method.set_key = pyro.print_help, !20pyrocore, ((print, ((cat, "pyrocore Manual (rtcontrol)  https://pyrocore.readthedocs.io/" )) ))
+method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH Setup Wiki    https://github.com/chros73/rtorrent-ps-ch_setup/wiki" )) ))
+
 ### end: UI commands ###
 
 
@@ -291,6 +300,9 @@ branch=pyro.extended=,"schedule2 = bind_toggle_theme,0,0,\"ui.bind_key=download_
 
 # UI/KEY: Bind '^G' to DISPLAY the TAGS of the current download
 branch=pyro.extended=,"schedule2 = bind_tag_show,0,0,\"ui.bind_key=download_list,^G,tag.show=\""
+
+# UI/KEY: Bind 'F2' to DISPLAY quick HELP resources
+branch=pyro.extended=,"schedule2 = bind_pyro.print_help,0,0,\"ui.bind_key=download_list,0412,pyro.print_help=\""
 
 # UI/KEY: Bind '/' to TOGGLE visibility of extra COLUMNS
 method.insert = ui.columns.extra.state, value|private, 1
