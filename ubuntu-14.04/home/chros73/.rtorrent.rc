@@ -39,6 +39,9 @@ pyro.import = (cat,"rtorrent-ps",(cfg.postfix),".rc")
 # gets the full path of data of a torrent (it's a workaround for the possibly empty 'd.base_path' attribute)
 method.insert = d.get_data_full_path, simple, "branch=((d.is_multi_file)),((cat,(d.directory))),((cat,(d.directory),/,(d.name)))"
 
+# gets the full path of the session file
+method.insert = d.session_file, simple, "cat=(session.path),(d.hash),.torrent"
+
 # helper method: set/unset unsafe_data attrib (possible values: "","1","2")
 method.insert = d.unsafe_data.set, simple|private, "d.custom.set=unsafe_data,(argument.0); d.save_resume="
 # helper method: sets priority and throttle (or removes it) for torrents based upon its arguments

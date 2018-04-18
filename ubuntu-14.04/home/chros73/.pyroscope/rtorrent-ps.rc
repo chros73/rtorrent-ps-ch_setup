@@ -64,7 +64,7 @@ method.set_key = event.download.resumed, ~activations, "pyro.activations.append=
 ### begin: UI commands ###
 
 # UI/CMD: Use rtcontrol filter (^X s=KEYWORD, ^X t=TRACKER, ^X f="FILTER")
-method.insert = s,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,\"$cat=*,$argument.0=,*\""
+method.insert = s,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,[,\"$cat=*,$argument.0=,*\",OR,\"$cat=custom_displayname=,*,$argument.0=,*\",]"
 method.insert = t,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,\"$cat=\\\"alias=\\\",$argument.0=\""
 method.insert = f,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,$argument.0="
 
@@ -328,8 +328,8 @@ branch=pyro.extended=,"schedule2 = toggle_extra_columns,0,0,\"ui.bind_key=downlo
 ##### begin: Unused pyroscope features #####
 
 ## UI/CMD: Housekeeping (delete item + data)
-#method.insert = purge,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",-q,--detach,--purge,--yes,\"$cat=hash=,$d.hash=\""
-#method.insert = cull,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",-q,--detach,--cull,--yes,\"$cat=hash=,$d.hash=\""
+#method.insert = purge,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",-q,--detach,--purge,--yes,--from-view,$d.hash=,//"
+#method.insert = cull,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",-q,--detach,--cull,--yes,--from-view,$d.hash=,//"
 
 ## TORQUE/CMD: Daemon watchdog
 #method.insert = pyro.watchdog,simple|private,"execute.nothrow=bash,-c,\"$cat=\\\"test ! -f \\\",$argument.0=,\\\"/run/pyrotorque || \\\",$pyro.bin_dir=,\\\"pyrotorque --cron \\\",$argument.1=\""
