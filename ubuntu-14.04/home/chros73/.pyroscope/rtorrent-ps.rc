@@ -68,6 +68,11 @@ method.insert = s,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontro
 method.insert = t,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,\"$cat=\\\"alias=\\\",$argument.0=\""
 method.insert = f,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,$argument.0="
 
+# UI/CMD: Add, remove, and show tags
+method.insert = tag.add,  simple|private, "execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,-otag_show,--flush,--yes,--from-view,$d.hash=,//,--tag,$argument.0="
+method.insert = tag.rm,   simple|private, "execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,-otag_show,--flush,--yes,--from-view,$d.hash=,//,--tag,\"$cat=-,$argument.0=\""
+method.insert = tag.show, simple|private, "execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",--detach,-qV,-otag_show,--from-view,$d.hash=,//,--flush"
+
 ### end: UI commands ###
 
 
@@ -283,6 +288,9 @@ method.insert = pyro.theme.store_set, simple|private, "pyro.import=$cat=$argumen
 method.insert = pyro.theme.toggle1, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.1=}\",pyro.theme.store_set=$cfg.theme.2=,pyro.theme.store_set=$cfg.theme.0="
 method.insert = pyro.theme.toggle0, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.0=}\",pyro.theme.store_set=$cfg.theme.1=,pyro.theme.toggle1="
 branch=pyro.extended=,"schedule2 = bind_toggle_theme,0,0,\"ui.bind_key=download_list,|,pyro.theme.toggle0=\""
+
+# UI/KEY: Bind '^G' to DISPLAY the TAGS of the current download
+branch=pyro.extended=,"schedule2 = bind_tag_show,0,0,\"ui.bind_key=download_list,^G,tag.show=\""
 
 # UI/KEY: Bind '/' to TOGGLE visibility of extra COLUMNS
 method.insert = ui.columns.extra.state, value|private, 1
