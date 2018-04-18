@@ -12,6 +12,9 @@ method.insert = cfg.external_dnscache.use, value|private, 0
 # Set an interface with IPv4 address to bind to: [eth0|tun0]
 method.insert = cfg.interface.bind, string|const|private, (cat,"")
 
+# Min uprate/downrate threshold for last_xfer custom field in B
+method.insert.value = pyro.last_xfer.min_rate, 5000
+
 ##### end: rtorrent-ps-ch_setup variables #####
 
 
