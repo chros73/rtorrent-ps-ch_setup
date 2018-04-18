@@ -82,6 +82,12 @@ method.set_key = pyro.print_help, !10wiki,     ((print, ((cat, "rTorrent Wiki   
 method.set_key = pyro.print_help, !20pyrocore, ((print, ((cat, "pyrocore Manual (rtcontrol)  https://pyrocore.readthedocs.io/" )) ))
 method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH Setup Wiki    https://github.com/chros73/rtorrent-ps-ch_setup/wiki" )) ))
 
+# UI/EVENTS/SCHEDULE: Log loaded, completed, deleted download items and add day break to log
+method.set_key = event.download.inserted_new, log, ((print, "LOADED ",    ((d.name)), " [", ((convert.date,((system.time)))), "]", " Size: ", ((convert.human_size, ((d.selected_size_bytes)), (value, 0) )), " / Free: ", ((convert.human_size, ((d.free_diskspace)), (value, 0) )) ))
+method.set_key = event.download.finished,     log, ((print, "COMPLETED ", ((d.name)), " [", ((convert.date,((system.time)))), "]"))
+method.set_key = event.download.erased,       log, ((print, "DELETED ",   ((d.name)), " [", ((convert.date,((system.time)))), "]", " Size: ", ((convert.human_size, ((d.selected_size_bytes)), (value, 0) )), " / Free: ", ((convert.human_size, ((d.free_diskspace)), (value, 0) )) ))
+schedule2 = log_new_day, 00:00:05, 24:00:00, ((print, "New day: ", ((convert.date, ((system.time_seconds)) )) ))
+
 ### end: UI commands ###
 
 
