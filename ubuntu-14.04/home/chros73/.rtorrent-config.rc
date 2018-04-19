@@ -17,7 +17,7 @@ method.insert = cfg.scrape_interval.active, value,   580
 method.insert = cfg.scrape_interval.idle,   value, 43180
 
 # Min uprate/downrate threshold for last_xfer custom field in B
-method.insert.value = pyro.last_xfer.min_rate, 5000
+method.insert = pyro.last_xfer.min_rate, value, 5000
 
 ##### end: rtorrent-ps-ch_setup variables #####
 
