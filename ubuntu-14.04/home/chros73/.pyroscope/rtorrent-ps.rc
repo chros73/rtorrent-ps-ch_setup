@@ -238,8 +238,8 @@ branch=pyro.extended=,"schedule2 = bind_ratio,0,0,\"ui.bind_key=download_list,%,
 # UI/VIEW: ADD collapsed CATEGORY view  (bound to '@' in rT-PS)     SORT it by CATEGORY (full path means NAME as well)
 view.add = category
 branch=pyro.extended=,"view.collapsed.toggle=category"
-branch=pyro.extended=,"view.sort_new     = category,\"compare=+,d.get_data_full_path=\"","view.sort_new     = category,less=d.get_data_full_path="
-branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.get_data_full_path=\"","view.sort_current = category,less=d.get_data_full_path="
+branch=pyro.extended=,"view.sort_new     = category,\"compare=+,d.data_path=\"","view.sort_new     = category,less=d.data_path="
+branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.data_path=\"","view.sort_current = category,less=d.data_path="
 branch=pyro.extended=,"schedule2 = bind_category,0,0,\"ui.bind_key=download_list,@,ui.current_view.set=category\""
 
 # UI/VIEW: ADD collapsed DELETABLE view  (bound to '?' in rT-PS)     SORT it by DOWNLOADED TIME, group by 'unsafe_data' desc, THROTTLE desc . Show deletable torrents.
