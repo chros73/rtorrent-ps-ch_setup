@@ -1,4 +1,7 @@
 # Color scheme for 256 xterm colors - Solarized Yellow (http://ethanschoonover.com/solarized)
+
+pyro.color_theme.name = "Solarized Yellow"
+
 branch=pyro.extended=,"ui.color.alarm.set       = \"bold 254 on 160\""
 branch=pyro.extended=,"ui.color.complete.set    = \"136\""
 branch=pyro.extended=,"ui.color.even.set        = \"on 234\""
