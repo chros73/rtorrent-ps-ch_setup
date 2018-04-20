@@ -1,7 +1,5 @@
 # Color scheme for 8 ANSI colors
 
-pyro.color_theme.name = "Default (8 ANSI colors)"
-
 branch=pyro.extended=,"ui.color.alarm.set       = \"white on red\""
 branch=pyro.extended=,"ui.color.complete.set    = \"white\""
 branch=pyro.extended=,"ui.color.even.set        = \"\""

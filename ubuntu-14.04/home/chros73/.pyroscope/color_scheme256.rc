@@ -1,7 +1,5 @@
 # Color scheme for 256 xterm colors
 
-pyro.color_theme.name = "Default (256 xterm colors)"
-
 branch=pyro.extended=,"ui.color.alarm.set       = \"bold white on red\""
 branch=pyro.extended=,"ui.color.complete.set    = \"41\""
 branch=pyro.extended=,"ui.color.even.set        = \"on 234\""

@@ -1,7 +1,5 @@
 # Color scheme for 256 xterm colors - Happy Pastel (less harsh default colors)
 
-pyro.color_theme.name = "Happy Pastel"
-
 branch=pyro.extended=,"ui.color.alarm.set       = \"bold 250 on 124\""
 branch=pyro.extended=,"ui.color.complete.set    = \"41\""
 branch=pyro.extended=,"ui.color.even.set        = \"on 234\""
