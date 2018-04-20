@@ -24,6 +24,9 @@ pyro.import = (pyro.theme.selected)
 # LOG: Log extension switch setting
 branch=pyro.extended=,print=rTorrent-PS\\\ features\\\ active!,print=rTorrent-PS\\\ features\\\ NOT\\\ active!
 
+# COMMAND: To gracefully exit rtorrent
+method.insert = quit, simple, "execute.throw=kill,-INT,(system.pid)"
+
 # COMMAND: Provide dummy multi-methods for plain rTorrent
 branch=(not, (pyro.extended)), ((method.insert, ui.column.render, multi|rlookup|static))
 
@@ -309,6 +312,10 @@ pyro.bind_key = show_tags, ^G, "tag.show="
 
 # UI/KEY: Bind 'F2' to DISPLAY quick HELP resources
 pyro.bind_key = show_quick_help, 0412, "pyro.print_help="
+
+# UI/KEY: Disable '^q' from exit
+method.insert = pyro._print_noquit, simple|private, "print=\"^Q is disabled, use '^X quit='\""
+pyro.bind_key = no_quit, ^q, "pyro._print_noquit="
 
 # UI/KEY: Bind '/' to TOGGLE visibility of extra COLUMNS
 method.insert = ui.columns.extra.state, value|private, 1
