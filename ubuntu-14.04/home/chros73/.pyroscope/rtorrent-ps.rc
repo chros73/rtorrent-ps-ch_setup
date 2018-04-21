@@ -301,7 +301,7 @@ method.insert = pyro.theme.toggle1, simple|private, "branch=\"equal={pyro.theme.
 method.insert = pyro.theme.toggle0, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.0=}\",pyro.theme.store_set=$cfg.theme.1=,pyro.theme.toggle1="
 pyro.bind_key = toggle_theme, |, "pyro.theme.toggle0="
 
-# UI/KEY: Bind '^G' to DISPLAY the TAGS of the current download
+# UI/KEY: Bind '^g' to DISPLAY the TAGS of the current download
 pyro.bind_key = show_tags, ^G, "tag.show="
 
 # UI/KEY: Bind 'F2' to DISPLAY quick HELP resources
