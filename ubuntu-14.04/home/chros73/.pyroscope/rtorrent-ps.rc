@@ -67,6 +67,14 @@ method.insert = pyro.bind_key, private|simple, "branch=(pyro.extended), ((pyro._
 method.insert = pyro.view.collapsed.toggle, private|simple, "branch=(pyro.extended), ((view.collapsed.toggle,(argument.0)))"
 method.insert = pyro.collapsed_view.add, private|simple, "view.add=(argument.0); pyro.view.collapsed.toggle=(argument.0)"
 
+
+### begin: Logging, Log Rotation, Archival, and Pruning ###
+
+# Log messages into file: this type of log is being dealt differently, 'rtorrent-messages' logrotate conf is responsible for this (requires rtorrent-PS-CH >= v1.7.0)
+branch=(pyro.extended),((log.messages, (cat, (cfg.dir.logs), messages.log) ))
+
+### end: Logging, Log Rotation, Archival, and Pruning ###
+
 ##### end: Useful command extensions #####
 
 

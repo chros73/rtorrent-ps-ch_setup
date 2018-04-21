@@ -24,3 +24,6 @@ HOME="/home/chros73"
 54 5 * * *	chros73	"$HOME/bin/reportStopped.sh"
 # run report of low rotating space every day at 06:54
 54 6 * * *	chros73	"$HOME/bin/reportLowRotatingSpace.sh"
+
+# run logrotating messages log every day at 01:14
+14 1 * * *	chros	/usr/sbin/logrotate -s "$HOME/.local/logrotate/status" "$HOME/.local/logrotate/rtorrent-messages.conf" > /dev/null 2>&1

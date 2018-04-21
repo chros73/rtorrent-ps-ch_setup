@@ -147,6 +147,7 @@ method.insert = cfg.dir.meta_downl, string|const|private, (cat,(cfg.dir.sub),".d
 method.insert = cfg.dir.meta_compl, string|const|private, (cat,(cfg.dir.sub),".completed/")
 method.insert = cfg.dir.delqueue,   string|const|private, (cat,(cfg.dir.sub),".delqueue/")
 method.insert = cfg.dir.session,    string|const|private, (cat,(cfg.dir.sub),".session/")
+method.insert = cfg.dir.logs,       string|const|private, (cat,(cfg.dir.sub),".log/")
 
 # Default directory to save the downloaded torrents and where you should place your 'complete' data before you place your *.torrent file into the watch folder to be able to be hash checked. (directory)
 directory.default.set = (cat,(cfg.dir.incomplete))
