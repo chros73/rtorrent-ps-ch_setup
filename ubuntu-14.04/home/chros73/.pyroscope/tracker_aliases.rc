@@ -1,0 +1,9 @@
+# UI/DOMAIN: Display tracker domain aliases
+
+branch=(pyro.extended),((trackers.alias.set_key, bt1.archive.org,         "Archive"))
+branch=(pyro.extended),((trackers.alias.set_key, t.bitlove.org,           "BitLove"))
+branch=(pyro.extended),((trackers.alias.set_key, bundles.bittorrent.com,  "BitTorrent"))
+branch=(pyro.extended),((trackers.alias.set_key, bttracker.debian.org,    "Debian"))
+branch=(pyro.extended),((trackers.alias.set_key, etree.org,               "ETree"))
+branch=(pyro.extended),((trackers.alias.set_key, legittorrents.info,      "LegitTorrents"))
+branch=(pyro.extended),((trackers.alias.set_key, mininova.org,            "MiniNova"))

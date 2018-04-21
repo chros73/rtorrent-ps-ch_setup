@@ -269,13 +269,7 @@ pyro.bind_key = toggle_network_auto_scale, =, "network.history.auto_scale.ui_tog
 branch=pyro.extended=,"branch=pyro.extended.ch=,\"ui.status.throttle.up.set = slowup,tardyup\""
 
 # UI/DOMAIN: Display tracker domain aliases
-trackers.alias.set_key = bt1.archive.org,         "Archive"
-trackers.alias.set_key = t.bitlove.org,           "BitLove"
-trackers.alias.set_key = bundles.bittorrent.com,  "BitTorrent"
-trackers.alias.set_key = bttracker.debian.org,    "Debian"
-trackers.alias.set_key = etree.org,               "ETree"
-trackers.alias.set_key = legittorrents.info,      "LegitTorrents"
-trackers.alias.set_key = mininova.org,            "MiniNova"
+pyro.import=(cat,"tracker_aliases.rc")
 
 ### end: Other UI enhancements ###
 
