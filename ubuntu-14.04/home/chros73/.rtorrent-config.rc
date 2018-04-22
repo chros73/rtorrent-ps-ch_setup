@@ -288,10 +288,5 @@ system.file.allocate.set = 1
 #network.http.proxy_address.set = 127.0.0.1:8118
 #network.proxy_address.set = 127.0.0.1:8118
 
-# Enables logging. Levels=[critical|error|warn|notice|info|debug]  Groups=[connection_*|dht_*|peer_*|rpc_*|storage_*|thread_*|tracker_*|torrent_*]
-#log.open_gz_file_pid = "rtorrent.log", (cat,"/tmp/rtorrent.log")
-#log.add_output = "info", "rtorrent.log"
-#log.add_output = "tracker_debug", "rtorrent.log"
-
 ##### end: Other settings #####
 

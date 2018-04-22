@@ -73,6 +73,45 @@ method.insert = pyro.collapsed_view.add, private|simple, "view.add=(argument.0);
 # Log messages into file: this type of log is being dealt differently, 'rtorrent-messages' logrotate conf is responsible for this (requires rtorrent-PS-CH >= v1.7.0)
 branch=(pyro.extended),((log.messages, (cat, (cfg.dir.logs), messages.log) ))
 
+# Set archival and retention delay in days for log rotation
+method.insert = pyro.log_archival.days,  value, 2
+method.insert = pyro.log_retention.days, value, 7
+
+# String value for the currently used time stamp, changed on rotation
+method.insert = pyro.log_stamp.current, string
+# helper method: creates a "YYYY-mm-dd-HHMMSS" time stamp
+method.insert = pyro.date_iso.log_stamp, simple|private, "execute.capture_nothrow = bash, -c, \"echo -n $(date +%Y-%m-%d-%H%M%S)\""
+# helper method: creates a full logfile path using the current stamp
+method.insert = pyro.logfile_path, simple|private, "cat = (cfg.dir.logs), (argument.0), \"-\", (pyro.log_stamp.current), .log"
+# helper method: log file archival and pruning
+method.insert = pyro._logfile_find_cmd, simple|private, "cat=\"find \", (cfg.dir.logs), \" -daystart -type f ! -name 'messages*.log*' -name '*.\", (argument.0), \"'\", \" -mtime +\", (argument.1), \" -exec nice \", (argument.2), \" '{}' ';'\""
+
+# (Re-)open all logs with a current time stamp (command group); the main log file is just opened, you need to add some logging scopes yourself!
+#   Disabled: enable any of the actual logging ([execute|xmlrpc|~main]) if it's desired
+method.insert  = pyro.log_rotate, multi|rlookup|static
+method.set_key = pyro.log_rotate, !stamp,   "pyro.log_stamp.current.set = (cat, (pyro.date_iso.log_stamp))"
+#method.set_key = pyro.log_rotate, execute,  "log.execute = (pyro.logfile_path, execute)"
+#method.set_key = pyro.log_rotate, xmlrpc,   "log.xmlrpc = (pyro.logfile_path, xmlrpc)"
+#method.set_key = pyro.log_rotate, ~main,    "log.open_file = log, (pyro.logfile_path, rtorrent)"
+
+##  Scheduling is Disabled: enable all of them if any of the logging ([execute|xmlrpc|~main]) in 'pyro.log_rotate' command group is enabled
+# Logrotate schedule (rotating shortly after 1AM, so DST shenanigans are taken care of, and rotation is always near the next day's begin)
+#schedule2 = pyro_daily_log_rotate, 01:05:00, 24:00:00, ((pyro.log_rotate))
+# Log file archival schedule
+#schedule2 = pyro_logfile_archival, 01:10:00, 24:00:00, "execute.nothrow = bash, -c, (pyro._logfile_find_cmd, log, (pyro.log_archival.days), gzip)"
+# Log file pruning schedule
+#schedule2 = pyro_logfile_pruning,  01:20:00, 24:00:00, "execute.nothrow = bash, -c, (pyro._logfile_find_cmd, log.gz, (pyro.log_retention.days), rm)"
+
+# Open logs initially on startup
+#   Disabled: enable it if any of the logging ([execute|xmlrpc|~main]) in 'pyro.log_rotate' command group is enabled
+#pyro.log_rotate=
+
+# Enables logging. Levels=[critical|error|warn|notice|info|debug]  Groups=[connection_*|dht_*|peer_*|rpc_*|storage_*|thread_*|tracker_*|torrent_*]
+#   Disabled: enable any/all of them if it's desired (requires '~main' command in 'pyro.log_rotate' command group to be enabled)
+#log.add_output = "info", "log"
+#log.add_output = "debug", "log"
+#log.add_output = "tracker_debug", "log"
+
 ### end: Logging, Log Rotation, Archival, and Pruning ###
 
 ##### end: Useful command extensions #####
