@@ -1,5 +1,5 @@
 HOME="/home/chros73"
-
+RTHOME="/mnt/Torrents"
 
 # run queue management script in every 5 minutes
 0-59/5 * * * *	chros73	"$HOME/bin/queueTorrent.sh"
@@ -26,4 +26,4 @@ HOME="/home/chros73"
 54 6 * * *	chros73	"$HOME/bin/reportLowRotatingSpace.sh"
 
 # run logrotating messages log every day at 01:14
-14 1 * * *	chros	/usr/sbin/logrotate -s "$HOME/.local/logrotate/status" "$HOME/.local/logrotate/rtorrent-messages.conf" > /dev/null 2>&1
+14 1 * * *	chros	/usr/sbin/logrotate -s "$RTHOME/.rtorrent/.log/.logrotate.status" "$HOME/.local/logrotate/rtorrent-messages.conf" > /dev/null 2>&1
