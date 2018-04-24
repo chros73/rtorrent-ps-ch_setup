@@ -242,9 +242,9 @@ method.insert = get_interface_ipv4_address, simple|private, "execute.capture=bas
 # Get public IP address without the need of having dynamic DNS service, also works from behind NAT, through tunnel
 method.insert = get_public_ip_address, simple|private, "execute.capture=bash,-c,\"eval echo -n \$(dig TXT +short o-o.myaddr.l.google.com @ns1.google.com)\""
 
-# Format any valid timestamp value in human readable format (e.g.: 30/06/2013 23:47:33) or return the value itself otherwise
+# Format any valid timestamp value in human readable format (e.g.: 30/06/2013 23:47:33)
 #   Usage: hrf_time=<<timefield>>  (e.g.: hrf_time=$d.creation_date=  ,  hrf_time=$d.custom=tm_last_scrape)
-method.insert = hrf_time, simple, "branch=((greater, ((argument.0)), ((cat,0)))), ((cat, (convert.date,(argument.0)), \" \", (convert.time,(argument.0)))), ((cat, (argument.0)))"
+method.insert = hrf_time, simple, "branch=\"and={argument.0=,\\\"greater=argument.0=,cat=0\\\"}\", \"cat=$convert.date=$argument.0=, \\\" \\\", $convert.time=$argument.0=\""
 
 # Regularly update scrape information for all torrents (even stopped ones), it won't affect the operation of rtorrent, but nice to have these values updated.
 # This info is only updated when rtorrent starts or a torrent is added by default.
