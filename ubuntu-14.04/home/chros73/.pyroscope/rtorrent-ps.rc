@@ -162,7 +162,7 @@ method.insert = d.print.status, simple|private, "print=(argument.0),\
 method.set_key = event.download.inserted_new, ~log, ((d.print.status, "LOADED  "))
 method.set_key = event.download.finished,     ~log, ((d.print.status, "FINISHED"))
 method.set_key = event.download.erased,       ~log, ((d.print.status, "DELETED "))
-schedule2      = log_startup_time, 1, 0, ((print, "rTorrent is started at: ", ((hrf_time, ((cat, (startup_time) )) )) ))
+schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, ((cat, (startup_time) )) )) ))
 
 ### end: UI commands ###
 
