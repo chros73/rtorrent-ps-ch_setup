@@ -33,8 +33,14 @@ branch=(not, (pyro.extended)), ((method.insert, ui.column.render, multi|rlookup|
 # COMMAND: Return startup time (can be used to calculate uptime)
 method.insert = startup_time,value|const,$system.time=
 
-# COMMAND: Returns uptime (with the help of getUptime.sh script) in the form of "Up: 6 years, 5 months, 18 days, 02:39:57" (year/month info isn't shown if their value is 0)
-method.insert = uptime, simple, "print=\"$execute.capture=\\\"$cat=$pyro.bin_dir=,getUptime.sh\\\",$system.time=,$startup_time=\""
+# COMMAND: Returns elapsed time between 2 timestamps in the form of "6 years, 5 months, 18 days, 02:40:00" (year/month info isn't shown if their value is 0)
+method.insert = get_elapsed_time, simple, "execute.capture=(cat,(pyro.bin_dir),getElapsedTime.sh), (argument.0), (argument.1)"
+
+# COMMAND: Returns uptime (with the help of getElapsedTime.sh script) in the form of "Up: 6 years, 5 months, 18 days, 02:39:57" (year/month info isn't shown if their value is 0)
+method.insert = uptime, simple, "print=\"Up: \", (cat, (get_elapsed_time,(system.time),(startup_time)))"
+
+# COMMAND: Returns d.ratio as float formatted string
+method.insert = d.get_ratio_float, simple, "cat=(math.div,(d.ratio),1000) ,., (chars.pad, (chars.chop, (math.div,(math.sub,(d.ratio),(math.mul,(math.div,(d.ratio),1000),1000)),10), 2), 2, 0, 0)"
 
 # COMMAND: Returns current timestamp for items that have peers or 'last_active' timestamp otherwise
 method.insert  = d.last_active, simple, "if=(d.peers_connected), (cat,(system.time)), (d.custom,last_active)"
@@ -145,7 +151,6 @@ method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH S
 method.set_key = event.download.inserted_new, log, ((print, "LOADED ",    ((d.name)), " [", ((convert.date,((system.time)))), "]", " Size: ", ((convert.human_size, ((d.selected_size_bytes)), (value, 0) )), " / Free: ", ((convert.human_size, ((d.free_diskspace)), (value, 0) )) ))
 method.set_key = event.download.finished,     log, ((print, "COMPLETED ", ((d.name)), " [", ((convert.date,((system.time)))), "]"))
 method.set_key = event.download.erased,       log, ((print, "DELETED ",   ((d.name)), " [", ((convert.date,((system.time)))), "]", " Size: ", ((convert.human_size, ((d.selected_size_bytes)), (value, 0) )), " / Free: ", ((convert.human_size, ((d.free_diskspace)), (value, 0) )) ))
-schedule2 = log_new_day, 00:00:05, 24:00:00, ((print, "New day: ", ((convert.date, ((system.time_seconds)) )) ))
 
 ### end: UI commands ###
 

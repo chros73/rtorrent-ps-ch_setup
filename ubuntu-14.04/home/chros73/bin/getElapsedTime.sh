@@ -1,6 +1,6 @@
 #!/bin/bash
-# Calculates and prints uptime in the form of "Up: 6 years, 5 months, 18 days, 02:40:00" (year/month info isn't shown if their value is 0)
-# Usage: getUptime.sh current_timestamp startup_timestamp
+# Calculates and prints elapsed time in the form of "6 years, 5 months, 18 days, 02:40:00" (year/month info isn't shown if their value is 0)
+# Usage: getElapsedTime.sh current_timestamp startup_timestamp
 
 
 # checking parameter count
@@ -40,9 +40,9 @@ SEC=$((difftimestamp%60));
 
 # don't display year or month info if their value is 0
 [ "$YEAR" -eq 0 ] && YEARSTR="" || YEARSTR="$YEAR year$YEARP, ";
-[ "$MONTH" -eq 0 ] && MONTHSTR="" || MONTHSTR="$MONTH month$YEARP, ";
+[ "$MONTH" -eq 0 ] && MONTHSTR="" || MONTHSTR="$MONTH month$MONTHP, ";
 
 
 # print the result
-printf 'Up: %s%s%d day%s, %02d:%02d:%02d' "$YEARSTR" "$MONTHSTR" "$DAY" "$DAYP" "$HOUR" "$MIN" "$SEC";
+printf '%s%s%d day%s, %02d:%02d:%02d' "$YEARSTR" "$MONTHSTR" "$DAY" "$DAYP" "$HOUR" "$MIN" "$SEC";
 
