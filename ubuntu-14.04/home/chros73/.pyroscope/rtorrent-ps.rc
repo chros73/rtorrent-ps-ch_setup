@@ -149,10 +149,20 @@ method.set_key = pyro.print_help, !10wiki,     ((print, ((cat, "rTorrent Wiki   
 method.set_key = pyro.print_help, !20pyrocore, ((print, ((cat, "pyrocore Manual (rtcontrol)  https://pyrocore.readthedocs.io/" )) ))
 method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH Setup Wiki    https://github.com/chros73/rtorrent-ps-ch_setup/wiki" )) ))
 
-# UI/EVENTS/SCHEDULE: Log loaded, completed, deleted download items and add day break to log
-method.set_key = event.download.inserted_new, log, ((print, "LOADED ",    ((d.name)), " [", ((convert.date,((system.time)))), "]", " Size: ", ((convert.human_size, ((d.selected_size_bytes)), (value, 0) )), " / Free: ", ((convert.human_size, ((d.free_diskspace)), (value, 0) )) ))
-method.set_key = event.download.finished,     log, ((print, "COMPLETED ", ((d.name)), " [", ((convert.date,((system.time)))), "]"))
-method.set_key = event.download.erased,       log, ((print, "DELETED ",   ((d.name)), " [", ((convert.date,((system.time)))), "]", " Size: ", ((convert.human_size, ((d.selected_size_bytes)), (value, 0) )), " / Free: ", ((convert.human_size, ((d.free_diskspace)), (value, 0) )) ))
+# UI/CMD/LOG/SCHEDULE/EVENTS: Log loaded, completed, deleted download items and startup time
+method.insert = d.print.status, simple|private, "print=(argument.0),\
+                     \"  \",   (chars.pad, (chars.chop, (d.name), 68, 1), 68),\
+                     \"  \",   (convert.human_size, (d.selected_size_bytes), (value, 0) ),\
+                     \"  U:\", (convert.human_size, (d.up.total), (value, 0) ),\
+                     \"  R:\", (convert.magnitude, (d.get_ratio_float.front)) ,., (chars.pad, (chars.chop, (d.get_ratio_float.back), 2), 2, 0, 0),\
+                     \"  S:\", (convert.magnitude, (d.tracker_scrape.complete)), \"/L:\", (convert.magnitude, (d.tracker_scrape.incomplete)),\
+                     \"  \",   (hrf_time, (d.custom,tm_loaded)),\
+                     \" \(\",  (convert.human_size, (d.free_diskspace), (value, 0) ), \"\)\",\
+                     \" \",    (d.tracker_domain)"
+method.set_key = event.download.inserted_new, ~log, ((d.print.status, "LOADED  "))
+method.set_key = event.download.finished,     ~log, ((d.print.status, "FINISHED"))
+method.set_key = event.download.erased,       ~log, ((d.print.status, "DELETED "))
+schedule2      = log_startup_time, 1, 0, ((print, "rTorrent is started at: ", ((hrf_time, ((cat, (startup_time) )) )) ))
 
 ### end: UI commands ###
 
