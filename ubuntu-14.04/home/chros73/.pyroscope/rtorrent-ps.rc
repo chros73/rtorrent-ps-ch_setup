@@ -40,7 +40,9 @@ method.insert = get_elapsed_time, simple, "execute.capture=(cat,(pyro.bin_dir),g
 method.insert = uptime, simple, "print=\"Up: \", (cat, (get_elapsed_time,(system.time),(startup_time)))"
 
 # COMMAND: Returns d.ratio as float formatted string
-method.insert = d.get_ratio_float, simple, "cat=(math.div,(d.ratio),1000) ,., (chars.pad, (chars.chop, (math.div,(math.sub,(d.ratio),(math.mul,(math.div,(d.ratio),1000),1000)),10), 2), 2, 0, 0)"
+method.insert = d.get_ratio_float.front, private|simple, "math.div=(d.ratio),1000"
+method.insert = d.get_ratio_float.back,  private|simple, "math.div=(math.sub,(d.ratio),(math.mul,(math.div,(d.ratio),1000),1000)),10"
+method.insert = d.get_ratio_float, simple, "cat=(chars.pad, (d.get_ratio_float.front), 3, \" \", 0 ) ,., (chars.pad, (chars.chop, (d.get_ratio_float.back), 2), 2, 0, 0)"
 
 # COMMAND: Returns current timestamp for items that have peers or 'last_active' timestamp otherwise
 method.insert  = d.last_active, simple, "if=(d.peers_connected), (cat,(system.time)), (d.custom,last_active)"
