@@ -46,12 +46,12 @@ method.insert = d.get_ratio_float, simple, "cat=(math.div,(d.ratio),1000) ,., (c
 method.insert  = d.last_active, simple, "if=(d.peers_connected), (cat,(system.time)), (d.custom,last_active)"
 
 # EVENTS: Timestamps: 'tm_loaded' (time loaded into client), 'tm_started' (time of *first* start)
-method.set_key = event.download.inserted_new, tm_loaded,  ((d.custom.set, tm_loaded, ((cat,((system.time)))) ))
-method.set_key = event.download.resumed,      tm_started, {(branch, ((not,((d.custom,tm_started)))), ((d.custom.set, tm_started, (cat,(system.time)))) )}
+method.set_key = event.download.inserted_new, 00tm_loaded,  ((d.custom.set, tm_loaded, ((cat,((system.time)))) ))
+method.set_key = event.download.resumed,      00tm_started, {(branch, ((not,((d.custom,tm_started)))), ((d.custom.set, tm_started, (cat,(system.time)))) )}
 
 # EVENTS: Timestamp 'tm_downloaded' (time when meta (torrent) file was downloaded)
 method.insert = d.tm_downloaded, simple|private, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,(d.tied_to_file)"
-method.set_key = event.download.inserted_new, tm_downloaded, ((d.custom.set, tm_downloaded, ((cat,((d.tm_downloaded)))) ))
+method.set_key = event.download.inserted_new, 00tm_downloaded, ((d.custom.set, tm_downloaded, ((cat,((d.tm_downloaded)))) ))
 
 # COMMAND/SCHEDULE: Timestamp 'last_xfer' for items that transfer data
 method.insert = pyro_last_xfer_check_min_rate, simple|private, "greater=((argument.0)),((pyro.last_xfer.min_rate))"
