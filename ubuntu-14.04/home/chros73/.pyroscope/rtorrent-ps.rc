@@ -375,32 +375,34 @@ pyro.bind_key = show_quick_help, 0412, "pyro.print_help="
 method.insert = pyro._print_noquit, simple|private, "print=\"^Q is disabled, use '^X quit='\""
 pyro.bind_key = no_quit, ^q, "pyro._print_noquit="
 
-# UI/KEY: Bind '/' to TOGGLE visibility of extra COLUMNS
-method.insert = ui.columns.extra.state, value|private, 1
-method.insert = ui.columns.extra.enable,  simple|private, "\
-       method.set_key = ui.column.render, \"100:1:☢\",  ((string.map, ((cat, ((d.is_open)), ((d.is_active)))), {00, \"▪\"}, {01, \"▪\"}, {10, \"╍\"}, {11, \"▹\"}));\
-       method.set_key = ui.column.render, \"110:1:☍\",  ((if, ((d.tied_to_file)), ((cat, \"⚯\")), ((cat, \" \"))));\
-       method.set_key = ui.column.render, \"120:1:⌘\",  ((if, ((d.ignore_commands)), ((cat, \"◌\")), ((cat, \"⚒\"))));\
-       method.set_key = ui.column.render, \"310:1:⋮\",  ((if, ((d.down.rate)), ((if,((d.up.rate)),((cat, \"⇅\")),((cat, \"↡\")))), ((if,((d.up.rate)),((cat, \"↟\")),((cat, \" \")))) ));\
-       method.set_key = ui.column.render, \"400:2: ↺\", ((convert.magnitude, ((d.tracker_scrape.downloaded)) ));\
-       method.set_key = ui.column.render, \"410:2: ⤴\", ((convert.magnitude, ((d.tracker_scrape.complete)) ));\
-       method.set_key = ui.column.render, \"420:2: ⤵\", ((convert.magnitude, ((d.tracker_scrape.incomplete)) ));\
-       method.set_key = ui.column.render, \"430:2: ↻\", ((convert.magnitude, ((d.peers_connected)) ));\
-       method.set_key = ui.column.render, \"700:6:   ⊼  \", ((if, ((d.up.total)), ((convert.human_size, ((d.up.total)), (value, 0) )), ((cat, \"   ·  \"))));\
-       ui.columns.extra.state.set=1"
-method.insert = ui.columns.extra.disable, simple|private, "\
-       method.set_key = ui.column.render, \"100:1:☢\";\
-       method.set_key = ui.column.render, \"110:1:☍\";\
-       method.set_key = ui.column.render, \"120:1:⌘\";\
-       method.set_key = ui.column.render, \"310:1:⋮\";\
-       method.set_key = ui.column.render, \"400:2: ↺\";\
-       method.set_key = ui.column.render, \"410:2: ⤴\";\
-       method.set_key = ui.column.render, \"420:2: ⤵\";\
-       method.set_key = ui.column.render, \"430:2: ↻\";\
-       method.set_key = ui.column.render, \"700:6:   ⊼  \";\
-       ui.columns.extra.state.set=0"
-method.insert = ui.columns.extra.toggle,  simple, "branch=$ui.columns.extra.state=, ui.columns.extra.disable=, ui.columns.extra.enable="
-pyro.bind_key = toggle_extra_columns, /, "ui.columns.extra.toggle="
+# UI/KEY: Bind '/' to TOGGLE visibility of certain COLUMNS
+method.insert  = ui.columns.enable, multi|rlookup|static
+method.set_key = ui.columns.enable, 05state,  "method.set_key = ui.column.render, \"100:1:☢\",  ((string.map, ((cat, ((d.is_open)), ((d.is_active)))), {00, \"▪\"}, {01, \"▪\"}, {10, \"╍\"}, {11, \"▹\"}))"
+method.set_key = ui.columns.enable, 10tied,   "method.set_key = ui.column.render, \"110:1:☍\",  ((if, ((d.tied_to_file)), ((cat, \"⚯\")), ((cat, \" \"))))"
+method.set_key = ui.columns.enable, 15cmd,    "method.set_key = ui.column.render, \"120:1:⌘\",  ((if, ((d.ignore_commands)), ((cat, \"◌\")), ((cat, \"⚒\"))))"
+method.set_key = ui.columns.enable, 20transf, "method.set_key = ui.column.render, \"310:1:⋮\",  ((if, ((d.down.rate)), ((if,((d.up.rate)),((cat, \"⇅\")),((cat, \"↡\")))), ((if,((d.up.rate)),((cat, \"↟\")),((cat, \" \")))) ))"
+method.set_key = ui.columns.enable, 25scrap1, "method.set_key = ui.column.render, \"400:2: ↺\", ((convert.magnitude, ((d.tracker_scrape.downloaded)) ))"
+method.set_key = ui.columns.enable, 30scrap2, "method.set_key = ui.column.render, \"410:2: ⤴\", ((convert.magnitude, ((d.tracker_scrape.complete)) ))"
+method.set_key = ui.columns.enable, 35scrap3, "method.set_key = ui.column.render, \"420:2: ⤵\", ((convert.magnitude, ((d.tracker_scrape.incomplete)) ))"
+method.set_key = ui.columns.enable, 40peers,  "method.set_key = ui.column.render, \"430:2: ↻\", ((convert.magnitude, ((d.peers_connected)) ))"
+method.set_key = ui.columns.enable, 45uptota, "method.set_key = ui.column.render, \"700:6:   ⊼  \", ((if, ((d.up.total)), ((convert.human_size, ((d.up.total)), (value, 0) )), ((cat, \"   ·  \"))))"
+method.set_key = ui.columns.enable, 99status, "ui.columns.state.set=1"
+
+method.insert  = ui.columns.disable, multi|rlookup|static
+method.set_key = ui.columns.disable, 05state,  "method.set_key = ui.column.render, \"100:1:☢\""
+method.set_key = ui.columns.disable, 10tied,   "method.set_key = ui.column.render, \"110:1:☍\""
+method.set_key = ui.columns.disable, 15cmd,    "method.set_key = ui.column.render, \"120:1:⌘\""
+method.set_key = ui.columns.disable, 20transf, "method.set_key = ui.column.render, \"310:1:⋮\""
+method.set_key = ui.columns.disable, 25scrap1, "method.set_key = ui.column.render, \"400:2: ↺\""
+method.set_key = ui.columns.disable, 30scrap2, "method.set_key = ui.column.render, \"410:2: ⤴\""
+method.set_key = ui.columns.disable, 35scrap3, "method.set_key = ui.column.render, \"420:2: ⤵\""
+method.set_key = ui.columns.disable, 40peers,  "method.set_key = ui.column.render, \"430:2: ↻\""
+method.set_key = ui.columns.disable, 45uptota, "method.set_key = ui.column.render, \"700:6:   ⊼  \""
+method.set_key = ui.columns.disable, 99status, "ui.columns.state.set=0"
+
+method.insert = ui.columns.state, value|private, 1
+method.insert = ui.columns.toggle, simple, "branch=ui.columns.state=, ui.columns.disable=, ui.columns.enable="
+pyro.bind_key = ui_columns_toggle, /, "ui.columns.toggle="
 
 ### end: Generic keybindings and attributes ###
 
