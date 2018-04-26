@@ -154,7 +154,7 @@ method.set_key = pyro.print_help, !10wiki,     ((print, ((cat, "rTorrent Wiki   
 method.set_key = pyro.print_help, !20pyrocore, ((print, ((cat, "pyrocore Manual (rtcontrol)  https://pyrocore.readthedocs.io/" )) ))
 method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH Setup Wiki    https://github.com/chros73/rtorrent-ps-ch_setup/wiki" )) ))
 
-# UI/CMD/LOG/SCHEDULE/EVENTS: Log loaded, completed, deleted download items and startup time
+# UI/CMD/LOG/SCHEDULE/EVENTS: Log various data of download items during different events and startup time
 method.insert = d.print.status, simple|private, "print=(argument.0),\
                      \"  \",   (chars.pad, (chars.chop, (d.name), 68, 1), 68),\
                      \"  \",   (convert.human_size, (d.selected_size_bytes), (value, 0) ),\
@@ -164,9 +164,12 @@ method.insert = d.print.status, simple|private, "print=(argument.0),\
                      \"  \",   (hrf_time, (d.custom,tm_loaded)),\
                      \" \(\",  (convert.human_size, (d.free_diskspace), (value, 0) ), \"\)\",\
                      \" \",    (d.tracker_domain)"
-method.set_key = event.download.inserted_new, ~log, ((d.print.status, "LOADED  "))
-method.set_key = event.download.finished,     ~log, ((d.print.status, "FINISHED"))
-method.set_key = event.download.erased,       ~log, ((d.print.status, "DELETED "))
+method.set_key = event.download.inserted_new,        ~log,  ((d.print.status, "LOADED   "))
+method.set_key = event.download.resumed,             00log, {(branch, ((not,((d.custom,tm_started)))), ((d.print.status, "STARTED  ")) )}
+method.set_key = event.download.finished,            ~log,  ((d.print.status, "COMPLETED"))
+method.set_key = event.download.hash_done,           !log,  {(branch, ((and,((d.complete)),((not,((d.custom,tm_completed)))))), ((d.print.status, "HASHCHKED")) )}
+method.set_key = event.download.partially_restarted, ~log,  ((d.print.status, "RESTARTED"))
+method.set_key = event.download.erased,              ~log,  ((d.print.status, "DELETED  "))
 schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, ((cat, (startup_time) )) )) ))
 
 ### end: UI commands ###
