@@ -1,6 +1,6 @@
 # The default PyroScope configuration script
 #
-# For details, see http://code.google.com/p/pyroscope/wiki/UserConfiguration
+# For details, see https://pyrocore.readthedocs.io/en/latest/setup.html
 #
 
 def _custom_fields():
