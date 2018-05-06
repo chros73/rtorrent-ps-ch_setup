@@ -47,7 +47,7 @@ You can experiment with others (see Connect via SSH section).
 
 ### Connect via SSH
 
-Use [KiTTY](http://www.9bis.net/kitty/) version 0.69.0.2 or greater (it's a patched [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/) fork).
+Use [KiTTY](http://www.9bis.net/kitty/) version 0.70.0.1p or greater (it's a patched [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/) fork).
 
 Advantages over `PuTTY`:
 * fully portable
@@ -57,8 +57,6 @@ Advantages over `PuTTY`:
 You have to [rename](http://www.9bis.net/kitty/?page=Download) the `exe` file to `putty.exe`.
 
 The following settings are suggested for the session:
-* Terminal:
-    * uncheck `Use background colour to erase screen`
 * Terminal - Features:
     * check `Disable remote-controlled terminal resizing`
 * Window - Appearance:

@@ -7,6 +7,8 @@ Additions
 Standard Views in rTorrent
 --------------------------
 
+This is how `standard views in rTorrent <https://github.com/rakshasa/rtorrent/wiki/User-Guide#main-view-keys>`_ are set up.
+
 ===  ==============  =======  =========  =============================
 Key  View            Updated  Collapsed  Sorting, filtering properties
 ===  ==============  =======  =========  =============================
@@ -26,6 +28,8 @@ Key  View            Updated  Collapsed  Sorting, filtering properties
 Extra Views in rTorrent
 -----------------------
 
+There are extra views defined along with the `standard views in rTorrent <https://github.com/rakshasa/rtorrent/wiki/User-Guide#main-view-keys>`_.
+
 ===  ================  =========  =============================
 Key  View              Collapsed  Sorting, filtering properties
 ===  ================  =========  =============================
@@ -33,7 +37,7 @@ Key  View              Collapsed  Sorting, filtering properties
  !   ``messages``      *          sorted by ``downloaded time``, group by ``throttle``, ``message``
  t   ``trackers``      *          sorted by ``downloaded time`` desc, group by ``domain``
  :   ``tagged``        *          
- <   ``datasize``      *          sorted by ``data size`` desc
+ <   ``datasize``      *          sorted by ``selected data size`` desc
  >   ``uploadeddata``  *          sorted by ``uploaded data`` desc, ``downloaded time`` desc
  %   ``ratio``         *          sorted by ``ratio`` desc, ``uploaded data`` desc, ``downloaded time`` desc
  @   ``category``      *          sorted by ``category``, ``name``
@@ -41,24 +45,124 @@ Key  View              Collapsed  Sorting, filtering properties
 ===  ================  =========  =============================
 
 
+Extra Columns on Extended Canvas
+--------------------------------
+
+The following extra columns are modified / added on the fully customizable `extended canvas <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/Manual.rst#built-in-columns-in-the-collapsed-display>`_, since in ``rTorrent-PS-CH v1.7.0-0.9.7`` all the columns are configurable (can be disabled, overridden or new ones added on-the-fly) except for "Name" and "Tracker Domain" columns.
+
+==============  ====================================  ===========
+ Column          Key                                  Description
+==============  ====================================  ===========
+ ⊘              "200:1:⊘"                             Throttle (none = global, ∞ = NULL, ⊼ = slowup, ⊻ = tardyup throttle)
+ ◎              "230:1:◎"                             Unsafe-data (none = safe data, ⊘ = unsafe data, ⊗ = unsafe data with delqueue)
+ ⊕              "250:1:⊕"                             Data directory (none = base path entry is missing, otherwise the first letter of the name of data directory)
+==============  ====================================  ===========
+
+
 Extra Keyboard shortcuts in rTorrent
 ------------------------------------
+
+There are extra keyboard shortcuts defined along with the `original ones in rTorrent <https://github.com/rakshasa/rtorrent/wiki/User-Guide#navigating>`_.
 
 ====  ========================================
 Key   Functionality
 ====  ========================================
- }    toggle ``unsafe_data`` for a torrent
- #    send manual scrape request for a torrent
- .    toggle tag for a torrent
+ F    subfilter the current view based on the name of downloads by entering a regexp (capital ``f``) (defined in ``rTorrent-PS-CH``)
+↑, ↓  prev, next in input history (at any input prompt, e.g. at ``^x``) (defined in ``rTorrent-PS-CH``)
+ESC   exit from any input prompt (e.g. at ``^x``) (defined in ``rTorrent-PS-CH``)
+ }    toggle ``unsafe_data`` for a download item
+ #    send manual scrape request for a download item
+ .    toggle tag for a download item
  T    clear ``tag`` view
+ ^g   display tags for a download item
  \*   toggle collapsed/expanded display
+ /    toggle visibility of columns on collapsed display
  \|   toggle selectable themes
  =    toggle autoscale network history
 home  Home
 end   End
 pgup  Pageg Up
 pgdn  Page Down
+ F2   display quick help resources
+ ^q   DISABLED (used to exit rtorrent)
 ====  ========================================
+
+
+
+Extra Variables in rTorrent config files
+---------------------------------------
+
+The following variables are added in rTorrent config files.
+
+cfg.inotify.use
+^^^^^^^^^^^
+Determines whether to use inotify for loading/removing torrent (meta) files from watch directories.
+
+- values ``[0|1]``, ``1`` means inotify will be used
+
+cfg.external_dnscache.use
+^^^^^^^^^^^
+Determines whether to use external DNS cache instead of the built-in one of CURL.
+
+- values ``[0|1]``, ``1`` means external DNS cache will be used.
+
+cfg.interface.bind
+^^^^^^^^^^^
+Sets an interface with IPv4 address to bind to.
+
+- values ``[eth0|tun0|...]``
+
+cfg.scrape_interval.[active|idle]
+^^^^^^^^^^^
+Sets scrape intervals for active (``580`` ~10 mins) and idle items (``43180`` ~12 hours).
+
+pyro.last_xfer.min_rate
+^^^^^^^^^^^
+Sets the min uprate/downrate threshold for last_xfer custom field in Bytes.
+
+cfg.slowup.d.[peers_min|peers_max|uploads_max]
+^^^^^^^^^^^
+Values used for ``min_peers`` / ``max_peers`` / ``max_uploads`` settings of downloads that belong to non-special groups and those values will be overridden by per torrent settings in Favouring section of main config file.
+
+cfg.[slowup|tardyup].uprate.[min|max]
+^^^^^^^^^^^
+Values used for getting the upload rate limit for throttle groups in KB.
+
+cfg.[slowup|tardyup].slots.[leech|seed].max
+^^^^^^^^^^^
+Values used for getting the max number of upload/download slots during leeching and seeding for choke groups.
+
+cfg.global.downrate.[min|max], cfg.global.[upall|upmain].threshold
+^^^^^^^^^^^
+Values used for getting the global download rate limit in KB.
+
+cfg.global.slot.uprate.min
+^^^^^^^^^^^
+Min value of uprate per upload slot (unchoked peers) in KB.
+
+cfg.dir.[main|sub|incomplete|meta_downl|meta_compl|delqueue|session|logs]
+^^^^^^^^^^^
+Directory constants.
+
+cfg.postfix
+^^^^^^^^^^^
+Custom string that can help to use different config files, scripts with different setups based on naming. It can be an empty string as well.
+
+cfg.theme.[0|1|2]
+^^^^^^^^^^^
+Define selectable color theme configs.
+
+pyro.bin_dir
+^^^^^^^^^^^
+Sets "pyro.bin_dir" to the "bin" directory where the ``pyrocore`` tools are installed. Make sure you end it with a "/". If this is left empty, then the shell's path is searched
+
+pyro.[extended|extended.ch]
+^^^^^^^^^^^
+Determines whether to activate rTorrent-PS / rTorrent-PS-CH features.
+
+pyro.[log_archival|log_retention].days
+^^^^^^^^^^^
+Sets archival and retention delay in days for log rotation if it's enabled.
 
 
 
@@ -85,6 +189,10 @@ Determines the sub-directory (category) for meta file of a torrent. It's used wi
 
 -  ``meta_dir`` : name of category, e.g. ``unsafe``, ``rotating``
 
+orig_category
+^^^^^^^^
+Name of category the download was originally assigned to.
+
 tm_downloaded
 ^^^^^^^^^^^^^^
 Timestamp, time the torrent file was downloaded (created locally).
@@ -104,6 +212,10 @@ Timestamp, time of completion of the torrent.
 last_active
 ^^^^^^^^^^^^^^
 Timestamp, last time the torrent had peers.
+
+last_xfer
+^^^^^^^^^^^^^^
+Timestamp, last time the torrent had transfered data.
 
 activations
 ^^^^^^^^^^^^^^
@@ -137,9 +249,13 @@ Moves a finished, stucked meta file from the downloading directory into its fina
 
 Example usage: ``d.move_meta_to=rotating``, ``d.move_meta_to=fullseed``, ``d.move_meta_to=unsafe``, ``d.move_meta_to=various`` 
 
-d.get_data_full_path=
+d.data_path=
 ^^^^^^^^^^^^^^^^^^
 Gets the full path of data of a torrent (it's a workaround for the possibly empty `d.base_path` attribute).
+
+d.session_file=
+^^^^^^^^^^^^^^^^^^
+Gets the full path of the session file of a torrent.
 
 d.remove_data=
 ^^^^^^^^^^^^^^
@@ -161,6 +277,10 @@ d.fix_delqueue_flag=
 ^^^^^^^^^^^^^^^^^^
 Fixes ``unsafe_data`` values depending on a symlink in ``.delqueue`` directory exists or not. Useful if symlinks are sometimes created manually or by a script in ``.delqueue`` dir.
 
+d.get_ratio_float=
+^^^^^^^^^^^^^^
+Returns d.ratio as float formatted string.
+
 d.modify_slots_both=
 ^^^^^^^^^^^^^^^^^^
 Modifies the ``peers_min``, ``peers_max``, ``max_uploads`` values of a torrent for both downloading and uploading based on which group (special or not) it belongs to.
@@ -175,9 +295,41 @@ d.last_active=
 ^^^^^^^^^^^^^^
 Returns the value of ``last_active`` timestamp custom field of a torrent or current timestamp if it has peers.
 
+d.last_xfer=
+^^^^^^^^^^^^^^
+Returns the value of ``last_xfer`` timestamp custom field of a torrent or current timestamp if it transfer data.
+
+get_elapsed_time=
+^^^^^^^
+Returns elapsed time between 2 timestamps in the form of ``6 years, 5 months, 18 days, 02:40:00``. Year/month info isn't shown if their value is 0.
+
+pyro.print_help=
+^^^^^^^
+Displays quick help resources.
+
+pyro.ui.messages.show=
+^^^^^^^
+Switches current view to ``messages`` and prints the size of the view.
+
+pyro.view.toggle_visible=view_name
+^^^^^^^
+Sets view visible.
+
+ui.columns.enable=
+^^^^^^^
+Enables the visibility of certain columns.
+
+ui.columns.disable=
+^^^^^^^
+Disables the visibility of certain columns.
+
+ui.columns.toggle=
+^^^^^^^
+Toggles visibility of certain columns.
+
 uptime=
 ^^^^^^^
-Returns uptime (with the help of ``getUptime.sh`` script) in the form of ``Up: 6 years, 5 months, 18 days, 02:39:57``. Year/month info isn't shown if their value is 0.
+Returns uptime (with the help of ``getElapsedTime.sh`` script) in the form of ``Up: 6 years, 5 months, 18 days, 02:39:57``. Year/month info isn't shown if their value is 0.
 
 hrf_time=timestamp
 ^^^^^^^
@@ -189,6 +341,10 @@ get_uprate_main=
 ^^^^^^^
 Gets current uprate in KB for special group.
 
+get_total_rotating_size=
+^^^^^^^
+Gets total size of rotating and unsafe downloads.
+
 pyro.import=rtconfig_filename
 ^^^^^^^^^^^^
 Imports the specified config file from ``~/.pyroscope/`` directory.
@@ -196,6 +352,10 @@ Imports the specified config file from ``~/.pyroscope/`` directory.
 -  ``rtconfig_filename`` : name of rtorrent config file in ``~/.pyroscope/`` directory, e.g. ``rtorrent-ps.rc``, ``color_scheme256-happy_pastel.rc``
 
 Usage: pyro.import="color_scheme256-happy_pastel.rc"
+
+quit=
+^^^^^^^
+Exits ``rTorrent`` gracefully.
 
 
 Extra Bash functions
@@ -206,6 +366,12 @@ rtlistOrphans
 List orphaned torrents.
 
 Usage: ``rtlistOrphans``
+
+rtlistOrphanMetas
+^^^^^^^^^^^^^
+List orphaned torrent (meta) files.
+
+Usage: ``rtlistOrphanMetas``
 
 rtlistPublic
 ^^^^^^^^^^^^^
@@ -254,11 +420,11 @@ Backup session directory of rtorrent.
 
 Usage: ``doBackup.sh``
 
-getUptime.sh
+getElapsedTime.sh
 ^^^^^^^^^^^^
-Calculates and prints uptime in the form of ``Up: 6 years, 5 months, 18 days, 02:40:00``. Year/month info isn't shown if their value is 0. It's used by ``uptime=`` method in rtorrent.
+Calculates and prints elapsed time between 2 timestamps in the form of ``6 years, 5 months, 18 days, 02:40:00``. Year/month info isn't shown if their value is 0. It's used by ``get_elapsed_time=`` and ``uptime=`` methods in rtorrent.
 
-Usage: ``getUptime.sh <<current_timestamp>> <<startup_timestamp>>``
+Usage: ``getElapsedTime.sh <<current_timestamp>> <<startup_timestamp>>``
 
 queueTorrent.sh
 ^^^^^^^^^^^^^^^
@@ -277,6 +443,12 @@ reportOrphans.sh
 Send email report about any orphaned torrent.
 
 Usage: ``reportOrphans.sh``
+
+reportOrphanMetas.sh
+^^^^^^^^^^^^^^^^
+Send email report about any orphaned meta files.
+
+Usage: ``reportOrphanMetas.sh``
 
 reportPublic.sh
 ^^^^^^^^^^^^^^^^

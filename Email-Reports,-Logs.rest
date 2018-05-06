@@ -1,7 +1,7 @@
-Email Reports
+Email Reports, Logs
 =============
 
-The system can send automatic email reports about various activities with the help of `ssmtp <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ and `cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ and you can easily create your own.
+The system can send automatic email reports about various activities with the help of `ssmtp <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/ssmtp/ssmtp.conf>`_ and `cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_ and you can easily create your own. It also logs every major event to a file.
 
 .. contents:: **Contents**
 
@@ -128,6 +128,22 @@ It can happen that data of a torrent gets abandoned, consuming only disk space b
 
 
 
+Orphaned meta files
+^^^^^^^^^^^^^^
+
+It can happen that meta files of a torrent gets abandoned, not used by ``rTorrent-PS-CH``.
+
+`reportOrphanMetas.sh <Additions#reportorphanmetas-sh>`_ lists orphaned meta files, runs in every 10 day as a reminder, a possible email report with subject ``U - List of Orphaned meta files`` looks like this:
+
+.. code-block::
+
+   Free space before action: 6.6GiB
+   
+   There are orphaned meta files, manual interaction is required.
+      .rtorrent/.completed/rotating/Baen_CD-08-Into_the_Looking_Glass.torrent
+
+
+
 Public torrents
 ^^^^^^^^^^^^^^
 
@@ -230,3 +246,23 @@ You can easily create your own report with the help of ``rtcontrol``, this is wh
 * add the new report script to `cron <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/etc/cron.d/chros73>`_
 
 That's it. :)
+
+
+Logs
+----
+
+In addition to email reports ``rTorrent-PS-CH`` can produce log files into ``.log`` directory as well.
+
+Messages log
+^^^^^^^^^^^^
+
+Logs various data of download items (``event``, ``title``, ``size``, ``uploaded data``, ``ratio``, ``seeders/leechers`` scrape info, ``loaded time``, ``disk free space``, ``tracker``) during different events and startup time, being logrotated.
+
+.. code-block::
+
+   2018-04-26  8:18:04 LOADED     Great Southern Stand Breaking News - Stupid Warning Labels Comedy               1.4G  U:  0.0K  R: ·.00  S: ·/L: ·  26/04/2018  8:18:04 ( 47.3G) opentrackr.org
+   2018-04-26  8:18:04 STARTED    Great Southern Stand Breaking News - Stupid Warning Labels Comedy               1.4G  U:  0.0K  R: ·.00  S: ·/L: ·  26/04/2018  8:18:04 ( 47.3G) opentrackr.org
+   2018-04-26  8:19:01 COMPLETED  Great Southern Stand Breaking News - Stupid Warning Labels Comedy               1.4G  U:235.4M  R: ·.16  S:17/L: 6  26/04/2018  8:18:04 ( 45.9G) opentrackr.org
+   2018-04-26 11:19:01 DELETED    Great Southern Stand Breaking News - Stupid Warning Labels Comedy               1.4G  U:941.6M  R: ·.64  S:49/L: 2  26/04/2018  8:18:04 ( 45.9G) opentrackr.org
+
+

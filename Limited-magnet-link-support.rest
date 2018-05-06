@@ -9,7 +9,7 @@ The problem
 
 Magnet links are really problematic with ``rtorrent``, just to name a few:
 
-* actual meta file can't be downloaded from other clients of only encrypted connection is allowed
+* actual meta file can't be downloaded from other clients if only encrypted connection is allowed
 
 * created meta file by ``rtorrent`` is invalid (that means it can't be used to determine the size of the torrent with ``lstor``)
 
@@ -19,7 +19,7 @@ Although sometimes it still can be useful to grab something via magnet links.
 Solution
 --------
 
-* requires ``rTorrent-PS-CH v1.4-0.9.6`` or newer (includes a new command ``d.is_meta`` in ``rtorrent``)
+* requires ``rTorrent-PS-CH v1.4.0-0.9.7`` or newer (includes a new command ``d.is_meta`` in ``rtorrent``)
 
 * they can't be used with ``queue`` script (created meta file by ``rtorrent`` is invalid), so there's only manual support for them
 
@@ -35,4 +35,4 @@ Torrents created in this way:
 
 * can't be picked up by the ``queue`` script: check available disk space manually before adding one (if there isn't enough then free up some) 
 
-* won't be deleted by the ``queue`` script, no matter what category they are: you have to manage them manually
+* they can be deleted by the ``queue`` script with recent hacks :)
