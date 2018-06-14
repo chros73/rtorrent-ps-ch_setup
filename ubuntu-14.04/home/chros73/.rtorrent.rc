@@ -240,7 +240,7 @@ method.insert = get_total_rotating_size, simple, "math.add=(d.multicall2,default
 method.insert = get_interface_ipv4_address, simple|private, "execute.capture=bash,-c,\"$cat=\\\"echo -n \$(ip -o -4 addr show \\\",$argument.0=,\\\" | grep -Po 'inet \\\\\\\\\\K[\\\\\\\\\\d.]+')\\\"\""
 
 # Get public IP address without the need of having dynamic DNS service, also works from behind NAT, through tunnel
-method.insert = get_public_ip_address, simple|private, "execute.capture=bash,-c,\"eval echo -n \$(dig TXT +short o-o.myaddr.l.google.com @ns1.google.com)\""
+method.insert = get_public_ip_address, simple|private, "execute.capture=bash,-c,\"eval echo -n \$(dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com)\""
 
 # Format any valid timestamp value in human readable format (e.g.: 30/06/2013 23:47:33)
 #   Usage: hrf_time=<<timefield>>  (e.g.: hrf_time=$d.creation_date=  ,  hrf_time=$d.custom=tm_last_scrape)
