@@ -43,7 +43,7 @@ method.insert = uptime, simple, "print=\"Up: \", (cat, (get_elapsed_time,(system
 # COMMAND: Returns d.ratio as float formatted string
 method.insert = d.get_ratio_float.front, private|simple, "math.div=(d.ratio),1000"
 method.insert = d.get_ratio_float.back,  private|simple, "math.div=(math.sub,(d.ratio),(math.mul,(math.div,(d.ratio),1000),1000)),10"
-method.insert = d.get_ratio_float, simple, "cat=(chars.pad, (d.get_ratio_float.front), 3, \" \", 0 ) ,., (chars.pad, (chars.chop, (d.get_ratio_float.back), 2), 2, 0, 0)"
+method.insert = d.get_ratio_float, simple, "cat=(string.lpad, (cat, (d.get_ratio_float.front)), 3) ,., (string.lpad, (string.substr, (cat, (d.get_ratio_float.back)), 0, 2), 2, 0)"
 
 # EVENTS: Timestamps: 'tm_loaded' (time loaded into client), 'tm_started' (time of *first* start), 'tm_completed' (time of completion)
 method.set_key = event.download.inserted_new, 00tm_loaded,  ((d.custom.set, tm_loaded, ((cat,((system.time)))) ))
@@ -157,14 +157,14 @@ method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH S
 
 # UI/CMD/LOG/SCHEDULE/EVENTS: Log various data of download items during different events and startup time
 method.insert = d.print.status, simple|private, "print=(argument.0),\
-                     \"  \",   (chars.pad, (chars.chop, (d.name), 68, 1), 68),\
+                     \"  \",   (string.rpad, (string.shorten, (d.name), 68), 68),\
                      \"  \",   (convert.human_size, (d.selected_size_bytes), (value, 0) ),\
                      \"  U:\", (convert.human_size, (d.up.total), (value, 0) ),\
-                     \"  R:\", (convert.magnitude, (d.get_ratio_float.front)) ,., (chars.pad, (chars.chop, (d.get_ratio_float.back), 2), 2, 0, 0),\
+                     \"  R:\", (convert.magnitude, (d.get_ratio_float.front)) ,., (string.lpad, (string.substr, (cat, (d.get_ratio_float.back)), 0, 2), 2, 0),\
                      \"  S:\", (convert.magnitude, (d.tracker_scrape.complete)), \"/L:\", (convert.magnitude, (d.tracker_scrape.incomplete)),\
                      \"  \",   (hrf_time, (d.custom,tm_loaded)),\
                      \" \(\",  (convert.human_size, (d.free_diskspace), (value, 0) ), \"\)\",\
-                     \" \",    (d.tracker_domain)"
+                     \" \",    (d.tracker_alias)"
 method.set_key = event.download.inserted_new,        ~log,  ((d.print.status, "LOADED   "))
 method.set_key = event.download.resumed,             00log, {(branch, ((not,((d.custom,tm_started)))), ((d.print.status, "STARTED  ")) )}
 method.set_key = event.download.finished,            ~log,  ((d.print.status, "COMPLETED"))
