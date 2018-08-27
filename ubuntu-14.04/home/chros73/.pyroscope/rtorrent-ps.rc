@@ -349,6 +349,7 @@ pyro.bind_key = deletable_view, ?, "ui.current_view.set=deletable ;view.sort=del
 
 # UI/MONITOR: Show traffic of the last hour (bound to '=' key in rT-PS)
 branch=pyro.extended=,"network.history.depth.set=112"
+branch=pyro.extended=,"network.history.auto_scale.set=0"
 branch=pyro.extended=,"schedule2 = network_history_sampling,1,32,network.history.sample="
 method.insert = network.history.auto_scale.toggle, simple|private, "branch=network.history.auto_scale=,\"network.history.auto_scale.set=0\",\"network.history.auto_scale.set=1\""
 method.insert = network.history.auto_scale.ui_toggle, simple|private, "network.history.auto_scale.toggle= ;network.history.refresh="
