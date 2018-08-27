@@ -24,6 +24,11 @@ fi
 # include common alises like functions and export them
 . ~/.profile_rtfunctions && export RTHOME && export -f rtlistOrphans rtlistOrphanMetas rtlistPublic rtlistStuck rtlistMessages rtlistStopped rtgetTotalRotatingSize
 
+# include pyrocore tools alias definitions
+if [ -f ~/.pyroscope/rt_aliases.sh ]; then
+    . ~/.pyroscope/rt_aliases.sh
+fi
+
 # Automatically reattach the rtorrent session or create a new one only if STDIN is a terminal (we are using interactive mode)
 if [ -t 0 ] && [ -z "$TMUX" ]; then 
     tmux -2u new-session -A -s rtorrent 
