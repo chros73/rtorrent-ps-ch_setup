@@ -31,7 +31,8 @@ method.insert = quit, simple, "execute.throw=kill,-INT,(system.pid)"
 branch=(not, (pyro.extended)), ((method.insert, ui.column.render, multi|rlookup|static))
 
 # COMMAND: Return startup time (can be used to calculate uptime)
-method.insert = startup_time,value|const,$system.time=
+method.insert = system.startup_time, value|const, $system.time=
+method.redirect = startup_time, system.startup_time
 
 # COMMAND: Returns elapsed time between 2 timestamps in the form of "6 years, 5 months, 18 days, 02:40:00" (year/month info isn't shown if their value is 0)
 method.insert = get_elapsed_time, simple, "execute.capture=(cat,(pyro.bin_dir),getElapsedTime.sh), (argument.0), (argument.1)"
