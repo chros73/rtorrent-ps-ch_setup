@@ -397,6 +397,10 @@ pyro.bind_key = show_quick_help, 0412, "pyro.print_help="
 method.insert = pyro._print_noquit, simple|private, "print=\"^Q is disabled, use '^X quit='\""
 pyro.bind_key = no_quit, ^q, "pyro._print_noquit="
 
+# UI/KEY: Bind '_' to TOGGLE "chunk size" column on canvas
+method.insert = pmb._toggle_chunk_size, simple|private, "branch=ui.column.is_hidden=908, ui.column.show=908, ui.column.hide=908; ui.current_view.set = (ui.current_view)"
+pyro.bind_key = toggle_chunk_size, _, "pmb._toggle_chunk_size="
+
 ### end: Generic keybindings and attributes ###
 
 ##### end: UI related commands and enhancements #####
