@@ -178,14 +178,36 @@ schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, 
 
 ### begin: Extra column definitions ###
 
-# Override Throttle column (⊘)
-method.set_key = ui.column.render, "200:1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
+# Disable built in "Uprate or approximate time since last active state" column and add new one (Σ⇈)
+method.set_key = ui.column.render, (ui.column.spec, 520)
+method.set_key = ui.column.render, "523:5C70/5: ∆⋮ ⟲", ((if, ((d.up.rate)),((convert.human_size, ((d.up.rate)), (value, 10))), ((if, ((d.peers_connected)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_active)) )) )) )) ))
 
-# Add Unsafe data column (◎)
-method.set_key = ui.column.render, "230:1:◎", ((string.map, ((cat, ((d.custom,unsafe_data)))), {0, " "}, {1, "⊘"}, {2, "⊗"}))
+# Disable built in "Uploaded data" column and add new one (Σ⇈)
+method.set_key = ui.column.render, (ui.column.spec, 900)
+method.set_key = ui.column.render, "527:?6C24/5C21/1:  Σ⇈  ", ((if, ((d.up.total)),((convert.human_size, ((d.up.total)), (value, 0))),((cat, "   ⋅  ")) ))
 
-# Add Data directory column (⊕) (first character of parent directory)
-method.set_key = ui.column.render, "250:1:⊕", ((d.parent_dir))
+# Change order of "Selected data size" column (⛁)
+method.set_key = ui.column.render, (ui.column.spec, 930)
+method.set_key = ui.column.render, "903:4C15/3C21/1:  ⛁ ", ((convert.human_size, ((d.selected_size_bytes)) ))
+
+# Add ETA/last_xfer column (only on 'active', 'leeching' and 'started' views), hidden by default
+method.set_key = ui.column.render, "906:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
+method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, leeching, started\", ui.column.show=906, ui.column.hide=906"
+ui.column.hide = 906
+
+# Chunk Size, hidden by default
+ui.color.custom9.set = "bright blue"
+method.set_key = ui.column.render, "908:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
+ui.column.hide = 908
+
+# Add "Throttle" column (⊘)
+method.set_key = ui.column.render, "973:1C72/1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
+
+# Add "Unsafe data" column (◎)
+method.set_key = ui.column.render, "976:1C71/1:◎", ((string.map, ((cat, ((d.custom, unsafe_data)))), {0, " "}, {1, "⊘"}, {2, "⊗"}))
+
+# Add "Data directory" column (⊕) (first character of parent directory)
+method.set_key = ui.column.render, "978:1:⊕", ((d.parent_dir))
 
 ### end: Extra column definitions ###
 
