@@ -196,14 +196,12 @@ method.set_key = ui.column.render, "250:1:⊕", ((d.parent_dir))
 schedule2 = set_default_view,0,0,((ui.current_view.set,started))
 
 # UI/VIEW: SORT the collapsed MAIN view (view #1) by DOWNLOADED TIME desc and update it in every 20 seconds
-pyro.view.collapsed.toggle = main
 branch=pyro.extended=,"view.sort_new     = main,\"compare=-,d.custom=tm_downloaded\"","view.sort_new     = main,greater=d.custom=tm_downloaded"
 branch=pyro.extended=,"view.sort_current = main,\"compare=-,d.custom=tm_downloaded\"","view.sort_current = main,greater=d.custom=tm_downloaded"
 # overrides the default scheduling in main.cc to run the command in every 20 seconds instead of 10, the effect will be the same. Note: we have to use the same schedule-name!
 schedule2 = view.main,10,20,((view.sort,main))
 
 # UI/VIEW: SORT the collapsed NAME view (view #2) by NAME and update it in every 20 seconds
-pyro.view.collapsed.toggle = name
 branch=pyro.extended=,"view.sort_new     = name,\"compare=+,d.name=\"","view.sort_new     = name,less=d.name="
 branch=pyro.extended=,"view.sort_current = name,\"compare=+,d.name=\"","view.sort_current = name,less=d.name="
 # overrides the default scheduling in main.cc to run the command in every 20 seconds instead of 10, the effect will be the same. Note: we have to use the same schedule-name!
@@ -211,7 +209,6 @@ schedule2 = view.name,10,20,((view.sort,name))
 
 # UI/VIEW: SORT the collapsed STARTED view (view #3) by LAST ACTIVE desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc, update it in every 20 seconds (Note: do NOT SCHEDULE sorting/filtering on STARTED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
 # Items are grouped into incomplete, complete in that order. Each group is sorted by last_active field desc.
-pyro.view.collapsed.toggle = started
 branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.last_active="
 branch=pyro.extended=,"view.sort_current = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.last_active="
 # !!! Sorting on Started view requires rtorrent-PS-CH >= v1.3 or rtorrent/rtorrent-PS with the fix !!!
@@ -219,29 +216,26 @@ schedule2 = sort_started,12,20,((view.sort,started))
 
 # UI/VIEW: SORT the collapsed STOPPED view (view #4) by DOWNLOADED TIME desc, group by COMPLETE, THROTTLE  (Note: do NOT SCHEDULE sorting/filtering on STOPPED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
 # Items are grouped into complete, incomplete in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by tm_downloaded field desc.
-pyro.view.collapsed.toggle = stopped
 branch=pyro.extended=,"view.sort_new     = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_new     = stopped,greater=d.custom=tm_downloaded"
 branch=pyro.extended=,"view.sort_current = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = stopped,greater=d.custom=tm_downloaded"
 
 # UI/VIEW: SORT the collapsed COMPLETE view (view #5) by COMPLETED TIME desc
-pyro.view.collapsed.toggle = complete
 branch=pyro.extended=,"view.sort_new     = complete,\"compare=-,d.custom=tm_completed\"","view.sort_new     = complete,greater=d.custom=tm_completed"
 branch=pyro.extended=,"view.sort_current = complete,\"compare=-,d.custom=tm_completed\"","view.sort_current = complete,greater=d.custom=tm_completed"
 
 # UI/VIEW: SORT the collapsed INCOMPLETE view (view #6) by DOWNLOAD, UPLOAD SPEED desc, group by OPEN desc, THROTTLE
 # Items are grouped into started, stopped group in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by download and then upload speed desc.
-pyro.view.collapsed.toggle = incomplete
 branch=pyro.extended=,"view.sort_new     = incomplete,\"compare=-+--,d.is_open=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = incomplete,greater=d.down.rate="
 branch=pyro.extended=,"view.sort_current = incomplete,\"compare=-+--,d.is_open=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = incomplete,greater=d.down.rate="
 
 # UI/VIEW: SORT the HASHING view (view #7) by LOADED TIME, group by THROTTLE
 # Items are grouped into special, slowup group in that order. Each group is sorted by tm_loaded field desc.
+pyro.view.collapsed.toggle = hashing
 branch=pyro.extended=,"view.sort_new     = hashing,\"compare=++,d.throttle_name=,d.custom=tm_loaded\"","view.sort_new     = hashing,less=d.custom=tm_loaded"
 branch=pyro.extended=,"view.sort_current = hashing,\"compare=++,d.throttle_name=,d.custom=tm_loaded\"","view.sort_current = hashing,less=d.custom=tm_loaded"
 
 # UI/VIEW: SORT the collapsed SEEDING view (view #8) by the UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by upload speed desc.
-pyro.view.collapsed.toggle = seeding
 view.filter = seeding,"and={d.complete=,d.peers_connected=}"
 branch=pyro.extended=,"view.sort_new     = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_new     = seeding,greater=d.up.rate="
 branch=pyro.extended=,"view.sort_current = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_current = seeding,greater=d.up.rate="
@@ -249,6 +243,7 @@ schedule2 = sort_filter_seeding,12,20,((view.sort,seeding))
 
 # UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by download and then upload speed desc.
+pyro.view.collapsed.toggle = leeching
 view.filter = leeching,"and={not=$d.complete=,d.peers_connected=}"
 branch=pyro.extended=,"view.sort_new     = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = leeching,greater=d.down.rate="
 branch=pyro.extended=,"view.sort_current = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = leeching,greater=d.down.rate="
@@ -256,7 +251,6 @@ schedule2 = sort_filter_leeching,12,20,((view.sort,leeching))
 
 # UI/VIEW: SORT the collapsed ACTIVE view (view #0) by DOWNLOAD, UPLOAD SPEED desc, group by OPEN desc, THROTTLE, COMPLETE desc. Show active, incomplete torrents and update it in every 20 seconds
 # Items are grouped by whether they are open and throttle (e.g. slowup). Each group is devided again into subgroups complete, incomplete, in that order. Each subgroup is sorted by download and then upload speed desc.
-pyro.view.collapsed.toggle = active
 view.filter = active,"or={d.up.rate=,d.down.rate=,not=$d.complete=}"
 branch=pyro.extended=,"view.sort_new     = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_new     = active,greater=d.up.rate="
 branch=pyro.extended=,"view.sort_current = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_current = active,greater=d.up.rate="
