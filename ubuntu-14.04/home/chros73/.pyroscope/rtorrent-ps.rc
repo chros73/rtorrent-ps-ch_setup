@@ -37,11 +37,11 @@ method.redirect = startup_time, system.startup_time
 # COMMAND: Get mtime of a path, return 2nd argument when path does not exist
 method.insert = os.path.mtime, simple, "execute.capture = sh, -c, \"echo -n \$(stat -c '%Y' \\\"$1\\\" 2>/dev/null || echo \\\"$2\\\")\", getmtime, (argument.0), (argument.1)"
 
-# COMMAND: Returns elapsed time between 2 timestamps in the form of "6 years, 5 months, 18 days, 02:40:00" (year/month info isn't shown if their value is 0)
-method.insert = get_elapsed_time, simple, "execute.capture=(cat,(pyro.bin_dir),getElapsedTime.sh), (argument.0), (argument.1)"
+# COMMAND: Returns elapsed time since a timestamp
+method.insert = pyro._elapsed_time, private|simple, "convert.time_delta=(value, (argument.0))"
 
-# COMMAND: Returns uptime (with the help of getElapsedTime.sh script) in the form of "Up: 6 years, 5 months, 18 days, 02:39:57" (year/month info isn't shown if their value is 0)
-method.insert = uptime, simple, "print=\"Up: \", (cat, (get_elapsed_time,(system.time),(startup_time)))"
+# COMMAND: Returns uptime
+method.insert = uptime, simple, "print=\"Up: \", (cat, (pyro._elapsed_time,(startup_time)))"
 
 # COMMAND: Returns d.ratio as float formatted string
 method.insert = d.get_ratio_formatted, private|simple, "string.lpad=(string.lpad, (string.substr, (cat, (d.ratio)), 0, (math.sub, (string.len, (cat, (d.ratio))), 1)), 3, \"0\"), 5"
@@ -407,6 +407,9 @@ pyro.bind_key = toggle_theme, |, "pyro.theme.toggle0="
 
 # UI/KEY: Bind '^g' to DISPLAY the TAGS of the current download
 pyro.bind_key = show_tags, ^G, "tag.show="
+
+# UI/KEY: Bind 'u' to DISPLAY uptime of rtorrent
+pyro.bind_key = print_uptime, u, "uptime="
 
 # UI/KEY: Bind 'F2' to DISPLAY quick HELP resources
 pyro.bind_key = show_quick_help, 0412, "pyro.print_help="
