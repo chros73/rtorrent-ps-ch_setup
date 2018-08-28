@@ -415,7 +415,7 @@ pyro.bind_key = toggle_chunk_size, _, "pmb._toggle_chunk_size="
 #method.insert = cull,simple|private,"execute.nothrow=\"$cat=$pyro.bin_dir=,rtcontrol\",-q,--detach,--cull,--yes,--from-view,$d.hash=,//"
 
 ## TORQUE/CMD: Daemon watchdog
-#method.insert = pyro.watchdog,simple|private,"execute.nothrow=bash,-c,\"$cat=\\\"test ! -f \\\",$argument.0=,\\\"/run/pyrotorque || \\\",$pyro.bin_dir=,\\\"pyrotorque --cron \\\",$argument.1=\""
+#method.insert = pyro.watchdog,simple|private,"execute.nothrow=bash,-c,\"$cat=\\\"test ! -f \\\",$argument.0=,\\\"/run/pyrotorque || \\\",$pyro.bin_dir=,\\\"pyrotorque --cron \\\",$argument.1=, \\\" || true\\\"\""
 
 ## TORQUE/SCHEDULE: Schedule daemon watchdog. Must be activated by touching the "~/.pyroscope/run/pyrotorque" file! Set the second argument to "-v" or "-q" to change log verbosity.
 #schedule2 = pyro_watchdog,30,300,"pyro.watchdog=~/.pyroscope,"
