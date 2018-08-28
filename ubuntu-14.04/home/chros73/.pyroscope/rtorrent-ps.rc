@@ -80,6 +80,9 @@ method.insert = pyro.bind_key, private|simple, "branch=(pyro.extended), ((pyro._
 method.insert = pyro.view.collapsed.toggle, private|simple, "branch=(pyro.extended), ((view.collapsed.toggle,(argument.0)))"
 method.insert = pyro.collapsed_view.add, private|simple, "view.add=(argument.0); pyro.view.collapsed.toggle=(argument.0)"
 
+# COMMAND: Toggle visibility of an item for the given view, usage: pyro.view.toggle_visible=tagged
+method.insert = pyro.view.toggle_visible, simple, "branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
+
 
 ### begin: Logging, Log Rotation, Archival, and Pruning ###
 
@@ -309,7 +312,6 @@ pyro.bind_key = trackers_view, t, "ui.current_view.set=trackers"
 # UI/VIEW: ADD collapsed TAGGED view for manually tag/select items  (bound to ':' in rT-PS)  ('.' = toggle focused item between tagged and untagged , 'T' = clear all tags)
 pyro.collapsed_view.add = tagged
 view.persistent = tagged
-method.insert = pyro.view.toggle_visible, simple, "branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
 method.insert = pyro.view_tagged_clear, simple|private, "view.filter=tagged,false= ;d.multicall2=default,d.views.remove=tagged"
 pyro.bind_key = tagged_toggle, ., "pyro.view.toggle_visible=tagged"
 pyro.bind_key = tagged_clear,  T, "pyro.view_tagged_clear="
