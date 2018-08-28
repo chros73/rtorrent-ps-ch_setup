@@ -250,8 +250,8 @@ schedule2 = view.name,10,20,((view.sort,name))
 
 # UI/VIEW: SORT the collapsed STARTED view (view #3) by LAST ACTIVE desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc, update it in every 20 seconds (Note: do NOT SCHEDULE sorting/filtering on STARTED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
 # Items are grouped into incomplete, complete in that order. Each group is sorted by last_active field desc.
-branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.last_active="
-branch=pyro.extended=,"view.sort_current = started,\"compare=+-+--,d.complete=,d.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.last_active="
+branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+--,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.timestamp.last_active="
+branch=pyro.extended=,"view.sort_current = started,\"compare=+-+--,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.timestamp.last_active="
 # !!! Sorting on Started view requires rtorrent-PS-CH >= v1.3 or rtorrent/rtorrent-PS with the fix !!!
 schedule2 = sort_started,12,20,((view.sort,started))
 
@@ -453,7 +453,7 @@ pyro.bind_key = toggle_chunk_size, _, "pmb._toggle_chunk_size="
 #pyro.collapsed_view.add = indemand
 #view.filter = indemand, ((d.is_open))
 #view.filter_on = indemand,event.download.closed,event.download.opened
-#view.sort_current = indemand, greater=d.last_active=
+#view.sort_current = indemand, greater=d.timestamp.last_active=
 #schedule2 = sort_indemand, 22, 33, "view.filter = indemand,d.is_open= ;view.sort=indemand"
 #pyro.bind_key = indemand_view, ?, "ui.current_view.set=indemand"
 
