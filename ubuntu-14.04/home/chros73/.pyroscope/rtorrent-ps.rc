@@ -192,9 +192,9 @@ method.set_key = ui.column.render, "527:?6C24/5C21/1:  Σ⇈  ", ((if, ((d.up.to
 method.set_key = ui.column.render, (ui.column.spec, 930)
 method.set_key = ui.column.render, "903:4C15/3C21/1:  ⛁ ", ((convert.human_size, ((d.selected_size_bytes)) ))
 
-# Add ETA/last_xfer column (only on 'active', 'leeching' and 'started' views), hidden by default
+# Add ETA/last_xfer column (only on 'active', 'leeching', 'seeding' and 'started' views), hidden by default
 method.set_key = ui.column.render, "906:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
-method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, leeching, started\", ui.column.show=906, ui.column.hide=906"
+method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, leeching, seeding, started\", ui.column.show=906, ui.column.hide=906"
 ui.column.hide = 906
 
 # Chunk Size, hidden by default
