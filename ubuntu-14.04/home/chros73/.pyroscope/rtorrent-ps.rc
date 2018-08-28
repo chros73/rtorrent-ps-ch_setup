@@ -200,6 +200,11 @@ ui.color.custom9.set = "bright blue"
 method.set_key = ui.column.render, "908:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
 ui.column.hide = 908
 
+# Add Ratio (numeric) column (only on 'stopped' and 'ratio' views), hidden by default
+method.set_key = ui.column.render, "922:?6C93/6:  ☯ ‰ ", ((d.get_ratio_float))
+method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=, stopped, ratio\", ui.column.show=922, ui.column.hide=922"
+ui.column.hide = 922
+
 # Add "Throttle" column (⊘)
 method.set_key = ui.column.render, "973:1C72/1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
 
