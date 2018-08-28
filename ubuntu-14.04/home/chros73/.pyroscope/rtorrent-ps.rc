@@ -53,21 +53,22 @@ method.set_key = event.download.resumed,      00tm_started, {(branch, ((not,((d.
 method.set_key = event.download.finished,     !tm_completed,((d.custom.set, tm_completed, ((cat,((system.time)))) ))
 method.set_key = event.download.hash_done,    !tm_completed,{(branch, ((and,((d.complete)),((not,((d.custom,tm_completed)))))), ((d.custom.set, tm_completed, (cat,(system.time)))) )}
 
-# EVENTS: Timestamp 'tm_downloaded' (time when meta (torrent) file was downloaded)
-method.insert = d.tm_downloaded, simple|private, "execute.capture=sh,-c,\"echo -n \$(stat -c %Y \\\"$1\\\")\",getDownloadedDate,(d.tied_to_file)"
-method.set_key = event.download.inserted_new, 00tm_downloaded, ((d.custom.set, tm_downloaded, ((cat,((d.tm_downloaded)))) ))
+# COMMAND/EVENTS: Timestamp 'tm_downloaded' (time when meta (torrent) file was downloaded)
+method.insert = d.tm_downloaded, simple|private, "d.custom.set=tm_downloaded,(os.path.mtime, (d.tied_to_file), (cat, (system.time)))"
+method.insert = d.timestamp.downloaded, simple, "d.custom=tm_downloaded"
+method.set_key = event.download.inserted_new, 00tm_downloaded, ((d.tm_downloaded))
 
 # COMMAND/EVENTS/SCHEDULE: Timestamp 'last_active' for items that have peers
 method.set_key = event.download.finished,  !tm_last_active, ((d.custom.set, last_active, ((cat,((system.time)))) ))
 method.set_key = event.download.resumed,   !tm_last_active, {(branch, ((or,((d.peers_connected)),((not,((d.custom,last_active)))))), ((d.custom.set, last_active, (cat,(system.time)))) )}
 schedule2      = pyro_update_last_active,  24, 42,          ((d.multicall2, started, "branch=((d.peers_connected)),((d.custom.set, last_active, (cat,(system.time))))" ))
-method.insert  = d.last_active, simple, "if=(d.peers_connected), (cat,(system.time)), (d.custom,last_active)"
+method.insert  = d.timestamp.last_active, simple, "if=(d.peers_connected), (cat,(system.time)), (d.custom,last_active)"
 
 # COMMAND/SCHEDULE: Timestamp 'last_xfer' for items that transfer data
 method.insert = pyro_last_xfer_check_min_rate, simple|private, "greater=((argument.0)),((pyro.last_xfer.min_rate))"
 method.insert = d.last_xfer.is_active, simple, "or=(pyro_last_xfer_check_min_rate,(d.up.rate)), (pyro_last_xfer_check_min_rate,(d.down.rate))"
 schedule2     = pyro_update_last_xfer, 33, 17, ((d.multicall2, active, "branch=((d.last_xfer.is_active)),((d.custom.set, last_xfer, (cat,(system.time))))" ))
-method.insert = d.last_xfer, simple, "if=(d.last_xfer.is_active), (cat,(system.time)), (d.custom,last_xfer)"
+method.insert = d.timestamp.last_xfer, simple, "if=(d.last_xfer.is_active), (cat,(system.time)), (d.custom,last_xfer)"
 
 # COMMAND: Fallback through completed / loaded / downloaded event timestamps, for view sorting
 method.insert = pyro._view_sort_timestamp, simple|private, "d.custom.if_z = tm_completed, (d.custom.if_z, tm_loaded, (d.custom, tm_downloaded))"
