@@ -44,8 +44,8 @@ method.insert = pyro._elapsed_time, private|simple, "convert.time_delta=(value, 
 method.insert = uptime, simple, "print=\"Up: \", (cat, (pyro._elapsed_time,(startup_time)))"
 
 # COMMAND: Returns d.ratio as float formatted string
-method.insert = d.get_ratio_formatted, private|simple, "string.lpad=(string.lpad, (string.substr, (cat, (d.ratio)), 0, (math.sub, (string.len, (cat, (d.ratio))), 1)), 3, \"0\"), 5"
-method.insert = d.get_ratio_float, simple, "cat=(string.substr, (d.get_ratio_formatted), 0, 3) ,., (string.substr, (d.get_ratio_formatted), 3, 2)"
+method.insert = d.get_ratio_formatted, private|simple, "string.lpad=(string.substr, (cat, (d.ratio)), 0, (math.sub, (string.len, (cat, (d.ratio))), 1)), 3, \"0\""
+method.insert = d.get_ratio_float, simple, "cat=(convert.magnitude, (value, (string.substr, (d.get_ratio_formatted), 0, (math.sub, (string.len, (d.get_ratio_formatted)), 2)))) ,., (string.substr, (d.get_ratio_formatted), (math.sub, (string.len, (d.get_ratio_formatted)), 2), 2)"
 
 # EVENTS: Timestamps: 'tm_loaded' (time loaded into client), 'tm_started' (time of *first* start), 'tm_completed' (time of completion)
 method.set_key = event.download.inserted_new, 00tm_loaded,  ((d.custom.set, tm_loaded, ((cat,((system.time)))) ))
@@ -210,7 +210,7 @@ method.set_key = ui.column.render, "908:?4C9/3C21/1: ≣  ", ((convert.human_siz
 ui.column.hide = 908
 
 # Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'stopped' and 'ratio' views
-method.set_key = ui.column.render, "922:?6C93/6:  ☯ ‰ ", ((d.get_ratio_float))
+method.set_key = ui.column.render, "922:?5C93/5: ☯ ‰ ", ((d.get_ratio_float))
 method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=, stopped, ratio\", ui.column.show=922, ui.column.hide=922"
 ui.column.hide = 922
 
