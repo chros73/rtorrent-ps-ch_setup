@@ -88,7 +88,7 @@ method.insert = pyro.view.collapsed.toggle, private|simple, "branch=(pyro.extend
 method.insert = pyro.collapsed_view.add, private|simple, "view.add=(argument.0); pyro.view.collapsed.toggle=(argument.0)"
 
 # COMMAND: Toggle visibility of an item for the given view, usage: pyro.view.toggle_visible=tagged
-method.insert = pyro.view.toggle_visible, simple, "branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
+method.insert = pyro.view.toggle_visible, simple|private, "branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
 
 
 ### begin: Logging, Log Rotation, Archival, and Pruning ###

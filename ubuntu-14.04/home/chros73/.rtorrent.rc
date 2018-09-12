@@ -15,8 +15,8 @@ import = (cat,"~/.rtorrent",(cfg.postfix),"-config.rc")
 
 ##### begin: Including PyroScope settings #####
 
-# Set "pyro.extended" to 1 to activate rTorrent-PS features! LEAVE THIS AT 0 IF YOU RUN A VANILLA rTorrent!
-method.insert = pyro.extended,    value|const|private,  1
+# Set "pyro.extended" to 1 if rTorrent-PS is used. LEAVE THIS AT 0 IF YOU RUN A VANILLA rTorrent!
+method.insert = pyro.extended,    value|const, (system.has, rtorrent-ps)
 
 # Set "pyro.extended.ch" to 1 to activate rTorrent-PS-CH features! LEAVE THIS AT 0 IF YOU DO NOT RUN IT!
 method.insert = pyro.extended.ch, value|const|private,  1
