@@ -308,11 +308,11 @@ pyro.collapsed_view.add = rtcontrol
 view.filter = rtcontrol,false=
 pyro.bind_key = rtcontrol_view, ^, "ui.current_view.set=rtcontrol"
 
-# UI/VIEW: ADD collapsed MESSAGES view for tracker messages  (bound to '!' in rT-PS)  SORT it by DOWNLOADED TIME, group by THROTTLE, MESSAGE desc
+# UI/VIEW: ADD collapsed MESSAGES view for tracker messages  (bound to '!' in rT-PS)  SORT it by COMPLETED/LOADED/DOWNLOADED TIME desc, group by THROTTLE, MESSAGE desc
 pyro.collapsed_view.add = messages
 view.filter = messages,d.message=
-branch=pyro.extended=,"view.sort_new     = messages,\"compare=+-+,d.throttle_name=,d.message=,d.custom=tm_downloaded\"","view.sort_new     = messages,greater=d.message="
-branch=pyro.extended=,"view.sort_current = messages,\"compare=+-+,d.throttle_name=,d.message=,d.custom=tm_downloaded\"","view.sort_current = messages,greater=d.message="
+branch=pyro.extended=,"view.sort_new     = messages,\"compare=+--,d.throttle_name=,d.message=,pyro._view_sort_timestamp=\"","view.sort_new     = messages,greater=d.message="
+branch=pyro.extended=,"view.sort_current = messages,\"compare=+--,d.throttle_name=,d.message=,pyro._view_sort_timestamp=\"","view.sort_current = messages,greater=d.message="
 method.insert = pyro.ui.messages.show, simple, "ui.current_view.set=messages ;view.sort=messages ;print=$view.size=messages,\" message(s)!\""
 pyro.bind_key = messages_view, !, "pyro.ui.messages.show="
 
