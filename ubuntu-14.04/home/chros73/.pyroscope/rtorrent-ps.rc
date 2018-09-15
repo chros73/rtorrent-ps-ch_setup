@@ -204,6 +204,11 @@ method.set_key = ui.column.render, "820:?5C21/1C25/1C21/2C25/1:◷ ↺⤴⤵", (
 method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, stopped, trackers\", ui.column.show=820, ui.column.hide=820"
 ui.column.hide = 820
 
+# Add "Domain" sacrificial column only onto 'trackers' views
+method.set_key = ui.column.render, "830:?14:Domain", ((d.tracker_domain))
+method.set_key = event.view.show, ~trackers_domain_toggle, "branch=\"string.equals=$ui.current_view=, trackers\", ui.column.show=830, ui.column.hide=830"
+ui.column.hide = 830
+
 # Add "Progress (numeric)" sacrificial column (⣿) only onto 'hashing', 'incomplete' and 'leeching' views
 method.set_key = ui.column.render, "910:?2C94/2:⣿‰", ((if, ((d.is_partially_done)), ((cat, "✔ ")), ((if, ((d.get_progress_num)), ((cat, ((d.get_progress_num)))), ((cat, "--")) )) ))
 method.set_key = event.view.show, ~progress_toggle, "branch=\"string.equals=$ui.current_view=, hashing, incomplete, leeching\", ui.column.show=910, ui.column.hide=910"
