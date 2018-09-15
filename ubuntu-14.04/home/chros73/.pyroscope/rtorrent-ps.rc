@@ -190,51 +190,38 @@ schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, 
 
 ### begin: Extra column definitions ###
 
-# Disable built in "Uprate or approximate time since last active state" column and add new one (∆⋮ ⟲)
-method.set_key = ui.column.render, (ui.column.spec, 520)
-method.set_key = ui.column.render, "523:5C70/5: ∆⋮ ⟲", ((if, ((d.up.rate)),((convert.human_size, ((d.up.rate)), (value, 10))), ((if, ((d.peers_connected)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_active)) )) )) )) ))
-
-# Disable built in "Uploaded data" column and add new sacrificial one (Σ⇈)
-method.set_key = ui.column.render, (ui.column.spec, 900)
-method.set_key = ui.column.render, "527:?6C24/5C21/1:  Σ⇈  ", ((if, ((d.up.total)),((convert.human_size, ((d.up.total)), (value, 0))),((cat, "   ⋅  ")) ))
-
-# Change order of "Selected data size" column (⛁)
-method.set_key = ui.column.render, (ui.column.spec, 930)
-method.set_key = ui.column.render, "903:4C15/3C21/1:  ⛁ ", ((convert.human_size, ((d.selected_size_bytes)) ))
-
 # Add "ETA/last_xfer" sacrificial column (⟲ ⇅) only onto 'active', 'leeching', 'seeding' and 'started' views
-method.set_key = ui.column.render, "906:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
-method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, leeching, seeding, started\", ui.column.show=906, ui.column.hide=906"
-ui.column.hide = 906
+method.set_key = ui.column.render, "650:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
+method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, leeching, seeding, started\", ui.column.show=650, ui.column.hide=650"
+ui.column.hide = 650
 
 # Add "Chunk Size" sacrificial column (≣), hidden by default
-ui.color.custom9.set = "bright blue"
-method.set_key = ui.column.render, "908:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
-ui.column.hide = 908
+method.set_key = ui.column.render, "810:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
+ui.column.hide = 810
 
-# Add "Progress" in numeric format sacrificial column (⣿) only onto 'hashing' and 'leeching' views, hidden by default
-method.set_key = ui.column.render, "912:?2C94/2:⣿ ", ((if, ((d.is_partially_done)), ((cat, "✔ ")), ((if, ((d.get_progress_num)), ((cat, ((d.get_progress_num)))), ((cat, "--")) )) ))
-method.set_key = event.view.show, ~progress_toggle, "branch=\"string.equals=$ui.current_view=, hashing, leeching\", ui.column.show=912, ui.column.hide=912"
-ui.column.hide = 912
+# Add "Last scrape" sacrificial column (◷ ↺⤴⤵) only onto 'stopped' and 'trackers' views
+method.set_key = ui.column.render, "820:?5C21/1C25/1C21/2C25/1:◷ ↺⤴⤵", ((convert.time_delta, ((value, ((d.custom, tm_last_scrape)) )) ))
+method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, stopped, trackers\", ui.column.show=820, ui.column.hide=820"
+ui.column.hide = 820
 
-# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'stopped' and 'ratio' views
-method.set_key = ui.column.render, "922:?5C93/5: ☯ ‰ ", ((d.get_ratio_float))
-method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=, stopped, ratio\", ui.column.show=922, ui.column.hide=922"
-ui.column.hide = 922
+# Add "Progress (numeric)" sacrificial column (⣿) only onto 'hashing', 'incomplete' and 'leeching' views
+method.set_key = ui.column.render, "910:?2C94/2:⣿‰", ((if, ((d.is_partially_done)), ((cat, "✔ ")), ((if, ((d.get_progress_num)), ((cat, ((d.get_progress_num)))), ((cat, "--")) )) ))
+method.set_key = event.view.show, ~progress_toggle, "branch=\"string.equals=$ui.current_view=, hashing, incomplete, leeching\", ui.column.show=910, ui.column.hide=910"
+ui.column.hide = 910
 
-# Add "Last scrape" sacrificial column (◷ ↺⤴⤵) only onto 'trackers' and 'stopped' views
-method.set_key = ui.column.render, "964:?5C21/1C28/1C21/2C28/1:◷ ↺⤴⤵", ((convert.time_delta, ((value, ((d.custom, tm_last_scrape)) )) ))
-method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, trackers, stopped\", ui.column.show=964, ui.column.hide=964"
-ui.column.hide = 964
+# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'ratio' and 'stopped' views
+method.set_key = ui.column.render, "930:?5C93/5: ☯ ‰ ", ((d.get_ratio_float))
+method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=, ratio, stopped\", ui.column.show=930, ui.column.hide=930"
+ui.column.hide = 930
 
 # Add "Throttle" column (⊘)
-method.set_key = ui.column.render, "973:1C72/1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
+method.set_key = ui.column.render, "950:1C72/1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
 
 # Add "Unsafe data" column (◎)
-method.set_key = ui.column.render, "976:1C71/1:◎", ((string.map, ((cat, ((d.custom, unsafe_data)))), {0, " "}, {1, "⊘"}, {2, "⊗"}))
+method.set_key = ui.column.render, "960:1C71/1:◎", ((string.map, ((cat, ((d.custom, unsafe_data)))), {0, " "}, {1, "⊘"}, {2, "⊗"}))
 
 # Add "Data directory" column (⊕) (first character of parent directory)
-method.set_key = ui.column.render, "978:1:⊕", ((d.parent_dir))
+method.set_key = ui.column.render, "970:1:⊕", ((d.parent_dir))
 
 ### end: Extra column definitions ###
 
@@ -428,7 +415,7 @@ method.insert = pyro._print_noquit, simple|private, "print=\"^Q is disabled, use
 pyro.bind_key = no_quit, ^q, "pyro._print_noquit="
 
 # UI/KEY: Bind '_' to TOGGLE "chunk size" column on canvas
-method.insert = pmb._toggle_chunk_size, simple|private, "branch=ui.column.is_hidden=908, ui.column.show=908, ui.column.hide=908; ui.current_view.set = (ui.current_view)"
+method.insert = pmb._toggle_chunk_size, simple|private, "branch=ui.column.is_hidden=810, ui.column.show=810, ui.column.hide=810; ui.current_view.set = (ui.current_view)"
 pyro.bind_key = toggle_chunk_size, _, "pmb._toggle_chunk_size="
 
 ### end: Generic keybindings and attributes ###
