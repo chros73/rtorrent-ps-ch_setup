@@ -187,7 +187,7 @@ schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, 
 
 ### begin: Extra column definitions ###
 
-# Disable built in "Uprate or approximate time since last active state" column and add new one (Σ⇈)
+# Disable built in "Uprate or approximate time since last active state" column and add new one (∆⋮ ⟲)
 method.set_key = ui.column.render, (ui.column.spec, 520)
 method.set_key = ui.column.render, "523:5C70/5: ∆⋮ ⟲", ((if, ((d.up.rate)),((convert.human_size, ((d.up.rate)), (value, 10))), ((if, ((d.peers_connected)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_active)) )) )) )) ))
 
@@ -214,7 +214,7 @@ method.set_key = ui.column.render, "922:?5C93/5: ☯ ‰ ", ((d.get_ratio_float)
 method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=, stopped, ratio\", ui.column.show=922, ui.column.hide=922"
 ui.column.hide = 922
 
-# Add "Last scrape" sacrificial column only onto 'trackers' and 'stopped' views
+# Add "Last scrape" sacrificial column (◷ ↺⤴⤵) only onto 'trackers' and 'stopped' views
 method.set_key = ui.column.render, "964:?5C21/1C28/1C21/2C28/1:◷ ↺⤴⤵", ((convert.time_delta, ((value, ((d.custom, tm_last_scrape)) )) ))
 method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, trackers, stopped\", ui.column.show=964, ui.column.hide=964"
 ui.column.hide = 964
