@@ -68,10 +68,11 @@ schedule2      = pyro_update_last_active,  24, 42,          ((d.multicall2, star
 method.insert  = d.timestamp.last_active, simple, "if=(d.peers_connected), (cat,(system.time)), (d.custom,last_active)"
 
 # COMMAND/SCHEDULE: Timestamp 'last_xfer' for items that transfer data
-method.insert = pyro_last_xfer_check_min_rate, simple|private, "greater=((argument.0)),((pyro.last_xfer.min_rate))"
-method.insert = d.last_xfer.is_active, simple, "or=(pyro_last_xfer_check_min_rate,(d.up.rate)), (pyro_last_xfer_check_min_rate,(d.down.rate))"
-schedule2     = pyro_update_last_xfer, 33, 17, ((d.multicall2, active, "branch=((d.last_xfer.is_active)),((d.custom.set, last_xfer, (cat,(system.time))))" ))
-method.insert = d.timestamp.last_xfer, simple, "if=(d.last_xfer.is_active), (cat,(system.time)), (d.custom,last_xfer)"
+method.insert  = pyro_last_xfer_check_min_rate, simple|private, "greater=((argument.0)),((pyro.last_xfer.min_rate))"
+method.insert  = d.last_xfer.is_active, simple, "or=(pyro_last_xfer_check_min_rate,(d.up.rate)), (pyro_last_xfer_check_min_rate,(d.down.rate))"
+method.set_key = event.download.finished, !tm_last_xfer, ((d.custom.set, last_xfer, ((cat,((system.time)))) ))
+schedule2      = pyro_update_last_xfer, 33, 17, ((d.multicall2, active, "branch=((d.last_xfer.is_active)),((d.custom.set, last_xfer, (cat,(system.time))))" ))
+method.insert  = d.timestamp.last_xfer, simple, "if=(d.last_xfer.is_active), (cat,(system.time)), (d.custom,last_xfer)"
 
 # COMMAND: Fallback through completed / loaded / downloaded event timestamps, for view sorting
 method.insert = pyro._view_sort_timestamp, simple|private, "d.custom.if_z = tm_completed, (d.custom.if_z, tm_loaded, (d.custom, tm_downloaded))"
@@ -190,9 +191,9 @@ schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, 
 
 ### begin: Extra column definitions ###
 
-# Add "ETA/last_xfer" sacrificial column (⟲ ⇅) only onto 'active', 'leeching', 'seeding' and 'started' views
+# Add "ETA/last_xfer" sacrificial column (⟲ ⇅) only onto 'active', 'last_xfer', 'leeching', 'seeding' and 'started' views
 method.set_key = ui.column.render, "650:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
-method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, leeching, seeding, started\", ui.column.show=650, ui.column.hide=650"
+method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, last_xfer, leeching, seeding, started\", ui.column.show=650, ui.column.hide=650"
 ui.column.hide = 650
 
 # Add "Chunk Size" sacrificial column (≣), hidden by default
@@ -315,7 +316,7 @@ branch=pyro.extended=,"view.sort_current = messages,\"compare=+-+,d.throttle_nam
 method.insert = pyro.ui.messages.show, simple, "ui.current_view.set=messages ;view.sort=messages ;print=$view.size=messages,\" message(s)!\""
 pyro.bind_key = messages_view, !, "pyro.ui.messages.show="
 
-# UI/VIEW: ADD collapsed TRACKERS view  (bound to 't' in rT-PS)     SORT it by DOWNLOADED TIME desc, group by DOMAIN
+# UI/VIEW: ADD collapsed TRACKERS view  (bound to 't' in rT-PS)     SORT it by DOWNLOADED TIME desc, group by TRACKER ALIAS
 pyro.collapsed_view.add = trackers
 branch=pyro.extended=,"view.sort_new     = trackers,\"compare=+-,d.tracker_alias=,d.custom=tm_downloaded\""
 branch=pyro.extended=,"view.sort_current = trackers,\"compare=+-,d.tracker_alias=,d.custom=tm_downloaded\""
@@ -359,6 +360,12 @@ view.filter = deletable,d.custom=unsafe_data
 branch=pyro.extended=,"view.sort_new     = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_new     = deletable,greater=d.custom=unsafe_data"
 branch=pyro.extended=,"view.sort_current = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = deletable,greater=d.custom=unsafe_data"
 pyro.bind_key = deletable_view, ?, "ui.current_view.set=deletable ;view.sort=deletable"
+
+# UI/VIEW: ADD collapsed LAST_XFER view  (bound to '¬' in rT-PS)     SORT it by LAST_XFER desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc
+pyro.collapsed_view.add = last_xfer
+branch=pyro.extended=,"view.sort_new     = last_xfer,\"compare=+-+--,d.complete=,d.timestamp.last_xfer=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = last_xfer,greater=d.timestamp.last_xfer="
+branch=pyro.extended=,"view.sort_current = last_xfer,\"compare=+-+--,d.complete=,d.timestamp.last_xfer=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = last_xfer,greater=d.timestamp.last_xfer="
+pyro.bind_key = last_xfer_view, 0254, "ui.current_view.set=last_xfer"
 
 ### end: Adding new useful views ###
 
