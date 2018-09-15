@@ -316,10 +316,10 @@ branch=pyro.extended=,"view.sort_current = messages,\"compare=+--,d.throttle_nam
 method.insert = pyro.ui.messages.show, simple, "ui.current_view.set=messages ;view.sort=messages ;print=$view.size=messages,\" message(s)!\""
 pyro.bind_key = messages_view, !, "pyro.ui.messages.show="
 
-# UI/VIEW: ADD collapsed TRACKERS view  (bound to 't' in rT-PS)     SORT it by DOWNLOADED TIME desc, group by TRACKER ALIAS
+# UI/VIEW: ADD collapsed TRACKERS view  (bound to 't' in rT-PS)     SORT it by LAST SCRAPE TIME desc, group by TRACKER ALIAS
 pyro.collapsed_view.add = trackers
-branch=pyro.extended=,"view.sort_new     = trackers,\"compare=+-,d.tracker_alias=,d.custom=tm_downloaded\""
-branch=pyro.extended=,"view.sort_current = trackers,\"compare=+-,d.tracker_alias=,d.custom=tm_downloaded\""
+branch=pyro.extended=,"view.sort_new     = trackers,\"compare=+-,d.tracker_alias=,d.custom=tm_last_scrape\""
+branch=pyro.extended=,"view.sort_current = trackers,\"compare=+-,d.tracker_alias=,d.custom=tm_last_scrape\""
 pyro.bind_key = trackers_view, t, "ui.current_view.set=trackers"
 
 # UI/VIEW: ADD collapsed TAGGED view for manually tag/select items  (bound to ':' in rT-PS)  ('.' = toggle focused item between tagged and untagged , 'T' = clear all tags)
