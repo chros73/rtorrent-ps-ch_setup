@@ -261,9 +261,9 @@ schedule2 = sort_started,12,20,((view.sort,started))
 branch=pyro.extended=,"view.sort_new     = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_new     = stopped,greater=d.custom=tm_downloaded"
 branch=pyro.extended=,"view.sort_current = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = stopped,greater=d.custom=tm_downloaded"
 
-# UI/VIEW: SORT the collapsed COMPLETE view (view #5) by COMPLETED TIME desc
-branch=pyro.extended=,"view.sort_new     = complete,\"compare=-,d.custom=tm_completed\"","view.sort_new     = complete,greater=d.custom=tm_completed"
-branch=pyro.extended=,"view.sort_current = complete,\"compare=-,d.custom=tm_completed\"","view.sort_current = complete,greater=d.custom=tm_completed"
+# UI/VIEW: SORT the collapsed COMPLETE view (view #5) by COMPLETED/LOADED/DOWNLOADED TIME desc
+branch=pyro.extended=,"view.sort_new     = complete,\"compare=-,pyro._view_sort_timestamp=\"","view.sort_new     = complete,greater=pyro._view_sort_timestamp="
+branch=pyro.extended=,"view.sort_current = complete,\"compare=-,pyro._view_sort_timestamp=\"","view.sort_current = complete,greater=pyro._view_sort_timestamp="
 
 # UI/VIEW: SORT the collapsed INCOMPLETE view (view #6) by DOWNLOAD, UPLOAD SPEED desc, group by OPEN desc, THROTTLE
 # Items are grouped into started, stopped group in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by download and then upload speed desc.
@@ -330,22 +330,22 @@ pyro.bind_key = tagged_toggle, ., "pyro.view.toggle_visible=tagged"
 pyro.bind_key = tagged_clear,  T, "pyro.view_tagged_clear="
 pyro.bind_key = tagged_view,   :, "ui.current_view.set=tagged"
 
-# UI/VIEW: ADD collapsed DATASIZE view  (bound to '<' in rT-PS)     SORT it by DATASIZE desc
+# UI/VIEW: ADD collapsed DATASIZE view  (bound to '<' in rT-PS)     SORT it by DATASIZE desc, COMPLETED/LOADED/DOWNLOADED TIME desc
 pyro.collapsed_view.add = datasize
-branch=pyro.extended=,"view.sort_new     = datasize,\"compare=-,d.selected_size_bytes=\"","view.sort_new     = datasize,greater=d.selected_size_bytes="
-branch=pyro.extended=,"view.sort_current = datasize,\"compare=-,d.selected_size_bytes=\"","view.sort_current = datasize,greater=d.selected_size_bytes="
+branch=pyro.extended=,"view.sort_new     = datasize,\"compare=--,d.selected_size_bytes=,pyro._view_sort_timestamp=\"","view.sort_new     = datasize,greater=d.selected_size_bytes="
+branch=pyro.extended=,"view.sort_current = datasize,\"compare=--,d.selected_size_bytes=,pyro._view_sort_timestamp=\"","view.sort_current = datasize,greater=d.selected_size_bytes="
 pyro.bind_key = datasize_view, <, "ui.current_view.set=datasize"
 
-# UI/VIEW: ADD collapsed UPLOADED DATA view  (bound to '>' in rT-PS)     SORT it by UPLOADED DATA desc, DOWNLOADED TIME desc
+# UI/VIEW: ADD collapsed UPLOADED DATA view  (bound to '>' in rT-PS)     SORT it by UPLOADED DATA desc, COMPLETED/LOADED/DOWNLOADED TIME desc
 pyro.collapsed_view.add = uploadeddata
-branch=pyro.extended=,"view.sort_new     = uploadeddata,\"compare=--,d.up.total=,d.custom=tm_downloaded\"","view.sort_new     = uploadeddata,greater=d.up.total="
-branch=pyro.extended=,"view.sort_current = uploadeddata,\"compare=--,d.up.total=,d.custom=tm_downloaded\"","view.sort_current = uploadeddata,greater=d.up.total="
+branch=pyro.extended=,"view.sort_new     = uploadeddata,\"compare=--,d.up.total=,pyro._view_sort_timestamp=\"","view.sort_new     = uploadeddata,greater=d.up.total="
+branch=pyro.extended=,"view.sort_current = uploadeddata,\"compare=--,d.up.total=,pyro._view_sort_timestamp=\"","view.sort_current = uploadeddata,greater=d.up.total="
 pyro.bind_key = uploadeddata_view, >, "ui.current_view.set=uploadeddata"
 
-# UI/VIEW: ADD collapsed RATIO view  (bound to '%' in rT-PS)     SORT it by RATIO desc, UPLOADED DATA desc, DOWNLOADED TIME desc
+# UI/VIEW: ADD collapsed RATIO view  (bound to '%' in rT-PS)     SORT it by RATIO desc, UPLOADED DATA desc, COMPLETED/LOADED/DOWNLOADED TIME desc
 pyro.collapsed_view.add = ratio
-branch=pyro.extended=,"view.sort_new     = ratio,\"compare=---,d.ratio=,d.up.total=,d.custom=tm_downloaded\"","view.sort_new     = ratio,greater=d.ratio="
-branch=pyro.extended=,"view.sort_current = ratio,\"compare=---,d.ratio=,d.up.total=,d.custom=tm_downloaded\"","view.sort_current = ratio,greater=d.ratio="
+branch=pyro.extended=,"view.sort_new     = ratio,\"compare=---,d.ratio=,d.up.total=,pyro._view_sort_timestamp=\"","view.sort_new     = ratio,greater=d.ratio="
+branch=pyro.extended=,"view.sort_current = ratio,\"compare=---,d.ratio=,d.up.total=,pyro._view_sort_timestamp=\"","view.sort_current = ratio,greater=d.ratio="
 pyro.bind_key = ratio_view, %, "ui.current_view.set=ratio"
 
 # UI/VIEW: ADD collapsed CATEGORY view  (bound to '@' in rT-PS)     SORT it by CATEGORY (full path means NAME as well)
