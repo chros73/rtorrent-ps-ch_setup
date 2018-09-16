@@ -200,9 +200,24 @@ ui.column.hide = 650
 method.set_key = ui.column.render, "810:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
 ui.column.hide = 810
 
-# Add "Last scrape" sacrificial column (◷ ↺⤴⤵) only onto 'stopped' and 'trackers' views
+# Add "tm_downloaded" sacrificial column (◷ ⤵) only onto 'deletable', 'main' and 'stopped' views
+method.set_key = ui.column.render, "812:?5C21/1C25/1C21/2C25/1: ◷ ⤵ ", ((convert.time_delta, ((value, ((d.custom, tm_downloaded)) )) ))
+method.set_key = event.view.show, ~tm_downloaded_toggle, "branch=\"string.equals=$ui.current_view=, deletable, main, stopped\", ui.column.show=812, ui.column.hide=812"
+ui.column.hide = 812
+
+# Add "tm_completed" sacrificial column (◷ ↺) only onto 'complete' view
+method.set_key = ui.column.render, "814:?5C21/1C25/1C21/2C25/1: ◷ ↺ ", ((convert.time_delta, ((value, ((d.custom, tm_completed)) )) ))
+method.set_key = event.view.show, ~tm_completed_toggle, "branch=\"string.equals=$ui.current_view=, complete\", ui.column.show=814, ui.column.hide=814"
+ui.column.hide = 814
+
+# Add "tm_loaded" sacrificial column (◷ ⤴) only onto 'hashing' view
+method.set_key = ui.column.render, "816:?5C21/1C25/1C21/2C25/1: ◷ ⤴ ", ((convert.time_delta, ((value, ((d.custom, tm_loaded)) )) ))
+method.set_key = event.view.show, ~tm_loaded_toggle, "branch=\"string.equals=$ui.current_view=, hashing\", ui.column.show=816, ui.column.hide=816"
+ui.column.hide = 816
+
+# Add "Last scrape" sacrificial column (◷ ↺⤴⤵) only onto 'trackers' view
 method.set_key = ui.column.render, "820:?5C21/1C25/1C21/2C25/1:◷ ↺⤴⤵", ((convert.time_delta, ((value, ((d.custom, tm_last_scrape)) )) ))
-method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, stopped, trackers\", ui.column.show=820, ui.column.hide=820"
+method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, trackers\", ui.column.show=820, ui.column.hide=820"
 ui.column.hide = 820
 
 # Add "Domain" sacrificial column only onto 'trackers' views
