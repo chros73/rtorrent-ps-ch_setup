@@ -92,7 +92,7 @@ method.insert = pyro.view.collapsed.toggle, private|simple, "branch=(pyro.extend
 method.insert = pyro.collapsed_view.add, private|simple, "view.add=(argument.0); pyro.view.collapsed.toggle=(argument.0)"
 
 # COMMAND: Toggle visibility of an item for the given view, usage: pyro.view.toggle_visible=tagged
-method.insert = pyro.view.toggle_visible, simple|private, "branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
+method.insert = pyro.view.toggle_visible, private|simple, "branch=d.views.has=$argument.0=,view.set_not_visible=$argument.0=,view.set_visible=$argument.0="
 
 
 ### begin: Logging, Log Rotation, Archival, and Pruning ###
@@ -167,6 +167,12 @@ method.set_key = pyro.print_help, !10handbook, ((print, ((cat, "rTorrent Handboo
 method.set_key = pyro.print_help, !10wiki,     ((print, ((cat, "rTorrent Wiki                https://github.com/rakshasa/rtorrent/wiki" )) ))
 method.set_key = pyro.print_help, !20pyrocore, ((print, ((cat, "pyrocore Manual (rtcontrol)  https://pyrocore.readthedocs.io/" )) ))
 method.set_key = pyro.print_help, !90ps-ch,    ((print, ((cat, "rTorrent-PS-CH Setup Wiki    https://github.com/chros73/rtorrent-ps-ch_setup/wiki" )) ))
+method.set_key = pyro.print_help, !92ps-ch,    ((print, ((cat, "Keys:  '*' toggle collapsed/expanded display, '/' toggle sacrificial columns, '^f' search for a term in the name, 'F3' search next")) ))
+method.set_key = pyro.print_help, !93ps-ch,    ((print, ((cat, "       'F' subfilter current view, '↑'/'↓' prev/next in input history , 'ESC' exit from any input prompt, '}' toggle unsafe_data")) ))
+method.set_key = pyro.print_help, !94ps-ch,    ((print, ((cat, "       '#' send manual scrape request, '.' toggle tag, 'T' clear tag view, '^g' display tags, '_' toggle specified columns")) ))
+method.set_key = pyro.print_help, !95ps-ch,    ((print, ((cat, "       '|' toggle selectable themes, '=' toggle autoscale network history, 'home', 'end', 'pgup', 'pgdn', 'F2' quick help")) ))
+method.set_key = pyro.print_help, !98ps-ch,    ((print, ((cat, "Views: '^' rtcontrol, '!' messages, 't' trackers, ':' tagged ('.' toggle tag, 'T' clear view), '<' datasize, '>' uploadeddata")) ))
+method.set_key = pyro.print_help, !99ps-ch,    ((print, ((cat, "       '%' ratio, '@' category, '?' deletable, '¬' last_xfer" )) ))
 
 # UI/CMD/LOG/SCHEDULE/EVENTS: Log various data of download items during different events and startup time
 method.insert = d.print.status, simple|private, "print=(argument.0),\
@@ -191,52 +197,52 @@ schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, 
 
 ### begin: Extra column definitions ###
 
-# Add "ETA/last_xfer" sacrificial column (⟲ ⇅) only onto 'active', 'last_xfer', 'leeching', 'seeding' and 'started' views
+# Add "ETA/last_xfer time" sacrificial column (⟲ ⇅) only onto 'active', 'incomplete', 'last_xfer', 'leeching', 'seeding' and 'started' views
 method.set_key = ui.column.render, "650:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
-method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, last_xfer, leeching, seeding, started\", ui.column.show=650, ui.column.hide=650"
+method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, incomplete, last_xfer, leeching, seeding, started\", ui.column.show=650, ui.column.hide=650"
 ui.column.hide = 650
+
+# Add "Elapsed time" (time the download took) sacrificial column (◷ ↺), hidden by default
+method.set_key = ui.column.render, "805:?5C21/1C25/1C21/2C25/1: ◷ ↺ ", ((convert.time_delta, ((value, ((d.custom, tm_completed)) )), ((value, ((d.custom.if_z, tm_started, ((d.custom, tm_loaded)) )) )) ))
+ui.column.hide = 805
 
 # Add "Chunk Size" sacrificial column (≣), hidden by default
 method.set_key = ui.column.render, "810:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
 ui.column.hide = 810
 
-# Add "tm_downloaded" sacrificial column (◷ ⤵) only onto 'deletable', 'main' and 'stopped' views
-method.set_key = ui.column.render, "812:?5C21/1C25/1C21/2C25/1: ◷ ⤵ ", ((convert.time_delta, ((value, ((d.custom, tm_downloaded)) )) ))
-method.set_key = event.view.show, ~tm_downloaded_toggle, "branch=\"string.equals=$ui.current_view=, deletable, main, stopped\", ui.column.show=812, ui.column.hide=812"
+# Add "Downloaded time" sacrificial column (◷ ⤵) only onto 'main' view
+method.set_key = ui.column.render, "812:?5C21/1C20/1C21/2C20/1: ◷ ⤵ ", ((convert.time_delta, ((value, ((d.custom, tm_downloaded)) )) ))
+method.set_key = event.view.show, ~tm_downloaded_toggle, "branch=\"string.equals=$ui.current_view=, main\", ui.column.show=812, ui.column.hide=812"
 ui.column.hide = 812
 
-# Add "tm_completed" sacrificial column (◷ ↺) only onto 'complete' view
-method.set_key = ui.column.render, "814:?5C21/1C25/1C21/2C25/1: ◷ ↺ ", ((convert.time_delta, ((value, ((d.custom, tm_completed)) )) ))
-method.set_key = event.view.show, ~tm_completed_toggle, "branch=\"string.equals=$ui.current_view=, complete\", ui.column.show=814, ui.column.hide=814"
-ui.column.hide = 814
-
-# Add "tm_loaded" sacrificial column (◷ ⤴) only onto 'hashing' view
-method.set_key = ui.column.render, "816:?5C21/1C25/1C21/2C25/1: ◷ ⤴ ", ((convert.time_delta, ((value, ((d.custom, tm_loaded)) )) ))
-method.set_key = event.view.show, ~tm_loaded_toggle, "branch=\"string.equals=$ui.current_view=, hashing\", ui.column.show=816, ui.column.hide=816"
+# Add "Loaded time" sacrificial column (◷ ⤴) only onto 'deletable', 'hashing' and 'stopped' views
+method.set_key = ui.column.render, "816:?5C21/1C20/1C21/2C20/1: ◷ ⤴ ", ((convert.time_delta, ((value, ((d.custom, tm_loaded)) )) ))
+method.set_key = event.view.show, ~tm_loaded_toggle, "branch=\"string.equals=$ui.current_view=, deletable, hashing, stopped\", ui.column.show=816, ui.column.hide=816"
 ui.column.hide = 816
 
-# Add "Last scrape" sacrificial column (◷ ↺⤴⤵) only onto 'trackers' view
-method.set_key = ui.column.render, "820:?5C21/1C25/1C21/2C25/1:◷ ↺⤴⤵", ((convert.time_delta, ((value, ((d.custom, tm_last_scrape)) )) ))
+# Add "Last scrape time" sacrificial column (⟲ ↺⤴⤵) only onto 'trackers' view
+method.set_key = ui.column.render, "820:?5C21/1C20/1C21/2C20/1:⟲ ↺⤴⤵", ((convert.time_delta, ((value, ((d.custom, tm_last_scrape)) )) ))
 method.set_key = event.view.show, ~last_scrape_toggle, "branch=\"string.equals=$ui.current_view=, trackers\", ui.column.show=820, ui.column.hide=820"
 ui.column.hide = 820
 
-# Add "Domain" sacrificial column only onto 'trackers' views
+# Add "Domain" sacrificial column only onto 'trackers' view
 method.set_key = ui.column.render, "830:?14:Domain", ((d.tracker_domain))
 method.set_key = event.view.show, ~trackers_domain_toggle, "branch=\"string.equals=$ui.current_view=, trackers\", ui.column.show=830, ui.column.hide=830"
 ui.column.hide = 830
 
-# Add "Progress (numeric)" sacrificial column (⣿) only onto 'hashing', 'incomplete' and 'leeching' views
+# Add "Progress (numeric)" sacrificial column (⣿‰) only onto 'hashing', 'incomplete' and 'leeching' views
 method.set_key = ui.column.render, "910:?2C94/2:⣿‰", ((if, ((d.is_partially_done)), ((cat, "✔ ")), ((if, ((d.get_progress_num)), ((cat, ((d.get_progress_num)))), ((cat, "--")) )) ))
 method.set_key = event.view.show, ~progress_toggle, "branch=\"string.equals=$ui.current_view=, hashing, incomplete, leeching\", ui.column.show=910, ui.column.hide=910"
 ui.column.hide = 910
 
-# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'ratio' and 'stopped' views
+# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'complete', 'ratio', 'seeding', 'stopped' and 'uploadeddata' views
 method.set_key = ui.column.render, "930:?5C93/5: ☯ ‰ ", ((d.get_ratio_float))
-method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=, ratio, stopped\", ui.column.show=930, ui.column.hide=930"
+method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=,complete, ratio, seeding, stopped, uploadeddata\", ui.column.show=930, ui.column.hide=930"
 ui.column.hide = 930
 
-# Add "Throttle" column (⊘)
-method.set_key = ui.column.render, "950:1C72/1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
+# Disable built-in "Throttle" column (⊘) and replace it with a new one
+method.set_key = ui.column.render, (ui.column.spec, 950)
+method.set_key = ui.column.render, "951:1C72/1:⊘", ((string.map, ((d.throttle_name)), {"", " "}, {NULL, "∞"}, {slowup, "⊼"}, {tardyup, "⊻"}))
 
 # Add "Unsafe data" column (◎)
 method.set_key = ui.column.render, "960:1C71/1:◎", ((string.map, ((cat, ((d.custom, unsafe_data)))), {0, " "}, {1, "⊘"}, {2, "⊗"}))
@@ -258,32 +264,34 @@ branch=pyro.extended=,"view.sort_current = main,\"compare=-,d.custom=tm_download
 # overrides the default scheduling in main.cc to run the command in every 20 seconds instead of 10, the effect will be the same. Note: we have to use the same schedule-name!
 schedule2 = view.main,10,20,((view.sort,main))
 
-# UI/VIEW: SORT the collapsed NAME view (view #2) by NAME and update it in every 20 seconds
-branch=pyro.extended=,"view.sort_new     = name,\"compare=+,d.name=\"","view.sort_new     = name,less=d.name="
-branch=pyro.extended=,"view.sort_current = name,\"compare=+,d.name=\"","view.sort_current = name,less=d.name="
+# UI/VIEW: SORT the collapsed NAME view (view #2) by NAME, THROTTLE, TRACKER ALIAS and update it in every 20 seconds
+branch=pyro.extended=,"view.sort_new     = name,\"compare=+++,d.name=,d.throttle_name=,d.tracker_alias=\"","view.sort_new     = name,less=d.name="
+branch=pyro.extended=,"view.sort_current = name,\"compare=+++,d.name=,d.throttle_name=,d.tracker_alias=\"","view.sort_current = name,less=d.name="
 # overrides the default scheduling in main.cc to run the command in every 20 seconds instead of 10, the effect will be the same. Note: we have to use the same schedule-name!
 schedule2 = view.name,10,20,((view.sort,name))
 
-# UI/VIEW: SORT the collapsed STARTED view (view #3) by LAST ACTIVE desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc, update it in every 20 seconds (Note: do NOT SCHEDULE sorting/filtering on STARTED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
+# UI/VIEW: SORT the collapsed STARTED view (view #3) by LAST ACTIVE desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc, LAST_XFER desc, update it in every 20 seconds (Note: do NOT SCHEDULE sorting/filtering on STARTED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
 # Items are grouped into incomplete, complete in that order. Each group is sorted by last_active field desc.
-branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+--,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.timestamp.last_active="
-branch=pyro.extended=,"view.sort_current = started,\"compare=+-+--,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.timestamp.last_active="
+branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = started,greater=d.timestamp.last_active="
+branch=pyro.extended=,"view.sort_current = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = started,greater=d.timestamp.last_active="
+##branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.timestamp.last_xfer=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.timestamp.last_active="
+##branch=pyro.extended=,"view.sort_current = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.timestamp.last_xfer=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.timestamp.last_active="
 # !!! Sorting on Started view requires rtorrent-PS-CH >= v1.3 or rtorrent/rtorrent-PS with the fix !!!
 schedule2 = sort_started,12,20,((view.sort,started))
 
-# UI/VIEW: SORT the collapsed STOPPED view (view #4) by DOWNLOADED TIME desc, group by COMPLETE, THROTTLE  (Note: do NOT SCHEDULE sorting/filtering on STOPPED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
-# Items are grouped into complete, incomplete in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by tm_downloaded field desc.
-branch=pyro.extended=,"view.sort_new     = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_new     = stopped,greater=d.custom=tm_downloaded"
-branch=pyro.extended=,"view.sort_current = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = stopped,greater=d.custom=tm_downloaded"
+# UI/VIEW: SORT the collapsed STOPPED view (view #4) by LOADED TIME desc, group by COMPLETE, THROTTLE  (Note: do NOT SCHEDULE sorting/filtering on STOPPED view until this bug gets fixed: https://github.com/rakshasa/rtorrent/issues/449)
+# Items are grouped into complete, incomplete in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by tm_loaded field desc.
+branch=pyro.extended=,"view.sort_new     = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_loaded\"","view.sort_new     = stopped,greater=d.custom=tm_loaded"
+branch=pyro.extended=,"view.sort_current = stopped,\"compare=++-,d.complete=,d.throttle_name=,d.custom=tm_loaded\"","view.sort_current = stopped,greater=d.custom=tm_loaded"
 
 # UI/VIEW: SORT the collapsed COMPLETE view (view #5) by COMPLETED/LOADED/DOWNLOADED TIME desc
 branch=pyro.extended=,"view.sort_new     = complete,\"compare=-,pyro._view_sort_timestamp=\"","view.sort_new     = complete,greater=pyro._view_sort_timestamp="
 branch=pyro.extended=,"view.sort_current = complete,\"compare=-,pyro._view_sort_timestamp=\"","view.sort_current = complete,greater=pyro._view_sort_timestamp="
 
-# UI/VIEW: SORT the collapsed INCOMPLETE view (view #6) by DOWNLOAD, UPLOAD SPEED desc, group by OPEN desc, THROTTLE
+# UI/VIEW: SORT the collapsed INCOMPLETE view (view #6) by DOWNLOAD, UPLOAD SPEED desc, LAST_XFER desc, group by OPEN desc, THROTTLE
 # Items are grouped into started, stopped group in that order. Each group is devided again into subgroups special, slowup group in that order. Each subgroup is sorted by download and then upload speed desc.
-branch=pyro.extended=,"view.sort_new     = incomplete,\"compare=-+--,d.is_open=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = incomplete,greater=d.down.rate="
-branch=pyro.extended=,"view.sort_current = incomplete,\"compare=-+--,d.is_open=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = incomplete,greater=d.down.rate="
+branch=pyro.extended=,"view.sort_new     = incomplete,\"compare=-+---,d.is_open=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = incomplete,greater=d.down.rate="
+branch=pyro.extended=,"view.sort_current = incomplete,\"compare=-+---,d.is_open=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = incomplete,greater=d.down.rate="
 
 # UI/VIEW: SORT the HASHING view (view #7) by LOADED TIME, group by THROTTLE
 # Items are grouped into special, slowup group in that order. Each group is sorted by tm_loaded field desc.
@@ -291,26 +299,25 @@ pyro.view.collapsed.toggle = hashing
 branch=pyro.extended=,"view.sort_new     = hashing,\"compare=++,d.throttle_name=,d.custom=tm_loaded\"","view.sort_new     = hashing,less=d.custom=tm_loaded"
 branch=pyro.extended=,"view.sort_current = hashing,\"compare=++,d.throttle_name=,d.custom=tm_loaded\"","view.sort_current = hashing,less=d.custom=tm_loaded"
 
-# UI/VIEW: SORT the collapsed SEEDING view (view #8) by the UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
+# UI/VIEW: SORT the collapsed SEEDING view (view #8) by the UPLOAD SPEED desc, LAST_XFER desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by upload speed desc.
 view.filter = seeding,"and={d.complete=,d.peers_connected=}"
-branch=pyro.extended=,"view.sort_new     = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_new     = seeding,greater=d.up.rate="
-branch=pyro.extended=,"view.sort_current = seeding,\"compare=+-,d.throttle_name=,d.up.rate=\"","view.sort_current = seeding,greater=d.up.rate="
+branch=pyro.extended=,"view.sort_new     = seeding,\"compare=+--,d.throttle_name=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = seeding,greater=d.up.rate="
+branch=pyro.extended=,"view.sort_current = seeding,\"compare=+--,d.throttle_name=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = seeding,greater=d.up.rate="
 schedule2 = sort_filter_seeding,12,20,((view.sort,seeding))
 
-# UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
+# UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, LAST_XFER desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by download and then upload speed desc.
-pyro.view.collapsed.toggle = leeching
 view.filter = leeching,"and={not=$d.complete=,d.peers_connected=}"
-branch=pyro.extended=,"view.sort_new     = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = leeching,greater=d.down.rate="
-branch=pyro.extended=,"view.sort_current = leeching,\"compare=+--,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = leeching,greater=d.down.rate="
+branch=pyro.extended=,"view.sort_new     = leeching,\"compare=+---,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = leeching,greater=d.down.rate="
+branch=pyro.extended=,"view.sort_current = leeching,\"compare=+---,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = leeching,greater=d.down.rate="
 schedule2 = sort_filter_leeching,12,20,((view.sort,leeching))
 
-# UI/VIEW: SORT the collapsed ACTIVE view (view #0) by DOWNLOAD, UPLOAD SPEED desc, group by OPEN desc, THROTTLE, COMPLETE desc. Show active, incomplete torrents and update it in every 20 seconds
+# UI/VIEW: SORT the collapsed ACTIVE view (view #0) by DOWNLOAD, UPLOAD SPEED desc, LAST_XFER desc, group by OPEN desc, THROTTLE, COMPLETE desc. Show active, incomplete torrents and update it in every 20 seconds
 # Items are grouped by whether they are open and throttle (e.g. slowup). Each group is devided again into subgroups complete, incomplete, in that order. Each subgroup is sorted by download and then upload speed desc.
 view.filter = active,"or={d.up.rate=,d.down.rate=,not=$d.complete=}"
-branch=pyro.extended=,"view.sort_new     = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_new     = active,greater=d.up.rate="
-branch=pyro.extended=,"view.sort_current = active,\"compare=-+---,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=\"","view.sort_current = active,greater=d.up.rate="
+branch=pyro.extended=,"view.sort_new     = active,\"compare=-+----,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = active,greater=d.up.rate="
+branch=pyro.extended=,"view.sort_current = active,\"compare=-+----,d.is_open=,d.throttle_name=,d.complete=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = active,greater=d.up.rate="
 schedule2 = sort_filter_active,12,20,((view.sort,active))
 
 ### end: Modifications for default views ###
@@ -369,11 +376,11 @@ branch=pyro.extended=,"view.sort_new     = category,\"compare=+,d.data_path=\"",
 branch=pyro.extended=,"view.sort_current = category,\"compare=+,d.data_path=\"","view.sort_current = category,less=d.data_path="
 pyro.bind_key = category_view, @, "ui.current_view.set=category"
 
-# UI/VIEW: ADD collapsed DELETABLE view  (bound to '?' in rT-PS)     SORT it by DOWNLOADED TIME, group by 'unsafe_data' desc, THROTTLE desc . Show deletable torrents.
+# UI/VIEW: ADD collapsed DELETABLE view  (bound to '?' in rT-PS)     SORT it by LOADED TIME desc, group by 'unsafe_data' desc, THROTTLE desc . Show deletable torrents.
 pyro.collapsed_view.add = deletable
 view.filter = deletable,d.custom=unsafe_data
-branch=pyro.extended=,"view.sort_new     = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_new     = deletable,greater=d.custom=unsafe_data"
-branch=pyro.extended=,"view.sort_current = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_downloaded\"","view.sort_current = deletable,greater=d.custom=unsafe_data"
+branch=pyro.extended=,"view.sort_new     = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_loaded\"","view.sort_new     = deletable,greater=d.custom=unsafe_data"
+branch=pyro.extended=,"view.sort_current = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_loaded\"","view.sort_current = deletable,greater=d.custom=unsafe_data"
 pyro.bind_key = deletable_view, ?, "ui.current_view.set=deletable ;view.sort=deletable"
 
 # UI/VIEW: ADD collapsed LAST_XFER view  (bound to '¬' in rT-PS)     SORT it by LAST_XFER desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc
@@ -420,13 +427,13 @@ pyro.bind_key = send_scrape, #, "d.last_scrape.send_set="
 
 # UI/KEY: Bind '}' to TOGGLE "unsafe_data" ATTRIBUTE: "", "1", "2"   ("2" means in delqueue)
 method.insert = d.toggle_delqueue, simple|private, "branch=\"equal={d.custom=unsafe_data,cat=2}\",d.remove_from_delqueue=,\"branch=d.custom=unsafe_data,d.add_to_delqueue=,d.unsafe_data.set=1\""
-pyro.bind_key = toggle_delqueue, \}, "d.toggle_delqueue="
+pyro.bind_key = toggle_delqueue, \}, "d.toggle_delqueue=; ui.current_view.set = (ui.current_view)"
 
 # UI/KEY: Bind '|' to TOGGLE selectable THEMES defined at the top of this config file (Note: if a new theme is added to / removed from the available selection then this logic has to be modified as well!)
 method.insert = pyro.theme.store_set, simple|private, "pyro.import=$cat=$argument.0= ;pyro.theme.selected.set=$argument.0="
 method.insert = pyro.theme.toggle1, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.1=}\",pyro.theme.store_set=$cfg.theme.2=,pyro.theme.store_set=$cfg.theme.0="
 method.insert = pyro.theme.toggle0, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.0=}\",pyro.theme.store_set=$cfg.theme.1=,pyro.theme.toggle1="
-pyro.bind_key = toggle_theme, |, "pyro.theme.toggle0="
+pyro.bind_key = toggle_theme, |, "pyro.theme.toggle0=; ui.current_view.set = (ui.current_view)"
 
 # UI/KEY: Bind '^g' to DISPLAY the TAGS of the current download
 pyro.bind_key = show_tags, ^G, "tag.show="
@@ -441,9 +448,9 @@ pyro.bind_key = show_quick_help, 0412, "pyro.print_help="
 method.insert = pyro._print_noquit, simple|private, "print=\"^Q is disabled, use '^X quit='\""
 pyro.bind_key = no_quit, ^q, "pyro._print_noquit="
 
-# UI/KEY: Bind '_' to TOGGLE "chunk size" column on canvas
-method.insert = pmb._toggle_chunk_size, simple|private, "branch=ui.column.is_hidden=810, ui.column.show=810, ui.column.hide=810; ui.current_view.set = (ui.current_view)"
-pyro.bind_key = toggle_chunk_size, _, "pmb._toggle_chunk_size="
+# UI/KEY: Bind '_' to TOGGLE columns on canvas: "chunk size", "elapsed time"
+method.insert = pmb._toggle_columns, simple|private, "branch=\"or={ui.column.is_hidden=805,ui.column.is_hidden=810}\", \"ui.column.show=805,810\", \"ui.column.hide=805,810\"; ui.current_view.set = (ui.current_view)"
+pyro.bind_key = toggle_columns, _, "pmb._toggle_columns="
 
 ### end: Generic keybindings and attributes ###
 
