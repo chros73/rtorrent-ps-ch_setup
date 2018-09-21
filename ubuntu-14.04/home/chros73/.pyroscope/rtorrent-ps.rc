@@ -235,9 +235,9 @@ method.set_key = ui.column.render, "910:?2C94/2:⣿‰", ((if, ((d.is_partially_
 method.set_key = event.view.show, ~progress_toggle, "branch=\"string.equals=$ui.current_view=, hashing, incomplete, leeching\", ui.column.show=910, ui.column.hide=910"
 ui.column.hide = 910
 
-# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'complete', 'ratio', 'seeding', 'stopped' and 'uploadeddata' views
+# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'complete', 'last_xfer', 'ratio', 'seeding', 'stopped' and 'uploadeddata' views
 method.set_key = ui.column.render, "930:?5C93/5: ☯ ‰ ", ((d.get_ratio_float))
-method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=,complete, ratio, seeding, stopped, uploadeddata\", ui.column.show=930, ui.column.hide=930"
+method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=,complete, last_xfer, ratio, seeding, stopped, uploadeddata\", ui.column.show=930, ui.column.hide=930"
 ui.column.hide = 930
 
 # Disable built-in "Throttle" column (⊘) and replace it with a new one
@@ -274,8 +274,6 @@ schedule2 = view.name,10,20,((view.sort,name))
 # Items are grouped into incomplete, complete in that order. Each group is sorted by last_active field desc.
 branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = started,greater=d.timestamp.last_active="
 branch=pyro.extended=,"view.sort_current = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = started,greater=d.timestamp.last_active="
-##branch=pyro.extended=,"view.sort_new     = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.timestamp.last_xfer=,d.down.rate=,d.up.rate=\"","view.sort_new     = started,greater=d.timestamp.last_active="
-##branch=pyro.extended=,"view.sort_current = started,\"compare=+-+---,d.complete=,d.timestamp.last_active=,d.throttle_name=,d.timestamp.last_xfer=,d.down.rate=,d.up.rate=\"","view.sort_current = started,greater=d.timestamp.last_active="
 # !!! Sorting on Started view requires rtorrent-PS-CH >= v1.3 or rtorrent/rtorrent-PS with the fix !!!
 schedule2 = sort_started,12,20,((view.sort,started))
 
@@ -306,7 +304,7 @@ branch=pyro.extended=,"view.sort_new     = seeding,\"compare=+--,d.throttle_name
 branch=pyro.extended=,"view.sort_current = seeding,\"compare=+--,d.throttle_name=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_current = seeding,greater=d.up.rate="
 schedule2 = sort_filter_seeding,12,20,((view.sort,seeding))
 
-# UI/VIEW: SORT the LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, LAST_XFER desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
+# UI/VIEW: SORT the collapsed LEECHING view (view #9) by DOWNLOAD, UPLOAD SPEED desc, LAST_XFER desc, group by THROTTLE and only show torrents with peers and update it in every 20 seconds
 # Items are grouped into special, slowup group in that order. Each group is sorted by download and then upload speed desc.
 view.filter = leeching,"and={not=$d.complete=,d.peers_connected=}"
 branch=pyro.extended=,"view.sort_new     = leeching,\"compare=+---,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_xfer=\"","view.sort_new     = leeching,greater=d.down.rate="
@@ -383,10 +381,10 @@ branch=pyro.extended=,"view.sort_new     = deletable,\"compare=--+,d.custom=unsa
 branch=pyro.extended=,"view.sort_current = deletable,\"compare=--+,d.custom=unsafe_data,d.throttle_name=,d.custom=tm_loaded\"","view.sort_current = deletable,greater=d.custom=unsafe_data"
 pyro.bind_key = deletable_view, ?, "ui.current_view.set=deletable ;view.sort=deletable"
 
-# UI/VIEW: ADD collapsed LAST_XFER view  (bound to '¬' in rT-PS)     SORT it by LAST_XFER desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc
+# UI/VIEW: ADD collapsed LAST_XFER view  (bound to '¬' in rT-PS)     SORT it by LAST_XFER desc, group by COMPLETE, THROTTLE, DOWNLOAD, UPLOAD SPEED desc, LAST ACTIVE desc
 pyro.collapsed_view.add = last_xfer
-branch=pyro.extended=,"view.sort_new     = last_xfer,\"compare=+-+--,d.complete=,d.timestamp.last_xfer=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_new     = last_xfer,greater=d.timestamp.last_xfer="
-branch=pyro.extended=,"view.sort_current = last_xfer,\"compare=+-+--,d.complete=,d.timestamp.last_xfer=,d.throttle_name=,d.down.rate=,d.up.rate=\"","view.sort_current = last_xfer,greater=d.timestamp.last_xfer="
+branch=pyro.extended=,"view.sort_new     = last_xfer,\"compare=+-+---,d.complete=,d.timestamp.last_xfer=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_active=\"","view.sort_new     = last_xfer,greater=d.timestamp.last_xfer="
+branch=pyro.extended=,"view.sort_current = last_xfer,\"compare=+-+---,d.complete=,d.timestamp.last_xfer=,d.throttle_name=,d.down.rate=,d.up.rate=,d.timestamp.last_active=\"","view.sort_current = last_xfer,greater=d.timestamp.last_xfer="
 pyro.bind_key = last_xfer_view, 0254, "ui.current_view.set=last_xfer"
 
 ### end: Adding new useful views ###
