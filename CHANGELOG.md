@@ -1,5 +1,45 @@
 # Change Log
 
+## [1.0.0-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.0-0.9.7) (2018-09-22)
+**Implemented enhancements:**
+
+- Upgrade rtorrent-ps-ch to current version [\#154](https://github.com/chros73/rtorrent-ps-ch_setup/issues/154)
+- Replace ES File Explorer with X-plore File Manager on Android [\#153](https://github.com/chros73/rtorrent-ps-ch_setup/issues/153)
+- Upgrade pyrocore to current version [\#152](https://github.com/chros73/rtorrent-ps-ch_setup/issues/152)
+- Modify canvas config for canvas v2 [\#151](https://github.com/chros73/rtorrent-ps-ch_setup/issues/151)
+- Backport code snippets from pyrocore and pmp [\#150](https://github.com/chros73/rtorrent-ps-ch_setup/issues/150)
+
+**Merged pull requests:**
+
+- Force get\_public\_ip\_address to use ipv4 [\#147](https://github.com/chros73/rtorrent-ps-ch_setup/pull/147) ([Chaz6](https://github.com/Chaz6))
+
+**Diffstat:**
+
+```
+ README.rst                                                       |   2 +-
+ docs/Additions.rest                                              | 117 +++++++------
+ docs/Android-5.0.md                                              |  12 +-
+ docs/Auto-Scraping.md                                            |  10 +-
+ docs/Home.rest                                                   |  16 +-
+ docs/Installation-instructions.rest                              |   2 +-
+ docs/Windows-8.1.md                                              |   4 +-
+ ubuntu-14.04/home/chros73/.profile                               |   5 +
+ ubuntu-14.04/home/chros73/.pyroscope/color_scheme16.rc           |  23 ---
+ .../home/chros73/.pyroscope/color_scheme256-happy_pastel.rc      |  53 +++---
+ .../home/chros73/.pyroscope/color_scheme256-solarized_blue.rc    |  51 +++---
+ .../chros73/.pyroscope/color_scheme256-solarized_yellow-2.rc     |  23 ---
+ .../home/chros73/.pyroscope/color_scheme256-solarized_yellow.rc  |  51 +++---
+ ubuntu-14.04/home/chros73/.pyroscope/color_scheme256.rc          |  23 ---
+ ubuntu-14.04/home/chros73/.pyroscope/color_scheme8.rc            |  23 ---
+ ubuntu-14.04/home/chros73/.pyroscope/config.ini                  |  77 ++++++++-
+ ubuntu-14.04/home/chros73/.pyroscope/config.py                   | 120 ++++++++++++-
+ ubuntu-14.04/home/chros73/.pyroscope/rt_aliases.sh               |  18 ++
+ ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc              | 262 +++++++++++++++++------------
+ ubuntu-14.04/home/chros73/.rtorrent.rc                           |  13 +-
+ ubuntu-14.04/home/chros73/bin/getElapsedTime.sh                  |  48 ------
+ 21 files changed, 555 insertions(+), 398 deletions(-)
+```
+
 ## [0.9.9-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/0.9.9-0.9.7) (2018-05-06)
 **Implemented enhancements:**
 
