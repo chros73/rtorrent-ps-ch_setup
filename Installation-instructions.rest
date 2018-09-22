@@ -31,7 +31,7 @@ Let's see the hard part :) These instructions will work on a freshly installed m
 Core of the setup
 ^^^^^^^^
 
-Please refer `Debian Install From Source - The Easy Way <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/DebianInstallFromSourceTheEasyWay.rst>`_ to get ``rTorrent-PS-CH`` and ``pyrocore`` utilities up and running in ``tmux`` in 30 minutes.
+Please refer `Debian Install From Source - The Easy Way <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/DebianInstallFromSourceTheEasyWay.rst>`_ to get ``rTorrent-PS-CH`` and ``pyrocore`` utilities up and running in ``tmux`` in 20 minutes.
 
 This will also take care of the major dependencies.
 

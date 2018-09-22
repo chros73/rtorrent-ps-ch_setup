@@ -36,7 +36,7 @@ As it turned out Windows has a feature called font linking to be able to set a f
 
 I suggest to try out 2 fonts at first, `DejaVu Sans Condensed` will be our main font and `Everson Mono` as a fallback:
 
-* `DejaVu Sans Condensed` from http://dejavu-fonts.org/wiki/Download
+* `DejaVu Sans Condensed` from https://dejavu-fonts.github.io/
 * `Everson Mono` from http://www.evertype.com/emono/
 
 Install those fonts on Windows, then run the supplied registry patch: [fontlinking-dejavusanscondensed-eversonmono.reg](https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/windows-8.1/fontlinking-dejavusanscondensed-eversonmono.reg)
@@ -81,4 +81,4 @@ The following settings are suggested for the session:
 Alternatively you can copy the supplied [KiTTY directory](https://github.com/chros73/rtorrent-ps-ch_setup/tree/master/windows-8.1/KiTTY) that has almost all of these settings and it will create a session profile called `rtorrent-ps`.
 
 This is how the final result look like, using solarized-blue theme:
-![Extended Canvas Screenshot](https://raw.githubusercontent.com/chros73/rtorrent-ps-ch/master/docs/_static/img/rTorrent-PS-CH-0.9.6-solarized-blue-kitty-s.png)
+![Extended Canvas Screenshot](https://raw.githubusercontent.com/chros73/rtorrent-ps-ch/master/docs/_static/img/rTorrent-PS-CH-solarized-blue-kitty-s.png)

@@ -9,7 +9,7 @@
 ### Connect via SSH
 
 [JuiceSSH](https://juicessh.com) is a really easily configurable and usable SSH client with `tmux`. Although it has some rendering bugs regarding to Unicode characters, as we can see below, it's still amazing.
-![Extended Canvas Screenshot in JuiceSSH](https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/_static/img/rTorrent-PS-CH-0.9.6-happy-pastel-juicessh-s.png)
+![Extended Canvas Screenshot in JuiceSSH](https://raw.githubusercontent.com/chros73/rtorrent-ps-ch/master/docs/_static/img/rTorrent-PS-CH-happy-pastel-juicessh-s.png)
 
 The following settings under `Settings` are suggested for the session:
 * set "Theme / Colours" to `Solarized Dark`
@@ -45,11 +45,13 @@ You can duplicate the previously created connection if you like for internal use
 
 ### Connect to Samba share
 
-[ES File Explorer](http://www.estrongs.com) can be used for accessing `Samba shares` within our local network as well. Once it accessed to a share then a selected file can be `Open with` by any application (it has a role as a middle layer).
+[X-plore File Manager](https://play.google.com/store/apps/details?id=com.lonelycatgames.Xplore&hl=en_US) can be used for accessing `Samba shares` within our local network as well. Once it accessed to a share then a selected file can be `Open with` by any application (it has a role as a middle layer).
 
-Set up new share under `Network` tab using `New` command in `|` at top right:
-* set "Server" to "ip/sharename", e.g. `192.168.1.8/wd3`
+`Add a new server` under `LAN` at the left side of the app:
+* set a "Label" (display name)
+* set "Server" to "ip", e.g. `192.168.1.8`
+* set "Path" to "sharename", e.g. `wd3`
 * set "Username", "Password"
-* set a "Display name"
+* enable `SMB v2`
 
 That's it, it should work. If not and you are sure that it should (e.g. there's no firewall blocking, etc.) then ping the IP of the Ubuntu machine from a terminal app (I'm not kidding :) ) and try to connect to it again.
