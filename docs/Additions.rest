@@ -13,15 +13,15 @@ This is how `standard views in rTorrent <https://github.com/rakshasa/rtorrent/wi
 Key  View            Updated  Collapsed  Sorting, filtering properties
 ===  ==============  =======  =========  =============================
  1   ``main``        20 sec   *          sorted by ``downloaded time`` desc
- 2   ``name``        20 sec   *          sorted by ``name``
- 3   ``started``     20 sec   *          sorted by ``last active`` desc, group by ``complete``, ``throttle``, ``download and upload speed`` desc
- 4   ``stopped``              *          sorted by ``downloaded time`` desc, group by ``complete``, ``throttle``
- 5   ``complete``             *          sorted by ``completed time`` desc
- 6   ``incomplete``           *          sorted by ``download and upload speed`` desc, group by ``open`` desc, ``throttle``
- 7   ``hashing``                         sorted by ``loaded time`` desc, group by ``throttle``
- 8   ``seeding``     20 sec   *          sorted by ``upload speed`` desc, group by ``throttle``, only torrents with peers are shown
- 9   ``leeching``    20 sec              sorted by ``download and upload speed`` desc, group by ``throttle``, only torrents with peers are shown
- 0   ``active``      20 sec   *          sorted by ``download and upload speed`` desc, group by ``open`` desc, ``throttle``, ``complete`` desc, only active or incomplete torrents are shown
+ 2   ``name``        20 sec   *          sorted by ``name``, ``throttle``, ``tracker alias``
+ 3   ``started``     20 sec   *          sorted by ``last active time`` desc, group by ``complete``, ``throttle``, ``download and upload speed`` desc, ``last xfer time`` desc
+ 4   ``stopped``              *          sorted by ``loaded time`` desc, group by ``complete``, ``throttle``
+ 5   ``complete``             *          sorted by ``completed/loaded/downloaded time`` desc
+ 6   ``incomplete``           *          sorted by ``download and upload speed`` desc, group by ``open`` desc, ``throttle``, ``last xfer time`` desc
+ 7   ``hashing``                         sorted by ``loaded time``, group by ``throttle``
+ 8   ``seeding``     20 sec   *          sorted by ``upload speed`` desc, group by ``throttle``, ``last xfer time`` desc, only torrents with peers are shown
+ 9   ``leeching``    20 sec   *          sorted by ``download and upload speed`` desc, group by ``throttle``, ``last xfer time`` desc, only torrents with peers are shown
+ 0   ``active``      20 sec   *          sorted by ``download and upload speed`` desc, group by ``open`` desc, ``throttle``, ``complete`` desc, ``last xfer time`` desc, only active or incomplete torrents are shown
 ===  ==============  =======  =========  =============================
 
 
@@ -34,29 +34,46 @@ There are extra views defined along with the `standard views in rTorrent <https:
 Key  View              Collapsed  Sorting, filtering properties
 ===  ================  =========  =============================
  ^   ``rtcontrol``     *          
- !   ``messages``      *          sorted by ``downloaded time``, group by ``throttle``, ``message``
- t   ``trackers``      *          sorted by ``downloaded time`` desc, group by ``domain``
+ !   ``messages``      *          sorted by ``completed/loaded/downloaded time`` desc, group by ``throttle``, ``message`` desc
+ t   ``trackers``      *          sorted by ``last scrape time`` desc, group by ``tracker alias``
  :   ``tagged``        *          
- <   ``datasize``      *          sorted by ``selected data size`` desc
- >   ``uploadeddata``  *          sorted by ``uploaded data`` desc, ``downloaded time`` desc
- %   ``ratio``         *          sorted by ``ratio`` desc, ``uploaded data`` desc, ``downloaded time`` desc
+ <   ``datasize``      *          sorted by ``selected data size`` desc, ``completed/loaded/downloaded time`` desc
+ >   ``uploadeddata``  *          sorted by ``uploaded data`` desc, ``completed/loaded/downloaded time``  desc
+ %   ``ratio``         *          sorted by ``ratio`` desc, ``uploaded data`` desc, ``completed/loaded/downloaded time``  desc
  @   ``category``      *          sorted by ``category``, ``name``
- ?   ``deletable``     *          sorted by ``downloaded time``, group by ``unsafe_data`` desc, ``throttle`` desc, only deletable torrents are shown
+ ?   ``deletable``     *          sorted by ``loaded time`` desc, group by ``unsafe_data`` desc, ``throttle`` desc, only deletable torrents are shown
+ ¬   ``last_xfer``     *          sorted by , ``last xfer time`` desc, group by ``complete``, ``throttle``, ``download and upload speed`` desc, ``last active time`` desc
 ===  ================  =========  =============================
 
 
 Extra Columns on Extended Canvas
 --------------------------------
 
-The following extra columns are modified / added on the fully customizable `extended canvas <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/Manual.rst#built-in-columns-in-the-collapsed-display>`_, since in ``rTorrent-PS-CH v1.7.0-0.9.7`` all the columns are configurable (can be disabled, overridden or new ones added on-the-fly) except for "Name" and "Tracker Domain" columns.
+The following extra columns are modified / added on the fully customizable `extended canvas <https://github.com/chros73/rtorrent-ps-ch/blob/master/docs/Manual.rst#built-in-columns-in-the-collapsed-display>`_, since in ``rTorrent-PS-CH v1.7.0-0.9.7`` all the columns are configurable (can be disabled or new ones added on-the-fly) except for "Name" and "Tracker Domain" columns. The configuration for the extra columns can be found at the `Extra column definitions <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc#L198>`_ section of ``rtorrent-ps.rc``.
 
-==============  ====================================  ===========
- Column          Key                                  Description
-==============  ====================================  ===========
- ⊘              "200:1:⊘"                             Throttle (none = global, ∞ = NULL, ⊼ = slowup, ⊻ = tardyup throttle)
- ◎              "230:1:◎"                             Unsafe-data (none = safe data, ⊘ = unsafe data, ⊗ = unsafe data with delqueue)
- ⊕              "250:1:⊕"                             Data directory (none = base path entry is missing, otherwise the first letter of the name of data directory)
-==============  ====================================  ===========
+.. |_| unicode:: 0xA0
+   :trim:
+
+.. table:: This is my table
+    :widths: 5 35 60
+
+==============  ================================================  ===========
+ Column          Key                                              Description
+==============  ================================================  ===========
+ ⟲ ⇅            "650:?5C73/5: |_| ⟲ |_| ⇅ |_|"                    ETA / last xfer time (*sacrificial*), only on: ``active``, ``incomplete``, ``last_xfer``, ``leeching``, ``seeding`` and ``started`` views
+ ◷ ↺            "805:?5C21/1C25/1C21/2C25/1: |_| ◷ |_| ↺ |_|"     Elapsed time (time the download took) (*sacrificial*), hidden by default, can be toggled with ``_`` key
+ ≣              "810:?4C9/3C21/1: |_| ≣ |_| |_| "                  Chunk Size (*sacrificial*), hidden by default, can be toggled with ``_`` key
+ ◷ ⤵            "812:?5C21/1C20/1C21/2C20/1: |_| ◷ |_| ⤵ |_|"     Downloaded time (*sacrificial*), only on: ``main`` view
+ ◷ ⤴            "816:?5C21/1C20/1C21/2C20/1: |_| ◷ |_| ⤴ |_|"     Loaded time (*sacrificial*), only on: ``deletable``, ``hashing`` and ``stopped`` views
+ ⟲ ↺⤴⤵          "820:?5C21/1C20/1C21/2C20/1:⟲ |_| ↺⤴⤵"            Last scrape time (*sacrificial*), only on: ``trackers`` view
+ Domain         "830:?14:Domain"                                    Domain (*sacrificial*), only on: ``trackers`` view
+ ⣿‰             "910:?2C94/2:⣿‰"                                    Progress (numeric) (*sacrificial*), only on: ``hashing``, ``incomplete`` and ``leeching`` views
+ ☯ ‰            "930:?5C93/5: |_| ☯ |_| ‰ |_|"                      Ratio (numeric) (*sacrificial*), only on: ``complete``, ``last_xfer``, ``ratio``, ``seeding``, ``stopped`` and ``uploadeddata`` views
+ ⊘              "951:1C72/1:⊘"                                    Throttle (none = global, ∞ = NULL, ⊼ = slowup, ⊻ = tardyup throttle)
+ ◎              "960:1C71/1:◎"                                    Unsafe-data (none = safe data, ⊘ = unsafe data, ⊗ = unsafe data with delqueue)
+ ⊕              "970:1:⊕"                                         Data directory (none = base path entry is missing, otherwise the first letter of the name of data directory)
+==============  ================================================  ===========
+
 
 
 Extra Keyboard shortcuts in rTorrent
@@ -67,6 +84,10 @@ There are extra keyboard shortcuts defined along with the `original ones in rTor
 ====  ========================================
 Key   Functionality
 ====  ========================================
+ \*   toggle collapsed/expanded display (defined in ``rTorrent-PS-CH``)
+  /   toggle sacrificial columns manually (defined in ``rTorrent-PS-CH``)
+ ^F   search for a term in the name of download (defined in ``rTorrent-PS-CH``)
+ F3   search next (defined in ``rTorrent-PS-CH``)
  F    subfilter the current view based on the name of downloads by entering a regexp (capital ``f``) (defined in ``rTorrent-PS-CH``)
 ↑, ↓  prev, next in input history (at any input prompt, e.g. at ``^x``) (defined in ``rTorrent-PS-CH``)
 ESC   exit from any input prompt (e.g. at ``^x``) (defined in ``rTorrent-PS-CH``)
@@ -75,8 +96,7 @@ ESC   exit from any input prompt (e.g. at ``^x``) (defined in ``rTorrent-PS-CH``
  .    toggle tag for a download item
  T    clear ``tag`` view
  ^g   display tags for a download item
- \*   toggle collapsed/expanded display
- /    toggle visibility of columns on collapsed display
+ _    toggle visibility of specified columns on collapsed display
  \|   toggle selectable themes
  =    toggle autoscale network history
 home  Home
@@ -164,6 +184,9 @@ pyro.[log_archival|log_retention].days
 ^^^^^^^^^^^
 Sets archival and retention delay in days for log rotation if it's enabled.
 
+[system.]startup_time=
+^^^^^^^
+A constant value that holds the ``system.time`` when the client was started.
 
 
 Extra Attributes in rTorrent config files
@@ -281,6 +304,10 @@ d.get_ratio_float=
 ^^^^^^^^^^^^^^
 Returns d.ratio as float formatted string.
 
+d.get_progress_num=
+^^^^^^^^^^^^^^^^^^
+Returns progress in numeric format.
+
 d.modify_slots_both=
 ^^^^^^^^^^^^^^^^^^
 Modifies the ``peers_min``, ``peers_max``, ``max_uploads`` values of a torrent for both downloading and uploading based on which group (special or not) it belongs to.
@@ -291,17 +318,21 @@ Sends scrape request for a torrent, sets its ``tm_last_scrape`` timestamp custom
 
 It won't affect the operation of rtorrent, but nice to have these values updated. This info is only updated when rtorrent starts or a torrent is added by default. Although this setup regularly updates scrape information for all torrents (even stopped ones), sometimes this command can be useful.
 
-d.last_active=
+d.timestamp.downloaded=
 ^^^^^^^^^^^^^^
-Returns the value of ``last_active`` timestamp custom field of a torrent or current timestamp if it has peers.
+The modification time of the ``d.tied_to_file`` or else ``system.time``. This is set once when an item is newly added to the download list, so a later ``d.delete_tied`` does not change it.
 
-d.last_xfer=
+d.timestamp.last_active=
 ^^^^^^^^^^^^^^
-Returns the value of ``last_xfer`` timestamp custom field of a torrent or current timestamp if it transfer data.
+Last time any peer was connected. This is checked at least once per minute, but very short connections might not be recorded. Redefine the ``pyro_update_last_active`` schedule if you want the check to run at a different frequency.
 
-get_elapsed_time=
-^^^^^^^
-Returns elapsed time between 2 timestamps in the form of ``6 years, 5 months, 18 days, 02:40:00``. Year/month info isn't shown if their value is 0.
+d.timestamp.last_xfer=
+^^^^^^^^^^^^^^
+Last time any data was transferred for this item. ``pyro.last_xfer.min_rate`` sets the threshold in bytes below which activity is not counted, and defaults to ``5000``. Do not set this too low, since there is always some accounting traffic on an item, when peers connect and then are not interested in transferring actual data. Checking is done several times per minute, but very short transfer bursts might not be recorded. Redefine the ``pyro_update_last_xfer`` schedule if you want the check to run at a different frequency.
+
+d.last_xfer.is_active=
+^^^^^^^^^^^^^^
+Checks that threshold against both current upstream and downstream traffic.
 
 pyro.print_help=
 ^^^^^^^
@@ -314,18 +345,6 @@ Switches current view to ``messages`` and prints the size of the view.
 pyro.view.toggle_visible=view_name
 ^^^^^^^
 Sets view visible.
-
-ui.columns.enable=
-^^^^^^^
-Enables the visibility of certain columns.
-
-ui.columns.disable=
-^^^^^^^
-Disables the visibility of certain columns.
-
-ui.columns.toggle=
-^^^^^^^
-Toggles visibility of certain columns.
 
 uptime=
 ^^^^^^^
@@ -344,6 +363,10 @@ Gets current uprate in KB for special group.
 get_total_rotating_size=
 ^^^^^^^
 Gets total size of rotating and unsafe downloads.
+
+os.path.mtime=/path/to/file[,cmd]
+^^^^^^^^^^^^
+Gets mtime of a path or return 2nd argument when path does not exist.
 
 pyro.import=rtconfig_filename
 ^^^^^^^^^^^^
@@ -419,12 +442,6 @@ doBackup.sh
 Backup session directory of rtorrent.
 
 Usage: ``doBackup.sh``
-
-getElapsedTime.sh
-^^^^^^^^^^^^
-Calculates and prints elapsed time between 2 timestamps in the form of ``6 years, 5 months, 18 days, 02:40:00``. Year/month info isn't shown if their value is 0. It's used by ``get_elapsed_time=`` and ``uptime=`` methods in rtorrent.
-
-Usage: ``getElapsedTime.sh <<current_timestamp>> <<startup_timestamp>>``
 
 queueTorrent.sh
 ^^^^^^^^^^^^^^^
