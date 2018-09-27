@@ -30,9 +30,14 @@ method.insert = quit, simple, "execute.throw=kill,-INT,(system.pid)"
 # COMMAND: Provide dummy multi-methods for plain rTorrent
 branch=(not, (pyro.extended)), ((method.insert, ui.column.render, multi|rlookup|static))
 
-# COMMAND: Return startup time (can be used to calculate uptime)
-method.insert = system.startup_time, value|const, $system.time=
+# COMMAND/EVENT: Return startup time (can be used to calculate uptime)
+method.insert   = system.startup_time, value, 0
 method.redirect = startup_time, system.startup_time
+method.set_key  = event.system.startup_done, !!set_startup_time, {(branch, ((not,((system.startup_time)))), ((system.startup_time.set, (system.time))) )}
+
+# COMMAND/EVENT: Return shutdown time
+method.insert = system.shutdown_time, value|private, 0
+method.set_key = event.system.shutdown, !!set_shutdown_time, {(branch, ((not,((system.shutdown_time)))), ((system.shutdown_time.set, (system.time))) )}
 
 # COMMAND: Get mtime of a path, return 2nd argument when path does not exist
 method.insert = os.path.mtime, simple, "execute.capture = sh, -c, \"echo -n \$(stat -c '%Y' \\\"$1\\\" 2>/dev/null || echo \\\"$2\\\")\", getmtime, (argument.0), (argument.1)"
@@ -41,7 +46,7 @@ method.insert = os.path.mtime, simple, "execute.capture = sh, -c, \"echo -n \$(s
 method.insert = pyro._elapsed_time, private|simple, "convert.time_delta=(value, (argument.0))"
 
 # COMMAND: Returns uptime
-method.insert = uptime, simple, "print=\"Up: \", (cat, (pyro._elapsed_time,(startup_time)))"
+method.insert = uptime, simple, "print=\"Up: \", (cat, (pyro._elapsed_time,(system.startup_time)))"
 
 # COMMAND: Returns d.ratio as float formatted string
 method.insert = d.get_ratio_formatted, private|simple, "string.lpad=(string.substr, (cat, (d.ratio)), 0, (math.sub, (string.len, (cat, (d.ratio))), 1)), 3, \"0\""
@@ -190,16 +195,16 @@ method.set_key = event.download.finished,            ~log,  ((d.print.status, "C
 method.set_key = event.download.hash_done,           !log,  {(branch, ((and,((d.complete)),((not,((d.custom,tm_completed)))))), ((d.print.status, "HASHCHKED")) )}
 method.set_key = event.download.partially_restarted, ~log,  ((d.print.status, "RESTARTED"))
 method.set_key = event.download.erased,              ~log,  ((d.print.status, "DELETED  "))
-schedule2      = log_startup_time, 1, 0, ((print, "Startup time: ", ((hrf_time, ((cat, (startup_time) )) )) ))
+method.set_key = event.system.startup_done,          ~log,  ((print, "Startup time: ", ((hrf_time, ((cat, ((system.startup_time)) )) )) ))
 
 ### end: UI commands ###
 
 
 ### begin: Extra column definitions ###
 
-# Add "ETA/last_xfer time" sacrificial column (⟲ ⇅) only onto 'active', 'incomplete', 'last_xfer', 'leeching', 'seeding' and 'started' views
+# Add "ETA/last_xfer time" sacrificial column (⟲ ⇅) only onto 'incomplete', 'last_xfer' and 'leeching' views
 method.set_key = ui.column.render, "650:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_partially_done)), ((d.eta.time)), ((if, ((d.up.rate)), ((cat, "   0”")), ((convert.time_delta, ((value, ((d.custom, last_xfer)) )) )) )) ))
-method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, active, incomplete, last_xfer, leeching, seeding, started\", ui.column.show=650, ui.column.hide=650"
+method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, incomplete, last_xfer, leeching\", ui.column.show=650, ui.column.hide=650"
 ui.column.hide = 650
 
 # Add "Elapsed time" (time the download took) sacrificial column (◷ ↺), hidden by default
@@ -249,6 +254,27 @@ method.set_key = ui.column.render, "960:1C71/1:◎", ((string.map, ((cat, ((d.cu
 
 # Add "Data directory" column (⊕) (first character of parent directory)
 method.set_key = ui.column.render, "970:1:⊕", ((d.parent_dir))
+
+# Display "ETA/last_xfer" and "numeric Progress" columns only on 'active' and 'started' views if there's any started incomplete download
+# helper method: check whether a download is started and incomplete
+method.insert = d.is_started_incomplete, simple|private, "branch=\"and={d.incomplete=, d.state=}\", cat=1, cat=0"
+# helper method: count the number of started incomplete downloads
+method.insert = pyro.view.started_incomplete.count, simple|private, "math.add=(d.multicall2, default, d.is_started_incomplete=)"
+# helper method: toggle visibility of ETA/last_xfer and numeric Progress columns if there's any started incomplete download
+method.insert = pyro.ui.column.toggle_eta_progress, simple|private, "branch=pyro.view.started_incomplete.count=, \"ui.column.show=650,910\", \"ui.column.hide=650,910\""
+# helper method: check whether a view is 'active' or 'started' view
+method.insert = pyro.view.is_as_view, simple|private, "string.equals=$ui.current_view=, active, started"
+# helper method: toggle/show/hide ETA/last_xfer and numeric Progress columns only on 'active' and 'started' views
+method.insert = pyro.ui.column.toggle_on_as_views, simple|private, "branch=pyro.view.is_as_view=, pyro.ui.column.toggle_eta_progress="
+method.insert = pyro.ui.column.show_on_as_views,   simple|private, "branch=pyro.view.is_as_view=, \"ui.column.show=650,910\""
+# EVENTS: Toggle ETA/last_xfer and numeric Progress columns only on 'active' and 'started' views during the following events
+method.set_key = event.download.partially_restarted, ~~eta_progress_toggle,  ((pyro.ui.column.show_on_as_views))
+method.set_key = event.download.resumed,             ~~eta_progress_toggle,  {(branch, ((and,((d.incomplete)),((d.state)))), ((pyro.ui.column.show_on_as_views)) )}
+method.set_key = event.download.hash_queued,         ~~eta_progress_toggle,  {(branch, ((and,((d.incomplete)),((d.state)))), ((pyro.ui.column.show_on_as_views)) )}
+method.set_key = event.download.hash_done,           !!eta_progress_toggle,  {(branch, ((and,((not,((d.custom,tm_completed)),((d.complete)))))), ((pyro.ui.column.toggle_on_as_views)) )}
+method.set_key = event.download.paused,              ~~eta_progress_toggle,  {(branch, ((not,((system.shutdown_time)))), ((pyro.ui.column.toggle_on_as_views)) )}
+method.set_key = event.download.finished,            ~~eta_progress_toggle,  ((pyro.ui.column.toggle_on_as_views))
+method.set_key = event.view.show,                    ~~eta_progress_toggle,  {(branch, ((system.startup_time)), ((pyro.ui.column.toggle_on_as_views)) )}
 
 ### end: Extra column definitions ###
 
