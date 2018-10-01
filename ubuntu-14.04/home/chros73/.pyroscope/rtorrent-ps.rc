@@ -5,15 +5,16 @@
 ##### begin: Defining and including color themes #####
 
 # COMMAND: Defining selectable color theme configs
-method.insert = cfg.theme.0, string|const|private, (cat,"color_scheme256-happy_pastel.rc")
-method.insert = cfg.theme.1, string|const|private, (cat,"color_scheme256-solarized_yellow.rc")
-method.insert = cfg.theme.2, string|const|private, (cat,"color_scheme256-solarized_blue.rc")
+method.insert = cfg.themes, list, { "color_scheme256-happy_pastel.rc", \
+                                    "color_scheme256-solarized_yellow.rc", \
+                                    "color_scheme256-solarized_blue.rc" }
 
-# COMMAND: Setting default theme config
-method.insert = pyro.theme.selected, string|private, (cat,(cfg.theme.0))
+# COMMAND: Defining index of default color theme config
+method.insert = cfg.themes.idx, value|private, 0
 
 # IMPORT: Import default color theme from external config
-pyro.import = (pyro.theme.selected)
+method.insert = pyro._themes.import, simple|private, "pyro.import=(array.at, (cfg.themes), (cfg.themes.idx))"
+pyro._themes.import=
 
 ##### end: Defining and including color themes #####
 
@@ -453,11 +454,10 @@ pyro.bind_key = send_scrape, #, "d.last_scrape.send_set="
 method.insert = d.toggle_delqueue, simple|private, "branch=\"equal={d.custom=unsafe_data,cat=2}\",d.remove_from_delqueue=,\"branch=d.custom=unsafe_data,d.add_to_delqueue=,d.unsafe_data.set=1\""
 pyro.bind_key = toggle_delqueue, \}, "d.toggle_delqueue=; ui.current_view.set = (ui.current_view)"
 
-# UI/KEY: Bind '|' to TOGGLE selectable THEMES defined at the top of this config file (Note: if a new theme is added to / removed from the available selection then this logic has to be modified as well!)
-method.insert = pyro.theme.store_set, simple|private, "pyro.import=$cat=$argument.0= ;pyro.theme.selected.set=$argument.0="
-method.insert = pyro.theme.toggle1, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.1=}\",pyro.theme.store_set=$cfg.theme.2=,pyro.theme.store_set=$cfg.theme.0="
-method.insert = pyro.theme.toggle0, simple|private, "branch=\"equal={pyro.theme.selected=,cfg.theme.0=}\",pyro.theme.store_set=$cfg.theme.1=,pyro.theme.toggle1="
-pyro.bind_key = toggle_theme, |, "pyro.theme.toggle0=; ui.current_view.set = (ui.current_view)"
+# UI/KEY: Bind '|' to TOGGLE selectable THEMES defined at the top of this config file
+method.insert = pyro._themes.idx.max, simple|private, "math.sub=(array.size, (cfg.themes)), 1"
+method.insert = pyro._themes.next,    simple|private, "branch=\"less={cfg.themes.idx=,pyro._themes.idx.max=}\", \"cfg.themes.idx.set=(math.add, (cfg.themes.idx), 1)\", cfg.themes.idx.set=0"
+pyro.bind_key = toggle_themes, |, "pyro._themes.next=; pyro._themes.import=; ui.current_view.set=(ui.current_view)"
 
 # UI/KEY: Bind '^g' to DISPLAY the TAGS of the current download
 pyro.bind_key = show_tags, ^G, "tag.show="
