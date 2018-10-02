@@ -208,11 +208,11 @@ method.set_key = ui.column.render, "650:?5C73/5: ⟲ ⇅ ", ((if, ((d.is_not_par
 method.set_key = event.view.show, ~eta_toggle, "branch=\"string.equals=$ui.current_view=, last_xfer\", ui.column.show=650"
 ui.column.hide = 650
 
-# Add "Elapsed time" (time the download took) sacrificial column (◷ ↺), hidden by default
+# Add "Elapsed time" (time the download took) sacrificial, toggleable column (◷ ↺), hidden by default
 method.set_key = ui.column.render, "805:?5C21/1C25/1C21/2C25/1: ◷ ↺ ", ((convert.time_delta, ((value, ((d.custom, tm_completed)) )), ((value, ((d.custom.if_z, tm_started, ((d.custom, tm_loaded)) )) )) ))
 ui.column.hide = 805
 
-# Add "Chunk Size" sacrificial column (≣), hidden by default
+# Add "Chunk Size" sacrificial, toggleable column (≣), hidden by default
 method.set_key = ui.column.render, "810:?4C9/3C21/1: ≣  ", ((convert.human_size, ((d.chunk_size)) ))
 ui.column.hide = 810
 
@@ -241,9 +241,10 @@ method.set_key = ui.column.render, "910:?2C94/2:⣿‰", ((if, ((d.is_partially_
 method.set_key = event.view.show, ~progress_toggle, "branch=\"string.equals=$ui.current_view=, hashing\", ui.column.show=910"
 ui.column.hide = 910
 
-# Add "Ratio (numeric)" sacrificial column (☯ ‰) only onto 'complete', 'last_xfer', 'ratio', 'seeding', 'stopped' and 'uploadeddata' views
+# Add "Ratio (numeric)" sacrificial, toggleable column (☯ ‰) onto 'complete', 'last_xfer', 'ratio', 'seeding', 'stopped' and 'uploadeddata' views
 method.set_key = ui.column.render, "930:?5C93/5: ☯ ‰ ", ((d.get_ratio_float))
-method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=,complete, last_xfer, ratio, seeding, stopped, uploadeddata\", ui.column.show=930, ui.column.hide=930"
+method.insert  = ui.column.eta.check, simple|private, "branch=ui.column.is_hidden=805, ui.column.hide=930, ui.column.show=930"
+method.set_key = event.view.show, ~ratio_toggle, "branch=\"string.equals=$ui.current_view=,complete, last_xfer, ratio, seeding, stopped, uploadeddata\", ui.column.show=930, ui.column.eta.check="
 ui.column.hide = 930
 
 # Disable built-in "Throttle" column (⊘) and replace it with a new one
@@ -255,6 +256,7 @@ method.set_key = ui.column.render, "960:1C71/1:◎", ((string.map, ((cat, ((d.cu
 
 # Add "Data directory" column (⊕) (first character of parent directory)
 method.set_key = ui.column.render, "970:1:⊕", ((d.parent_dir))
+
 
 # Toggle "ETA/last_xfer", "numeric Progress" and "Progress" columns on 'active', 'incomplete', 'leeching' and 'started' views if there's any started incomplete download
 # helper method: show/hide 3 dynamic columns
@@ -475,8 +477,8 @@ pyro.bind_key = show_quick_help, 0412, "pyro.print_help="
 method.insert = pyro._print_noquit, simple|private, "print=\"^Q is disabled, use '^X quit='\""
 pyro.bind_key = no_quit, ^q, "pyro._print_noquit="
 
-# UI/KEY: Bind '_' to TOGGLE columns on canvas: "chunk size", "elapsed time"
-method.insert = pmb._toggle_columns, simple|private, "branch=\"or={ui.column.is_hidden=805,ui.column.is_hidden=810}\", \"ui.column.show=805,810\", \"ui.column.hide=805,810\"; ui.current_view.set = (ui.current_view)"
+# UI/KEY: Bind '_' to TOGGLE columns on canvas: "chunk size", "elapsed time", "numeric ratio"
+method.insert = pmb._toggle_columns, simple|private, "branch=\"or={ui.column.is_hidden=805,ui.column.is_hidden=810,ui.column.is_hidden=930}\", \"ui.column.show=805,810,930\", \"ui.column.hide=805,810,930\"; ui.current_view.set = (ui.current_view)"
 pyro.bind_key = toggle_columns, _, "pmb._toggle_columns="
 
 ### end: Generic keybindings and attributes ###
