@@ -60,15 +60,15 @@ The following extra columns are modified / added on the fully customizable `exte
 ==============  ================================================  ===========
  Column          Key                                              Description
 ==============  ================================================  ===========
- ⟲ ⇅            "650:?5C73/5: |_| ⟲ |_| ⇅ |_|"                    ETA / last xfer time (*sacrificial*), only on: ``active``, ``incomplete``, ``last_xfer``, ``leeching``, ``seeding`` and ``started`` views
+ ⟲ ⇅            "650:?5C73/5: |_| ⟲ |_| ⇅ |_|"                    ETA / last xfer time (*sacrificial*), on: ``last_xfer`` view; auto-toggled on: ``active``, ``incomplete``, ``leeching`` and ``started`` views only if there's any started incomplete download
  ◷ ↺            "805:?5C21/1C25/1C21/2C25/1: |_| ◷ |_| ↺ |_|"     Elapsed time (time the download took) (*sacrificial*), hidden by default, can be toggled with ``_`` key
  ≣              "810:?4C9/3C21/1: |_| ≣ |_| |_| "                  Chunk Size (*sacrificial*), hidden by default, can be toggled with ``_`` key
  ◷ ⤵            "812:?5C21/1C20/1C21/2C20/1: |_| ◷ |_| ⤵ |_|"     Downloaded time (*sacrificial*), only on: ``main`` view
  ◷ ⤴            "816:?5C21/1C20/1C21/2C20/1: |_| ◷ |_| ⤴ |_|"     Loaded time (*sacrificial*), only on: ``deletable``, ``hashing`` and ``stopped`` views
  ⟲ ↺⤴⤵          "820:?5C21/1C20/1C21/2C20/1:⟲ |_| ↺⤴⤵"            Last scrape time (*sacrificial*), only on: ``trackers`` view
  Domain         "830:?14:Domain"                                    Domain (*sacrificial*), only on: ``trackers`` view
- ⣿‰             "910:?2C94/2:⣿‰"                                    Progress (numeric) (*sacrificial*), only on: ``hashing``, ``incomplete`` and ``leeching`` views
- ☯ ‰            "930:?5C93/5: |_| ☯ |_| ‰ |_|"                      Ratio (numeric) (*sacrificial*), only on: ``complete``, ``last_xfer``, ``ratio``, ``seeding``, ``stopped`` and ``uploadeddata`` views
+ ⣿‰             "910:?2C94/2:⣿‰"                                    Progress (numeric) (*sacrificial*), on: ``hashing`` view;  auto-toggled (and replaces built-in 'Progress' column) on: ``active``, ``incomplete``, ``leeching`` and ``started`` views only if there's any started incomplete download
+ ☯ ‰            "930:?5C93/5: |_| ☯ |_| ‰ |_|"                      Ratio (numeric) (*sacrificial*), on: ``complete``, ``last_xfer``, ``ratio``, ``seeding``, ``stopped`` and ``uploadeddata`` views, can be toggled with ``_`` key
  ⊘              "951:1C72/1:⊘"                                    Throttle (none = global, ∞ = NULL, ⊼ = slowup, ⊻ = tardyup throttle)
  ◎              "960:1C71/1:◎"                                    Unsafe-data (none = safe data, ⊘ = unsafe data, ⊗ = unsafe data with delqueue)
  ⊕              "970:1:⊕"                                         Data directory (none = base path entry is missing, otherwise the first letter of the name of data directory)
@@ -96,7 +96,7 @@ ESC   exit from any input prompt (e.g. at ``^x``) (defined in ``rTorrent-PS-CH``
  .    toggle tag for a download item
  T    clear ``tag`` view
  ^g   display tags for a download item
- _    toggle visibility of specified columns on collapsed display
+ _    toggle visibility of specified columns ('Elapsed time', 'Chunk size', 'Ratio (numeric)') on collapsed display
  \|   toggle selectable themes
  =    toggle autoscale network history
 home  Home
