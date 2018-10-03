@@ -1,5 +1,21 @@
 # Change Log
 
+## [1.0.1-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.1-0.9.7) (2018-10-03)
+**Implemented enhancements:**
+
+- Upgrade rtorrent-ps-ch to current version [\#158](https://github.com/chros73/rtorrent-ps-ch_setup/issues/158)
+- Add 'numeric ratio' column to the manually toggleable columns [\#157](https://github.com/chros73/rtorrent-ps-ch_setup/issues/157)
+- Simplify toggling color schemes in rtorrent config [\#156](https://github.com/chros73/rtorrent-ps-ch_setup/issues/156)
+- Auto toggle visibility of 'ETA/last\_xfer' and 'numeric Progress' columns on 'active' and 'started' views [\#155](https://github.com/chros73/rtorrent-ps-ch_setup/issues/155)
+
+**Diffstat:**
+
+```
+ docs/Additions.rest                                 |  8 ++--
+ docs/Home.rest                                      |  4 +-
+ ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc | 81 ++++++++++++++++++++++----------
+```
+
 ## [1.0.0-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.0-0.9.7) (2018-09-22)
 **Implemented enhancements:**
 
