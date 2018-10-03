@@ -10,10 +10,11 @@
 
 **Diffstat:**
 
-```
+```vhdl
  docs/Additions.rest                                 |  8 ++--
  docs/Home.rest                                      |  4 +-
  ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc | 81 ++++++++++++++++++++++----------
+ 3 files changed, 62 insertions(+), 31 deletions(-)
 ```
 
 ## [1.0.0-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.0-0.9.7) (2018-09-22)
@@ -31,7 +32,7 @@
 
 **Diffstat:**
 
-```
+```vhdl
  README.rst                                                       |   2 +-
  docs/Additions.rest                                              | 117 +++++++------
  docs/Android-5.0.md                                              |  12 +-
