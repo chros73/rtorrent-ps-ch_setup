@@ -63,7 +63,8 @@ method.insert = check_object.error.print, simple|private, "print=\"$cat=Error\\\
 
 
 ### begin: Delete data (dir/files) for torrents that have been removed either from the UI (CTRL+dd) or the tied metafile has been removed manually or by a script, ###
-#     only for torrents that have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents) and their data dir/file exist and which are not partially done magnet-meta downloads.
+#     only for torrents that have the unsafe_data custom field set or which are in the incmoplete dir (useful to delete data of stucked torrents)
+#     and their data dir/file exist and which are not partially done magnet-meta downloads and which were not magnet downloads.
 #     This allows rotating capability.
 # Removes torrents from client when its metafile (torrent file) has been deleted manually or by a script. If inotify isn't used: Run it every 5 seconds, otherwise run only once when rtorrent is started.
 #temp#branch = ((cfg.inotify.use)), ((schedule2, untied_torrents, 99, 0, ((untied.remove)))), ((schedule2, untied_torrents, 8, 10, ((untied.remove))))
@@ -78,10 +79,10 @@ method.insert = d.remove_data.error.print, simple|private, "print=\"$cat=ERROR\\
 method.insert = d.remove_data.helper, simple|private, "d.remove_symlink=;execute2={rm,-rf,--,$d.data_path=}"
 # Deletes data of a torrent and removes symlink for its metafile  (calls 'd.remove_data.helper' if data dir/file of a torrent exist and its data is not bogus or prints out an error message)
 method.insert = d.remove_data, simple, "branch=\"and={d.name=,d.data_full_path_exist=,\\\"or=d.compare_incomplete_path=,d.compare_data_path=\\\"}\",d.remove_data.helper=,d.remove_data.error.print=$d.data_path="
-# Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir and their data dir/file exist and which are not partially done magnet-meta downloads.
+# Deletes data of a torrent and removes symlink for its metafile if a torrent has been removed (either from UI or manually) for torrents that have unsafe_data custom field set or which are in the incmoplete dir and their data dir/file exist and which are not partially done magnet-meta downloads and which were not magnet downloads.
 # !!! 'd.is_meta' command requires rtorrent-PS-CH >= v1.4 or rtorrent/rtorrent-PS with the patch !!!
-#temp#method.set_key = event.download.erased, remove_files, "branch=\"and={\\\"or=not=$d.is_meta=,d.is_not_partially_done=\\\",\\\"or=d.custom=unsafe_data,d.compare_incomplete_path=\\\"}\",d.remove_data="
-method.set_key = event.download.erased, remove_files, "branch=\"and={\\\"or=not=$d.is_meta=,d.is_not_partially_done=\\\",\\\"or=d.custom=unsafe_data,d.compare_incomplete_path=\\\"}\",d.remove_data="
+#temp#method.set_key = event.download.erased, remove_files, "branch=\"and={not=$d.custom=was_meta,\\\"or=not=$d.is_meta=,d.is_not_partially_done=\\\",\\\"or=d.custom=unsafe_data,d.compare_incomplete_path=\\\"}\",d.remove_data="
+method.set_key = event.download.erased, remove_files, "branch=\"and={not=$d.custom=was_meta,\\\"or=not=$d.is_meta=,d.is_not_partially_done=\\\",\\\"or=d.custom=unsafe_data,d.compare_incomplete_path=\\\"}\",d.remove_data="
 ### end: Delete data (dir/files) ###
 
 
@@ -218,16 +219,22 @@ method.insert = d.get_wrong_magnet_meta_file_path,   simple|private, "cat=$cfg.d
 # helper method: compose the full path of the right torrent file in ".session" dir
 method.insert = d.get_session_magnet_meta_file_path, simple|private, "cat=$cfg.dir.session=,$d.hash=,.torrent"
 # helper method: compose the new full path of the right torrent file in one of the category of ".downloading" dir
-method.insert = d.get_new_magnet_meta_file_path,     simple|private, "cat=$cfg.dir.meta_downl=,$d.custom=orig_category,/,$d.name=,-,$d.hash=,.torrent"
-# helper method: delete wrong meta file from "incomplete dir"
+method.insert = d.get_magnet_meta_file_path_downl,   simple|private, "cat=$cfg.dir.meta_downl=,$d.custom=orig_category,/,$d.name=,-,$d.hash=,.torrent"
+# helper method: compose the new full path of the right torrent file in one of the category of ".queue" dir
+method.insert = d.get_magnet_meta_file_path_queue,   simple|private, "cat=$cfg.dir.meta_queue=,$d.custom=orig_category,/,$d.name=,-,$d.hash=,.torrent"
+# helper method: delete wrong meta file from "incomplete" dir
 method.insert = d.delete_wrong_magnet_meta_file,     simple|private, "execute.nothrow={rm,-rf,--,$d.get_wrong_magnet_meta_file_path=}"
-# helper method: copy the right torrent file from ".session" dir into one of the category of ".downloading" dir
-method.insert = d.copy_session_magnet_meta_file,     simple|private, "execute.nothrow={cp,--,$d.get_session_magnet_meta_file_path=,$d.get_new_magnet_meta_file_path=}"
-# helper method: copies right one into its proper place, sets d.tied_to_file property to it, deletes the wrong one
-method.insert = d.fix_magnet_tied_file, simple|private, "d.copy_session_magnet_meta_file=; d.tied_to_file.set=$d.get_new_magnet_meta_file_path=; d.delete_wrong_magnet_meta_file="
+# helper method: copy the right torrent file from ".session" dir into another dir
+method.insert = d.copy_session_magnet_meta_file,     simple|private, "execute.nothrow={cp,--,$d.get_session_magnet_meta_file_path=,$argument.0=}"
+# helper method: copy right one into its proper ".downloading" dir, set d.tied_to_file property to it, delete the wrong one, saves session
+method.insert = d.fix_magnet_tied_file,    simple|private, "d.copy_session_magnet_meta_file=$d.get_magnet_meta_file_path_downl=; d.tied_to_file.set=$d.get_magnet_meta_file_path_downl=; d.delete_wrong_magnet_meta_file=; d.save_resume="
+# helper method: copy right one into its proper ".queue" dir, set a helper property, delete the meta download
+method.insert = d.queue_magnet_meta_file,  simple|private, "d.copy_session_magnet_meta_file=$d.get_magnet_meta_file_path_queue=; d.custom.set=was_meta,1; d.erase="
+# helper method: move the right torrent file from ".session" dir into its proper ".queue" or ".downloading" dir
+method.insert = d.handle_magnet_meta_file, simple|private, "branch=((cfg.magnet_link.queue)),((d.queue_magnet_meta_file)),((d.fix_magnet_tied_file))"
 
-# Fix tied torrent file of an initially magnet link when its download has been just started: delete the wrong one from "incomplete" dir and copy the right one from ".session" dir if they exist
-method.set_key = event.download.inserted_new, fix_magnet_tied_file, "branch=\"and={\\\"check_object.value=$cat=$d.get_session_magnet_meta_file_path=,,f\\\",\\\"check_object.value=$cat=$d.get_wrong_magnet_meta_file_path=,,f\\\"}\",d.fix_magnet_tied_file="
+# Handle torrent file of an initially magnet link when its download has been just started: move the right torrent file from ".session" dir into its proper ".queue" or ".downloading" dir if they exist
+method.set_key = event.download.inserted_new, ~~handle_magnet_meta_file, "branch=\"and={\\\"check_object.value=$cat=$d.get_session_magnet_meta_file_path=,,f\\\",\\\"check_object.value=$cat=$d.get_wrong_magnet_meta_file_path=,,f\\\"}\",d.handle_magnet_meta_file="
 ### end: Handle magnet links specail way ###
 
 

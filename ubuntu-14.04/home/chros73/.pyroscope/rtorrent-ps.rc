@@ -182,7 +182,7 @@ method.set_key = pyro.print_help, !99ps-ch,    ((print, ((cat, "       '%' ratio
 
 # UI/CMD/LOG/SCHEDULE/EVENTS: Log various data of download items during different events and startup time
 method.insert = d.print.status, simple|private, "print=(argument.0),\
-                     \"  \",   (string.rpad, (string.shorten, (d.name), 68), 68),\
+                     \"  \",   (string.rpad, (string.shorten, (cat, (d.name), (if, (d.custom,was_meta), (cat,\" (meta)\") )), 68), 68),\
                      \"  \",   (convert.human_size, (d.selected_size_bytes), (value, 0) ),\
                      \"  U:\", (convert.human_size, (d.up.total), (value, 0) ),\
                      \"  R:\", (d.get_ratio_float),\

@@ -6,6 +6,9 @@
 # Whether to use inotify for loading/removing torrent (meta) files from watch directories: [0|1]
 method.insert = cfg.inotify.use, value|const|private, 1
 
+# Whether to queue a magnet link download upon initial downloading (to be able to use Queue Manager) instead of start downloading it straight away: [0|1]
+method.insert = cfg.magnet_link.queue, value|private, 1
+
 # Whether to use external DNS cache instead of the built-in one of CURL: [0|1]
 method.insert = cfg.external_dnscache.use, value|private, 0
 
@@ -143,6 +146,7 @@ pieces.preload.type.set = 2
 method.insert = cfg.dir.main,       string|const|private, (cat,"/mnt/Torrents/")
 method.insert = cfg.dir.sub,        string|const|private, (cat,(cfg.dir.main),".rtorrent/")
 method.insert = cfg.dir.incomplete, string|const|private, (cat,(cfg.dir.sub),"incomplete/")
+method.insert = cfg.dir.meta_queue, string|const|private, (cat,(cfg.dir.sub),".queue/")
 method.insert = cfg.dir.meta_downl, string|const|private, (cat,(cfg.dir.sub),".downloading/")
 method.insert = cfg.dir.meta_compl, string|const|private, (cat,(cfg.dir.sub),".completed/")
 method.insert = cfg.dir.delqueue,   string|const|private, (cat,(cfg.dir.sub),".delqueue/")
