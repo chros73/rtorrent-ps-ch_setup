@@ -6,6 +6,9 @@
 # Whether to use inotify for loading/removing torrent (meta) files from watch directories: [0|1]
 method.insert = cfg.inotify.use, value|const|private, 1
 
+# Whether to use the provided p2p blocklist with IPv4 Filter to stop connecting to unwanted peers: [0|1]
+method.insert = cfg.blocklist.use, value|private,  1
+
 # Whether to queue a magnet link download upon initial downloading (to be able to use Queue Manager) instead of start downloading it straight away: [0|1]
 method.insert = cfg.magnet_link.queue, value|private, 1
 
@@ -284,6 +287,11 @@ system.umask.set = 022
 
 # Whether to allocate disk space for a new torrent. Default: `0`
 system.file.allocate.set = 1
+
+# Loads unwanted peers from external text file into IPv4 Filter at startup, e.g.:
+#   - https://www.wael.name/wael.list.p2p.gz (https://www.wael.name/other/best-blocklist/)
+#   - https://silo.glasz.org/antip2p.list.gz (https://gist.github.com/glaszig/bf96beccf4694ae25d4f1f7cc6224985)
+branch = ((cfg.blocklist.use)), ((schedule2, load_ipv4_filter, 0, 0, "ipv4_filter.load=(cat,(session.path),wael.list.p2p),unwanted"))
 
 # Change key-bindings. Values: [qwerty|azerty|qwertz|dvorak] Default is 'qwerty'. (key_layout)
 #keys.layout.set = qwerty
