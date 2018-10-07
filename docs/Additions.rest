@@ -120,6 +120,18 @@ Determines whether to use inotify for loading/removing torrent (meta) files from
 
 - values ``[0|1]``, ``1`` means inotify will be used
 
+cfg.blocklist.use
+^^^^^^^^^^^
+Determines whether to use the provided p2p blocklist with IPv4 Filter to stop connecting to unwanted peers.
+
+- values ``[0|1]``, ``1`` means blocklist will be used
+
+cfg.magnet_link.queue
+^^^^^^^^^^^
+Determines whether to queue a magnet link download upon initial downloading (to be able to use `Queue Manager <Queue-Manager>`_) instead of start downloading it straight away when `addMagnetLinksNative.sh <Additions#addmagnetlinksnative-sh>`_ helper script is used.
+
+- values ``[0|1]``, ``1`` means resulted torrent (meta) files will be queued.
+
 cfg.external_dnscache.use
 ^^^^^^^^^^^
 Determines whether to use external DNS cache instead of the built-in one of CURL.
@@ -431,11 +443,25 @@ Usage: ``rtgetTotalRotatingSize``
 Extra Bash scripts
 ------------------
 
-addMagnetLink.sh
+addMagnetLinksAria2.sh
 ^^^^^^^^^^^^^^^^
-Creates a magnet torrent file from magnet URI into one of the watch directories of rTorrent.
+Downloads and creates torrent files from magnet URIs into one of the queue directories of rTorrent. If 'category' parameter isn't given then a selection dialog is displayed. Requires: ``dialog`` and ``aria2`` commands.
 
-Usage: ``addMagnetLink.sh "magnet:?xt=urn:btih:foobar..."``
+Usage: 
+
+.. code-block:: sh
+
+   addMagnetLinksAria2.sh [category] "magnet:?xt=urn:btih:foo…" ["magnet:?xt=urn:btih:bar…", …]
+
+addMagnetLinksNative.sh
+^^^^^^^^^^^^^^^^
+Creates magnet torrent files from magnet URIs into one of the watch directories of rTorrent. If 'category' parameter isn't given then a selection dialog is displayed. Requires: ``dialog`` command.
+
+Usage:
+
+.. code-block:: sh
+
+   addMagnetLinksNative.sh [category] "magnet:?xt=urn:btih:foo…" ["magnet:?xt=urn:btih:bar…", …]
 
 doBackup.sh
 ^^^^^^^^^^^

@@ -1,0 +1,38 @@
+Magnet link support
+===========================
+
+.. contents:: **Contents**
+
+
+The problem
+---------------------
+
+Magnet links are really problematic with ``rtorrent``, just to name a few:
+
+* actual meta file can't be downloaded from other clients if only encrypted connection is allowed
+
+* created meta file by ``rtorrent`` is invalid (that means it can't be used to determine the size of the torrent with ``lstor``)
+
+Although sometimes it still can be useful to grab something via magnet links and the above issues can be circumvented with recent hacks. :)
+
+
+Solution
+--------
+
+* either use `addMagnetLinksNative.sh <https://github.com/chros73/rtorrent-ps-ch_setup/wiki/Additions#addmagnetlinksnative-sh>`_ script that will create "magnet torrent" files from magnet URIs into one of the watch directories (categories) (one of the subdirs of ``.downloading`` dir) optionally with the help of ncursed dialog for category selection
+
+  * if ``cfg.magnet_link.queue`` is enabled (it is by default) then it queues magnet link downloads upon initial downloading to be able to use `Queue Manager <https://github.com/chros73/rtorrent-ps-ch_setup/wiki/Queue-Manager>`_ instead of start downloading it straight away
+
+* or alternatively `addMagnetLinksAria2.sh <https://github.com/chros73/rtorrent-ps-ch_setup/wiki/Additions#addmagnetlinksaria2-sh>`_ script (if the above fails) that will download and create proper torrent files from magnet URIs into one of the queue directories (categories) (one of the subdirs of ``.queue`` dir) optionally with the help of ncursed dialog for category selection
+
+
+Final note
+----------
+
+Torrents created in this way:
+
+* can be picked up by the ``queue`` script to check available disk space
+
+* they can be deleted by the ``queue`` script
+
+Native way is the preferred way to deal with magnet URIs: the downloaded torrent (meta) files can't be renamed by ``aria2``.
