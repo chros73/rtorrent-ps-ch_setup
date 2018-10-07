@@ -1,7 +1,7 @@
 #!/bin/bash
 # Download and create torrent files from magnet URIs into one of the queue directories of rTorrent
 #   requires: aria2c
-# Usage: addMagnetLinksAria2.sh [category] "magnet:?xt=urn:btih:foo..." ["magnet:?xt=urn:btih:bar...", …]
+# Usage: addMagnetLinksAria2.sh [category] "magnet:?xt=urn:btih:foo…" ["magnet:?xt=urn:btih:bar…", …]
 
 
 # include common rT helper functions/variables
@@ -29,7 +29,7 @@ categories=(
 # Root of queue directories for rTorrent
 queue_root_dir="$RTHOME/.rtorrent/.queue"
 
-usage_str='Usage: addMagnetLinksAria2.sh [category] "magnet:?xt=urn:btih:foo..." ["magnet:?xt=urn:btih:bar...", …]'
+usage_str='Usage: addMagnetLinksAria2.sh [category] "magnet:?xt=urn:btih:foo…" ["magnet:?xt=urn:btih:bar…", …]'
 
 
 # check for 'aria2c' command

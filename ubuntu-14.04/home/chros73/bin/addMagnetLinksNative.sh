@@ -1,6 +1,6 @@
 #!/bin/bash
 # Create magnet torrent files from magnet URIs into one of the watch directories of rTorrent
-# Usage: addMagnetLinksNative.sh [category] "magnet:?xt=urn:btih:foo..." ["magnet:?xt=urn:btih:bar...", …]
+# Usage: addMagnetLinksNative.sh [category] "magnet:?xt=urn:btih:foo…" ["magnet:?xt=urn:btih:bar…", …]
 
 
 # include common rT helper functions/variables
@@ -28,7 +28,7 @@ categories=(
 # Root of watch directories that rTorrent polls
 watch_root_dir="$RTHOME/.rtorrent/.downloading"
 
-usage_str='Usage: addMagnetLinksNative.sh [category] "magnet:?xt=urn:btih:foo..." ["magnet:?xt=urn:btih:bar...", …]'
+usage_str='Usage: addMagnetLinksNative.sh [category] "magnet:?xt=urn:btih:foo…" ["magnet:?xt=urn:btih:bar…", …]'
 
 
 # check for arguments
