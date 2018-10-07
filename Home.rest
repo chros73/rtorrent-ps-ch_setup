@@ -1,7 +1,7 @@
 Automated rTorrent-PS-CH configuration
 ===================================
 
-An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps-ch/#rtorrent-ps-ch-fork-notes>`_ (requires v1.8.2-0.9.7 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
+An almost completely automated setup with the patched version of ``rTorrent-PS``, `rTorrent-PS-CH <https://github.com/chros73/rtorrent-ps-ch/#rtorrent-ps-ch-fork-notes>`_ (requires v1.8.3-0.9.7 or newer) that doesn't need any additional UI only an SSH client (with the help of ``tmux``), with category support, requiring the least amount of human interaction, including config files/scripts/instrucions for FTP, Samba, email reporting and many more.
 
 .. figure:: https://raw.githubusercontent.com/chros73/rtorrent-ps-ch/master/docs/_static/img/rTorrent-PS-CH-happy-pastel-kitty-s.png
    :align: center
@@ -44,7 +44,8 @@ Features
 
 -  favouring one group of torrents over 2 other groups of them (`read more <Favoring-Group-Of-Torrents>`_)
 -  hash-checking dropped data (`read more <Hints-and-possible-issues#hash-checking-existing-data-for-seeding-purposes>`_)
--  limited magnet link support (`read more <Limited-magnet-link-support>`_)
+-  full magnet link support (`read more <Magnet-link-support>`_)
+-  p2p blocklist support (`read more <https://github.com/chros73/rtorrent-ps-ch_setup/issues/160>`_)
 -  regularly updates scrape information for all torrents (`read more <Auto-Scraping>`_)
 -  extra columns on the fully customizable extended canvas (`read more <Additions#extra-columns-on-extended-canvas>`_)
 -  sending email reports automatically (`read more <Email-Reports,-Logs#logs>`_)
@@ -61,13 +62,13 @@ Useful additions in rtorrent
 
 *"Sounds awesome! What else?"* There are extra stuff defined in all over the setup:
 
--  `variables <Additions#extra-variables-in-rtorrent-config-files>`_ in rtorrent: ``cfg.inotify.use``, ``cfg.external_dnscache.use``, ``cfg.interface.bind``, ``cfg.scrape_interval.[active|idle]``, ``pyro.last_xfer.min_rate``, ``cfg.slowup.d.[peers_min|peers_max|uploads_max]``, ``cfg.[slowup|tardyup].uprate.[min|max]``, ``cfg.[slowup|tardyup].slots.[leech|seed].max``, ``cfg.global.downrate.[min|max], cfg.global.[upall|upmain].threshold``, ``cfg.global.slot.uprate.min``, ``cfg.dir.[main|sub|incomplete|meta_downl|meta_compl|delqueue|session|logs]``, ``cfg.postfix``, ``cfg.theme.[0|1|2]``, ``pyro.bin_dir``, ``pyro.[extended|extended.ch]``, ``pyro.[log_archival|log_retention].days``, ``[system.]startup_time``
+-  `variables <Additions#extra-variables-in-rtorrent-config-files>`_ in rtorrent: ``cfg.inotify.use``, ``cfg.blocklist.use``, ``cfg.magnet_link.queue``, ``cfg.external_dnscache.use``, ``cfg.interface.bind``, ``cfg.scrape_interval.[active|idle]``, ``pyro.last_xfer.min_rate``, ``cfg.slowup.d.[peers_min|peers_max|uploads_max]``, ``cfg.[slowup|tardyup].uprate.[min|max]``, ``cfg.[slowup|tardyup].slots.[leech|seed].max``, ``cfg.global.downrate.[min|max], cfg.global.[upall|upmain].threshold``, ``cfg.global.slot.uprate.min``, ``cfg.dir.[main|sub|incomplete|meta_downl|meta_compl|delqueue|session|logs]``, ``cfg.postfix``, ``cfg.theme.[0|1|2]``, ``pyro.bin_dir``, ``pyro.[extended|extended.ch]``, ``pyro.[log_archival|log_retention].days``, ``[system.]startup_time``
 -  `attributes <Additions#extra-attributes-in-rtorrent-config-files>`_ in rtorrent: ``unsafe_data``, ``data_dir``, ``meta_dir``, ``orig_category``, ``tm_downloaded``, ``tm_loaded``, ``tm_started``, ``tm_completed``, ``last_active``, ``last_xfer``, ``activations``, ``tm_last_scrape``
 -  `commands <Additions#extra-commands-in-rtorrent-config-files>`_ in rtorrent: ``d.move_to``, ``d.move_meta_to``, ``d.data_path``, ``d.session_file``, ``d.remove_data``, ``d.add_to_delqueue``, ``d.remove_from_delqueue``, ``d.fix_delqueue_flag``, ``d.get_ratio_float``, ``d.get_progress_num``, ``d.modify_slots_both``, ``d.last_scrape.send_set``, ``d.timestamp.downloaded``, ``d.timestamp.last_active``, ``d.timestamp.last_xfer``, ``d.last_xfer.is_active``, ``uptime``, ``hrf_time``, ``get_uprate_main``, ``get_total_rotating_size``, ``os.path.mtime``, ``pyro.import``, ``pyro.print_help``, ``pyro.ui.messages.show``, ``pyro.view.toggle_visible``, ``quit``
 -  `views <Additions#extra-views-in-rtorrent>`_ in rtorrent: ``^`` rtcontrol, ``!`` messages, ``t`` trackers, ``:`` tagged ``<`` datasize, ``>`` uploadeddata, ``%`` ratio, ``@`` category, ``?`` deletable, ``¬``	last_xfer
 -  `keyboard shortcuts <Additions#extra-keyboard-shortcuts-in-rtorrent>`_ in rtorrent: ``}`` toggle unsafe_data, ``#`` send manual scrape request, ``.`` toggle tag, ``T`` clear tag view, ``^g`` display tags, ``_`` toggle visibility of specified columns,  ``|`` toggle selectable themes, ``=`` toggle autoscale network history, ``home``, ``end``, ``pgup``, ``pgdn``, ``F2`` display quick help, ``^q`` DISABLED (used to exit rtorrent)
 -  `Bash functions <Additions#extra-bash-functions>`_: ``rtlistOrphans``, ``rtlistOrphanMetas``, ``rtlistPublic``, ``rtlistStuck``, ``rtlistMessages``, ``rtlistStopped``, ``rtgetTotalRotatingSize``
--  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLink.sh``, ``doBackup.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportOrphanMetas.sh``, ``reportPublic.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``reportLowRotatingSpace.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
+-  `Bash scripts <Additions#extra-bash-scripts>`_: ``addMagnetLinksAria2.sh``, ``addMagnetLinksNative.sh``, ``doBackup.sh``, ``queueTorrent.sh``, ``reportMessages.sh``, ``reportOrphans.sh``, ``reportOrphanMetas.sh``, ``reportPublic.sh``, ``reportStopped.sh``, ``reportStuck.sh``, ``reportLowRotatingSpace.sh``, ``rtUtils.sh``, ``sampleDownload.sh``, ``rtorrent init script``
 
 See `Additions <Additions>`_ page for more details.
 
@@ -110,7 +111,7 @@ Installation
 
 *"Okie, I kind'a like it. What should I do now?"* Well, go through the detailed `Installation instructions <Installation-instructions>`_, although it won't be a 5 minutes task :) , so let's summarize it first:
 
--  install ``rTorrent-PS-CH`` (v1.8.2-0.9.7 or newer) and ``pyrocore`` utilities with ``tmux``
+-  install ``rTorrent-PS-CH`` (v1.8.3-0.9.7 or newer) and ``pyrocore`` utilities with ``tmux``
 -  go through all the files in this project and modify them according to your setup/needs
 -  if you find a missing command on your system then install it (although every command should be covered by the Installation instructions)
 -  if you don't use a Debian based OS then you have to check every command switch whether it's compatible with your system

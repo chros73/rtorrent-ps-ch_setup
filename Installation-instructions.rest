@@ -58,13 +58,13 @@ Install more packages we need:
 
 .. code-block::
 
-   apt-get install sudo coreutils ssmtp dnsutils iproute2 dialog
+   apt-get install sudo coreutils ssmtp dnsutils iproute2 dialog aria2
 
 * ``sudo`` is used during queue management
 * ``ssmtp`` is used for email reporting
 * ``dig`` (requires ``dnsutils``) is used for getting public IP address
 * ``ip`` (requires ``iproute2``) is used for setting IP address of an interface to bind to
-* ``dialog`` is used for handling magnet links easily
+* ``dialog`` and ``aria2`` are used for handling magnet links easily
 
 Location of HDD
 """""""""
@@ -174,7 +174,7 @@ Copy all the directories/files from the given `home <https://github.com/chros73/
 You have to check the variables at the beginning of the following:
 
 * `.profile_rtfunctions <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.profile_rtfunctions>`_, `.pyroscope/templates/orphans-ch.txt <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/.pyroscope/templates/orphans-ch.txt>`_
-* script files in ``~/bin/`` directory: `addMagnetLink.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLink.sh>`_, `doBackup.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, `queueTorrent.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_, `rtUtils.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/rtUtils.sh>`_
+* script files in ``~/bin/`` directory: `addMagnetLinksAria2.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLinksAria2.sh>`_, `addMagnetLinksNative.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/addMagnetLinksNative.sh>`_, `doBackup.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/doBackup.sh>`_, `queueTorrent.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/queueTorrent.sh>`_, `rtUtils.sh <https://github.com/chros73/rtorrent-ps-ch_setup/blob/master/ubuntu-14.04/home/chros73/bin/rtUtils.sh>`_
 
 Finally, you only have to modify 1 rtorrent config file: 
 
