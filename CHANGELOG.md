@@ -1,5 +1,33 @@
 # Change Log
 
+## [1.0.2-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.2-0.9.7) (2018-10-07)
+**Implemented enhancements:**
+
+- Upgrade rtorrent-ps-ch to current version [\#161](https://github.com/chros73/rtorrent-ps-ch_setup/issues/161)
+- Add p2p blocklist manually for IPv4 Filter of rtorrent [\#160](https://github.com/chros73/rtorrent-ps-ch_setup/issues/160)
+- Add full magnet link support [\#159](https://github.com/chros73/rtorrent-ps-ch_setup/issues/159)
+
+**Diffstat:**
+
+```vhdl
+ .github_changelog_generator                                |      2 +-
+ CHANGELOG.md                                               |     32 +-
+ docs/Additions.rest                                        |     32 +-
+ docs/Home.rest                                             |     11 +-
+ docs/Installation-instructions.rest                        |      6 +-
+ docs/Limited-magnet-link-support.rest                      |     38 -
+ docs/Magnet-link-support.rest                              |     38 +
+ ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc        |      2 +-
+ ubuntu-14.04/home/chros73/.rtorrent-config.rc              |     12 +
+ ubuntu-14.04/home/chros73/.rtorrent.rc                     |     33 +-
+ ubuntu-14.04/home/chros73/bin/addMagnetLink.sh             |     67 -
+ ubuntu-14.04/home/chros73/bin/addMagnetLinksAria2.sh       |    107 +
+ ubuntu-14.04/home/chros73/bin/addMagnetLinksNative.sh      |    105 +
+ ubuntu-14.04/mnt/Torrents/.rtorrent/.session/.gitignore    |      4 -
+ ubuntu-14.04/mnt/Torrents/.rtorrent/.session/wael.list.p2p | 469628 +++++++++++++++++++++++++++++++++
+ 15 files changed, 469980 insertions(+), 137 deletions(-)
+```
+
 ## [1.0.1-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.1-0.9.7) (2018-10-03)
 **Implemented enhancements:**
 
@@ -11,10 +39,12 @@
 **Diffstat:**
 
 ```vhdl
- docs/Additions.rest                                 |  8 ++--
- docs/Home.rest                                      |  4 +-
- ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc | 81 ++++++++++++++++++++++----------
- 3 files changed, 62 insertions(+), 31 deletions(-)
+ .github_changelog_generator                         |  2 +-
+ CHANGELOG.md                                        | 16 +++++++++
+ docs/Additions.rest                                 |  8 ++---
+ docs/Home.rest                                      |  4 +--
+ ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc | 81 ++++++++++++++++++++++++++++++--------------
+ 5 files changed, 79 insertions(+), 32 deletions(-)
 ```
 
 ## [1.0.0-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/1.0.0-0.9.7) (2018-09-22)
@@ -33,28 +63,30 @@
 **Diffstat:**
 
 ```vhdl
- README.rst                                                       |   2 +-
- docs/Additions.rest                                              | 117 +++++++------
- docs/Android-5.0.md                                              |  12 +-
- docs/Auto-Scraping.md                                            |  10 +-
- docs/Home.rest                                                   |  16 +-
- docs/Installation-instructions.rest                              |   2 +-
- docs/Windows-8.1.md                                              |   4 +-
- ubuntu-14.04/home/chros73/.profile                               |   5 +
- ubuntu-14.04/home/chros73/.pyroscope/color_scheme16.rc           |  23 ---
- .../home/chros73/.pyroscope/color_scheme256-happy_pastel.rc      |  53 +++---
- .../home/chros73/.pyroscope/color_scheme256-solarized_blue.rc    |  51 +++---
- .../chros73/.pyroscope/color_scheme256-solarized_yellow-2.rc     |  23 ---
- .../home/chros73/.pyroscope/color_scheme256-solarized_yellow.rc  |  51 +++---
- ubuntu-14.04/home/chros73/.pyroscope/color_scheme256.rc          |  23 ---
- ubuntu-14.04/home/chros73/.pyroscope/color_scheme8.rc            |  23 ---
- ubuntu-14.04/home/chros73/.pyroscope/config.ini                  |  77 ++++++++-
- ubuntu-14.04/home/chros73/.pyroscope/config.py                   | 120 ++++++++++++-
- ubuntu-14.04/home/chros73/.pyroscope/rt_aliases.sh               |  18 ++
- ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc              | 262 +++++++++++++++++------------
- ubuntu-14.04/home/chros73/.rtorrent.rc                           |  13 +-
- ubuntu-14.04/home/chros73/bin/getElapsedTime.sh                  |  48 ------
- 21 files changed, 555 insertions(+), 398 deletions(-)
+ .github_changelog_generator                                       |   2 +-
+ CHANGELOG.md                                                      |  40 +++++
+ README.rst                                                        |   2 +-
+ docs/Additions.rest                                               | 117 +++++++------
+ docs/Android-5.0.md                                               |  12 +-
+ docs/Auto-Scraping.md                                             |  10 +-
+ docs/Home.rest                                                    |  16 +-
+ docs/Installation-instructions.rest                               |   2 +-
+ docs/Windows-8.1.md                                               |   4 +-
+ ubuntu-14.04/home/chros73/.profile                                |   5 +
+ ubuntu-14.04/home/chros73/.pyroscope/color_scheme16.rc            |  23 ---
+ .../home/chros73/.pyroscope/color_scheme256-happy_pastel.rc       |  53 +++---
+ .../home/chros73/.pyroscope/color_scheme256-solarized_blue.rc     |  51 +++---
+ .../home/chros73/.pyroscope/color_scheme256-solarized_yellow-2.rc |  23 ---
+ .../home/chros73/.pyroscope/color_scheme256-solarized_yellow.rc   |  51 +++---
+ ubuntu-14.04/home/chros73/.pyroscope/color_scheme256.rc           |  23 ---
+ ubuntu-14.04/home/chros73/.pyroscope/color_scheme8.rc             |  23 ---
+ ubuntu-14.04/home/chros73/.pyroscope/config.ini                   |  77 ++++++++-
+ ubuntu-14.04/home/chros73/.pyroscope/config.py                    | 120 ++++++++++++-
+ ubuntu-14.04/home/chros73/.pyroscope/rt_aliases.sh                |  18 ++
+ ubuntu-14.04/home/chros73/.pyroscope/rtorrent-ps.rc               | 262 +++++++++++++++++------------
+ ubuntu-14.04/home/chros73/.rtorrent.rc                            |  13 +-
+ ubuntu-14.04/home/chros73/bin/getElapsedTime.sh                   |  48 ------
+ 23 files changed, 596 insertions(+), 399 deletions(-)
 ```
 
 ## [0.9.9-0.9.7](https://github.com/chros73/rtorrent-ps-ch_setup/tree/0.9.9-0.9.7) (2018-05-06)
